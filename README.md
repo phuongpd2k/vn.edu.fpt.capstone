@@ -1,1 +1,1 @@
-# vn.edu.fpt.capstone
+# FPT Capstone Project
