@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserModel, Long>{
-	@Query("SELECT u FROM USER u WHERE u.EMAIL = :email")
-	 UserModel findByEmail(@Param("email") String email);
+//	@Query("SELECT * FROM USER u WHERE u.EMAIL = :email")
+//	 UserModel findByEmail(@Param("email") String email);
 }
