@@ -2,7 +2,6 @@ package vn.edu.fpt.capstone.controller;
 
 import java.util.List;
 
-import org.hibernate.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
