@@ -16,6 +16,8 @@
 	<description>FPT Capstone Project</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<deploy.projectId>pc-api-5547950074106411527-189</deploy.projectId>
+
 	</properties>
 	<dependencies>
 		<dependency>
