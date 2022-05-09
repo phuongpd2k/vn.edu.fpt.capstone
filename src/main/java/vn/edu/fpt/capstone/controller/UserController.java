@@ -21,7 +21,7 @@ import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.service.UserService;
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("/api")
 public class UserController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getName());
 	@Autowired
