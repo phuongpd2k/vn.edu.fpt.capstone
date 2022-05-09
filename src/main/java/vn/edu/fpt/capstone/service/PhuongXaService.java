@@ -1,6 +1,12 @@
 package vn.edu.fpt.capstone.service;
 
+import vn.edu.fpt.capstone.dto.PhuongXaDto;
+
+import java.util.List;
+
 public interface PhuongXaService {
-	void findById (Long id);
-	void findAll();
+	PhuongXaDto findById (Long id);
+	List<PhuongXaDto> findAll();
+
+	boolean isExist(Long id);
 }

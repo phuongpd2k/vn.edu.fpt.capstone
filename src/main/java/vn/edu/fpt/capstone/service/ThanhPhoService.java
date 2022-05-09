@@ -1,7 +1,12 @@
 package vn.edu.fpt.capstone.service;
 
+import vn.edu.fpt.capstone.dto.ThanhPhoDto;
+
+import java.util.List;
+
 public interface ThanhPhoService {
-	void findById(Long id);
-	void findBySlug(String slug);
-	void findAll();
+	ThanhPhoDto findById(Long id);
+	ThanhPhoDto findBySlug(String slug);
+	List<ThanhPhoDto> findAll();
+	boolean isExist(Long id);
 }
