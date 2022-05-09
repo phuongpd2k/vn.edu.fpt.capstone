@@ -16,10 +16,6 @@
     <description>FPT Capstone Project</description>
     <properties>
         <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <deploy.projectId>pc-api-5547950074106411527-189</deploy.projectId>
-
     </properties>
     <dependencies>
         <dependency>
@@ -69,16 +65,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>appengine-maven-plugin</artifactId>
-                <version>2.4.1</version>
-                <configuration>
-                    <project>pc-api-5547950074106411527-189</project>
-                    <deploy.promote>true</deploy.promote>
-                    <deploy.stopPreviousVersion>true</deploy.stopPreviousVersion>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
