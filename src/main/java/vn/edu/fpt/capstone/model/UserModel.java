@@ -19,7 +19,7 @@ public class UserModel {
 	@GeneratedValue(generator = "USER_SeqGen", strategy = GenerationType.SEQUENCE)
 	@SequenceGenerator(name = "USER_SeqGen", sequenceName = "USER_Seq",allocationSize=1)
 	@Column(name = "ID")
-	private Long ID;
+	private Long id;
 	@Column(name = "FIRST_NAME")
 	private String firstName;
 	@Column(name = "LAST_NAME")

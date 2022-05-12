@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.service.UserService;
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("/api")
 public class UserController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getName());
 	@Autowired
