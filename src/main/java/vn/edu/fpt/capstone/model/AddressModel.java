@@ -13,6 +13,8 @@ import javax.persistence.Table;
 public class AddressModel {
     @Id
     @Column(name = "ID")
+    @GeneratedValue(generator = "ADDRESS_SeqGen", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "ADDRESS_SeqGen", sequenceName = "ADDRESS_Seq",allocationSize=1)
     private Long id;
     @Column(name = "XAID")
     private Long xaId;

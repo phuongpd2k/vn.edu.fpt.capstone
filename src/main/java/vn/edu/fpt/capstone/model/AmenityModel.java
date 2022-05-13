@@ -13,6 +13,8 @@ import javax.persistence.Table;
 public class AmenityModel {
     @Id
     @Column(name = "ID")
+    @GeneratedValue(generator = "AMENITY_SeqGen", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "AMENITY_SeqGen", sequenceName = "AMENITY_Seq",allocationSize=1)
     private Long id;
     @Column(name = "ROOMID")
     private Long roomId;
