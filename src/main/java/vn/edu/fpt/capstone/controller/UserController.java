@@ -46,6 +46,7 @@ public class UserController {
 		}
 	}
 
+	/*
 	@PostMapping(value = "/user")
 	public ResponseEntity<ResponseObject> postUser(@RequestBody UserDto userDto) {
 		ResponseObject response = new ResponseObject();
@@ -55,11 +56,12 @@ public class UserController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
-			response.setCode("1001");
+			response.setCode(1001);
 			response.setMessage("Failed");
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
+	} */
+	
 	@PutMapping(value = "/user")
 	public ResponseEntity<ResponseObject> putUser(@RequestBody UserDto userDto) {
 		ResponseObject response = new ResponseObject();

@@ -65,4 +65,9 @@ public class RoleServiceImpl implements RoleService {
         }
         return false;
     }
+
+	@Override
+	public RoleModel getRoleByCode(String role) {
+		return roleRepository.getRoleByCode(role);
+	}
 }
