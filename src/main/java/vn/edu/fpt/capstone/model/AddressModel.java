@@ -2,10 +2,7 @@ package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -13,6 +10,8 @@ import javax.persistence.Table;
 public class AddressModel {
     @Id
     @Column(name = "ID")
+    @GeneratedValue(generator = "ADDRESS_SeqGen", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "ADDRESS_SeqGen", sequenceName = "ADDRESS_Seq",allocationSize=1)
     private Long id;
     @Column(name = "XAID")
     private Long xaId;
