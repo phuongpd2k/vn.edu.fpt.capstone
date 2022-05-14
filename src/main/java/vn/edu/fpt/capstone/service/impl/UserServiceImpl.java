@@ -2,27 +2,52 @@ package vn.edu.fpt.capstone.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
+import vn.edu.fpt.capstone.model.RoleModel;
 import vn.edu.fpt.capstone.model.UserModel;
+import vn.edu.fpt.capstone.repository.RoleRepository;
 import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	//private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
+	
 	@Autowired
-	ModelMapper modelMapper;
+	private RoleRepository roleRepository;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 
-	private UserModel convertToEntity(UserDto userDtol) {
-		UserModel userModel = modelMapper.map(userDtol, UserModel.class);
+	private UserModel convertToEntity(SignUpDto signUpDto) {
+		//UserModel userModel = modelMapper.map(signUpDto, UserModel.class);
+		UserModel userModel = new UserModel();
+		userModel.setUsername(signUpDto.getUsername());
+		userModel.setEmail(signUpDto.getEmail());
+		userModel.setPassword(BCrypt.hashpw(signUpDto.getPassword(), BCrypt.gensalt(12)));
+		userModel.setFirstName(signUpDto.getFirstName());
+		userModel.setLastName(signUpDto.getLastName());
+		userModel.setPhoneNumber(signUpDto.getPhoneNumber());
+		userModel.setImageLink(signUpDto.getImageLink());
+		userModel.setGender(signUpDto.isGender());
+		userModel.setDob(signUpDto.getDob());
+		for (RoleModel role : signUpDto.getRoles()) {
+        	userModel.addRole(roleRepository.getRoleByCode(role.getRole()));
+		}
+		
 		return userModel;
 	}
 
@@ -37,14 +62,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserModel createUser(UserDto userDto) {
-
-		return userRepository.save(convertToEntity(userDto));
+	public UserModel createUser(SignUpDto signUpDto) {
+		return userRepository.save(convertToEntity(signUpDto));
 	}
 
 	@Override
 	public UserModel updateUser(UserDto userDto) {
-		return userRepository.save(convertToEntity(userDto));
+		return null;
 	}
 
 	@Override
@@ -66,8 +90,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean checkIdExist(Long id) {
-		// TODO Auto-generated method stub
 		return userRepository.existsById(id);
+	}
+
+	@Override
+	public boolean existsByUsername(String username) {
+		return userRepository.existsByUsername(username);
 	}
 
 }
