@@ -30,6 +30,7 @@ public class UserController {
 
 	// Get all user
 	@GetMapping(value = "/user")
+	@CrossOrigin(origins = "*")
 	public ResponseEntity<ResponseObject> getUser() {
 		ResponseObject response = new ResponseObject();
 		try {
