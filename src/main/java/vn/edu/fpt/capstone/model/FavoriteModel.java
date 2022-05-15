@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "FAVORITE")
-public class FavoriteModel {
+public class FavoriteModel extends BaseModel{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "FAVORITE_SeqGen", strategy = GenerationType.SEQUENCE)

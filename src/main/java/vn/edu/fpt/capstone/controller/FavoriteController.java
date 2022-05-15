@@ -19,7 +19,7 @@ public class FavoriteController {
 
     @Autowired
     FavoriteService favoriteService;
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/favorite/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -48,7 +48,7 @@ public class FavoriteController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/favorite")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -70,7 +70,7 @@ public class FavoriteController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PostMapping(value = "/favorite")
     public ResponseEntity<ResponseObject> postFavorite(@RequestBody FavoriteDto favoriteDto) {
         ResponseObject response = new ResponseObject();
@@ -89,7 +89,7 @@ public class FavoriteController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PutMapping(value = "/favorite")
     public ResponseEntity<ResponseObject> putFavorite(@RequestBody FavoriteDto favoriteDto) {
         ResponseObject response = new ResponseObject();
@@ -110,7 +110,7 @@ public class FavoriteController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @DeleteMapping(value = "/favorite/{id}")
     public ResponseEntity<ResponseObject> deleteFavorite(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

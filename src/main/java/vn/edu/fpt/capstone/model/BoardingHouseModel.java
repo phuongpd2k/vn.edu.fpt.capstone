@@ -6,12 +6,12 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "BOARDING_HOUSE")
-public class BoardingHouseModel {
+@Table(name = "HOUSE")
+public class BoardingHouseModel extends BaseModel{
     @Id
     @Column(name = "ID")
-    @GeneratedValue(generator = "BOARDING_HOUSE_SeqGen", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "BOARDING_HOUSE_SeqGen", sequenceName = "BOARDING_HOUSE_Seq",allocationSize=1)
+    @GeneratedValue(generator = "HOUSE_SeqGen", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "HOUSE_SeqGen", sequenceName = "HOUSE_Seq",allocationSize=1)
     private Long id;
     @Column(name = "NAME")
     private String name;

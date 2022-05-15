@@ -62,7 +62,7 @@ public class UserController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	} */
-	
+	@CrossOrigin(origins = "*")
 	@PutMapping(value = "/user")
 	public ResponseEntity<ResponseObject> putUser(@RequestBody UserDto userDto) {
 		ResponseObject response = new ResponseObject();
@@ -77,6 +77,7 @@ public class UserController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	@CrossOrigin(origins = "*")
 	@DeleteMapping(value = "/user")
 	public ResponseEntity<ResponseObject> deleteUser(@RequestParam(required=true) String id) {
 		ResponseObject response = new ResponseObject();

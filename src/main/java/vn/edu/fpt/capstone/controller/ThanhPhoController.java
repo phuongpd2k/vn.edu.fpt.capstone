@@ -24,6 +24,7 @@ public class ThanhPhoController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThanhPhoController.class.getName());
     @Autowired
     ThanhPhoService thanhPhoService;
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/thanhpho/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -52,7 +53,7 @@ public class ThanhPhoController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/thanhpho")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();

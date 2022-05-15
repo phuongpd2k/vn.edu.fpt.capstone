@@ -19,7 +19,7 @@ public class BoardingHouseController {
 
     @Autowired
     BoardingHouseService boardingHouseService;
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/boardingHouse/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -48,7 +48,7 @@ public class BoardingHouseController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/boardingHouse")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -70,7 +70,7 @@ public class BoardingHouseController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PostMapping(value = "/boardingHouse")
     public ResponseEntity<ResponseObject> postBoardingHouse(@RequestBody BoardingHouseDto boardingHouseDto) {
         ResponseObject response = new ResponseObject();
@@ -89,7 +89,7 @@ public class BoardingHouseController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PutMapping(value = "/boardingHouse")
     public ResponseEntity<ResponseObject> putBoardingHouse(@RequestBody BoardingHouseDto boardingHouseDto) {
         ResponseObject response = new ResponseObject();
@@ -110,7 +110,7 @@ public class BoardingHouseController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @DeleteMapping(value = "/boardingHouse/{id}")
     public ResponseEntity<ResponseObject> deleteBoardingHouse(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

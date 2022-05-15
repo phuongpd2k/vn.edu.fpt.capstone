@@ -3,7 +3,7 @@ package vn.edu.fpt.capstone.dto;
 
 import lombok.Data;
 @Data
-public class FeedbackRoomDto {
+public class FeedbackRoomDto extends BaseDto{
     private Long id;
     private Long userId;
     private String content;

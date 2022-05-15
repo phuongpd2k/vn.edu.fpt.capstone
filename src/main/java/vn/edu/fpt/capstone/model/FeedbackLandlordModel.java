@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "FEEDBACK_LANDLORD")
-public class FeedbackLandlordModel {
+public class FeedbackLandlordModel extends BaseModel{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "FEEDBACK_LANDLORD_SeqGen", strategy = GenerationType.SEQUENCE)

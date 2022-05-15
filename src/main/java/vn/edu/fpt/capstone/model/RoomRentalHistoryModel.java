@@ -1,13 +1,15 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "ROOM_RENTAL_HISTORY")
-public class RoomRentalHistoryModel {
+public class RoomRentalHistoryModel extends BaseModel{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "ROOM_RENTAL_HISTORY_SeqGen", strategy = GenerationType.SEQUENCE)
@@ -20,9 +22,11 @@ public class RoomRentalHistoryModel {
     @Column(name = "ROOM_RENTER_PHONE")
     private String roomRenterPhone;
     @Column(name = "CHECK_IN_DATE")
-    private String checkInDate;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date checkInDate;
     @Column(name="CHECK_OUT_DATE")
-    private String checkOutDate;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date checkOutDate;
     @Column(name = "RENTAL_PRICE")
     private String rentalPrice;
 }

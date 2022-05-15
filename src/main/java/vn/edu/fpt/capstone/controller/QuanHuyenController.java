@@ -24,6 +24,7 @@ public class QuanHuyenController {
 
     @Autowired
     QuanHuyenService quanHuyenService;
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/quanhuyen/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -52,7 +53,7 @@ public class QuanHuyenController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/quanhuyen")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();

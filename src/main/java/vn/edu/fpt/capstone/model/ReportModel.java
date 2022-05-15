@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "REPORT")
-public class ReportModel {
+public class ReportModel extends BaseModel{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "REPORT_SeqGen", strategy = GenerationType.SEQUENCE)

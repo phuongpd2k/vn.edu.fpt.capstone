@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties({"password"})
-public class UserDto {
+public class UserDto extends BaseDto{
 	@JsonProperty("id")
 	private Long id;
 	@JsonProperty("firstName")

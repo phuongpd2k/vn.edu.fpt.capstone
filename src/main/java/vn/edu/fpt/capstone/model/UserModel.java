@@ -1,6 +1,6 @@
 package vn.edu.fpt.capstone.model;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +20,8 @@ import javax.persistence.UniqueConstraint;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
@@ -58,13 +60,14 @@ public class UserModel extends BaseModel{
 	private boolean gender;
 	
 	@Column(name = "DOB")
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date dob;
 	
-	@Builder.Default
+//	@Builder.Default
 	@Column(name = "isActive")
     private boolean isActive = true;
 	
-	@Builder.Default
+//	@Builder.Default
     @Column(name = "isDelete")
     private boolean isDelete = false;
 	
@@ -76,7 +79,7 @@ public class UserModel extends BaseModel{
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-	@Builder.Default
+//	@Builder.Default
     private Set<RoleModel> roles = new HashSet<RoleModel>();
 
 	public Long getId() {
