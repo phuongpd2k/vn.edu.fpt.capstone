@@ -19,7 +19,7 @@ public class RoleController {
 
     @Autowired
     RoleService roleService;
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/role/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -48,7 +48,7 @@ public class RoleController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/role")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -70,7 +70,7 @@ public class RoleController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PostMapping(value = "/role")
     public ResponseEntity<ResponseObject> postRole(@RequestBody RoleDto roleDto) {
         ResponseObject response = new ResponseObject();
@@ -89,7 +89,7 @@ public class RoleController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PutMapping(value = "/role")
     public ResponseEntity<ResponseObject> putRole(@RequestBody RoleDto roleDto) {
         ResponseObject response = new ResponseObject();
@@ -110,7 +110,7 @@ public class RoleController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @DeleteMapping(value = "/role/{id}")
     public ResponseEntity<ResponseObject> deleteRole(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

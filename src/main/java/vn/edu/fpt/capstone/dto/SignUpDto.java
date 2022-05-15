@@ -1,7 +1,9 @@
 package vn.edu.fpt.capstone.dto;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import vn.edu.fpt.capstone.model.RoleModel;
 
 public class SignUpDto {
@@ -13,6 +15,7 @@ public class SignUpDto {
 	private String phoneNumber;
 	private String imageLink;
 	private boolean gender;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/YYYY")
 	private Date dob;
     private Set<RoleModel> roles;
     

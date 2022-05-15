@@ -19,7 +19,7 @@ public class ReportController {
 
     @Autowired
     ReportService reportService;
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/report/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -48,7 +48,7 @@ public class ReportController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/report")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -70,7 +70,7 @@ public class ReportController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PostMapping(value = "/report")
     public ResponseEntity<ResponseObject> postReport(@RequestBody ReportDto reportDto) {
         ResponseObject response = new ResponseObject();
@@ -89,7 +89,7 @@ public class ReportController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PutMapping(value = "/report")
     public ResponseEntity<ResponseObject> putReport(@RequestBody ReportDto reportDto) {
         ResponseObject response = new ResponseObject();
@@ -110,7 +110,7 @@ public class ReportController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @DeleteMapping(value = "/report/{id}")
     public ResponseEntity<ResponseObject> deleteReport(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

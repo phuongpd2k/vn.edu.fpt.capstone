@@ -19,7 +19,7 @@ public class FeedbackRoomController {
 
     @Autowired
     FeedbackRoomService feedbackRoomService;
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/feedbackRoom/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -48,7 +48,7 @@ public class FeedbackRoomController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @GetMapping(value = "/feedbackRoom")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -70,7 +70,7 @@ public class FeedbackRoomController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PostMapping(value = "/feedbackRoom")
     public ResponseEntity<ResponseObject> postFeedbackRoom(@RequestBody FeedbackRoomDto feedbackRoomDto) {
         ResponseObject response = new ResponseObject();
@@ -89,7 +89,7 @@ public class FeedbackRoomController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @PutMapping(value = "/feedbackRoom")
     public ResponseEntity<ResponseObject> putFeedbackRoom(@RequestBody FeedbackRoomDto feedbackRoomDto) {
         ResponseObject response = new ResponseObject();
@@ -110,7 +110,7 @@ public class FeedbackRoomController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @CrossOrigin(origins = "*")
     @DeleteMapping(value = "/feedbackRoom/{id}")
     public ResponseEntity<ResponseObject> deleteFeedbackRoom(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

@@ -3,7 +3,7 @@ package vn.edu.fpt.capstone.dto;
 import lombok.Data;
 
 @Data
-public class RoomDto {
+public class RoomDto extends BaseDto {
     private Long id;
     private Long boardingHouseId;
     private String type;

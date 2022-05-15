@@ -1,13 +1,15 @@
 package vn.edu.fpt.capstone.model;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "ROOM")
-public class RoomModel {
+public class RoomModel extends BaseModel{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "ROOM_SeqGen", strategy = GenerationType.SEQUENCE)

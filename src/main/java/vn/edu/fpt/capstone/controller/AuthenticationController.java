@@ -9,10 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SignInDto;
@@ -30,7 +27,7 @@ public class AuthenticationController {
 	
 	@Autowired
 	private AuthenticationService authenticationService;
-	
+	@CrossOrigin(origins = "*")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
     //@Secured({"ADMIN"})
     @RequestMapping({ "/hello" })
@@ -38,7 +35,7 @@ public class AuthenticationController {
     	UserDetails u = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return "Hello World" + u.getUsername() + " " + u.getAuthorities();
     }
-	
+	@CrossOrigin(origins = "*")
 	@PostMapping(value = "/signup")
 	public ResponseEntity<ResponseObject> signUp(@RequestBody SignUpDto signUpDto) {
 		ResponseObject response = new ResponseObject();
@@ -66,7 +63,7 @@ public class AuthenticationController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+	@CrossOrigin(origins = "*")
 	@PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody SignInDto signInDto) {
 		ResponseObject response = new ResponseObject();
