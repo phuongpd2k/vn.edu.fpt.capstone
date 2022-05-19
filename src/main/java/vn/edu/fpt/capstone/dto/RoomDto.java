@@ -1,9 +1,12 @@
 package vn.edu.fpt.capstone.dto;
 
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class RoomDto extends BaseDto {
+@EqualsAndHashCode(callSuper = false)
+public class RoomDto extends BaseDto{
     private Long id;
     private Long boardingHouseId;
     private String type;

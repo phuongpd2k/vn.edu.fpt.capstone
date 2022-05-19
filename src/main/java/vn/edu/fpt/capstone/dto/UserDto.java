@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import vn.edu.fpt.capstone.model.AddressModel;
 
 @Data
 @JsonIgnoreProperties({"password"})
+@EqualsAndHashCode(callSuper = false)
 public class UserDto extends BaseDto{
 	@JsonProperty("id")
 	private Long id;

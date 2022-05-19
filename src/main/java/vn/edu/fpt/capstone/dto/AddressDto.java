@@ -2,8 +2,10 @@ package vn.edu.fpt.capstone.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class AddressDto extends BaseDto{
     @JsonProperty("id")
     private Long id;
