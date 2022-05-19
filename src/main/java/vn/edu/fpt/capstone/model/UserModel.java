@@ -1,10 +1,7 @@
 package vn.edu.fpt.capstone.model;
 
 import java.sql.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,11 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +24,7 @@ import lombok.Data;
 @Table(name = "USER", uniqueConstraints = {
         @UniqueConstraint(columnNames = "username")
 })
-public class UserModel extends BaseModel{
+public class UserModel extends Auditable<String>{
 	@Id
 	@GeneratedValue(generator = "USER_SeqGen", strategy = GenerationType.SEQUENCE)
 	@SequenceGenerator(name = "USER_SeqGen", sequenceName = "USER_Seq",allocationSize=1)
@@ -68,16 +66,9 @@ public class UserModel extends BaseModel{
     @Column(name = "isDelete")
     private boolean isDelete = false;
 	
-	@ManyToMany(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            targetEntity=RoleModel.class)
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-	@Builder.Default
-    private Set<RoleModel> roles = new HashSet<RoleModel>();
+	@ManyToOne
+    @JoinColumn(name = "role_id")
+    private RoleModel role;
 
 	public Long getId() {
 		return id;
@@ -175,16 +166,13 @@ public class UserModel extends BaseModel{
 		this.isDelete = isDelete;
 	}
 
-	public Set<RoleModel> getRoles() {
-		return roles;
+	@JsonBackReference
+	public RoleModel getRole() {
+		return role;
 	}
 
-	public void setRoles(Set<RoleModel> roles) {
-		this.roles = roles;
-	}
-	
-	public void addRole(RoleModel role) {
-		this.roles.add(role);
+	public void setRole(RoleModel role) {
+		this.role = role;
 	}
 	
 }

@@ -77,19 +77,12 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
                 .loadUserByUsername(signInDto.getUsername());
         
-        JwtResponse jwtResponse = generateJwtResponse(userPrincipal);
+        JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
         
-        return ResponseEntity.ok(jwtResponse);
-	}
-
-	private JwtResponse generateJwtResponse(UserPrincipal userPrincipal) {
-		final String token = jwtTokenUtil.generateToken(userPrincipal);
-		
-		Set<String> roles = userPrincipal.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-		
-		return new JwtResponse(token, new UserResponse(userPrincipal.getUsername(), roles));
+        response.setCode("200");
+        response.setMessage("Get token successfully!");
+        response.setResults(jwtResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
+import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.service.AuthenticationService;
 import vn.edu.fpt.capstone.service.UserService;
 
@@ -32,7 +33,6 @@ public class AuthenticationController {
 	private AuthenticationService authenticationService;
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-    //@Secured({"ADMIN"})
     @RequestMapping({ "/hello" })
     public String firstPage() {
     	UserDetails u = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -40,10 +40,17 @@ public class AuthenticationController {
     }
 	
 	@PostMapping(value = "/signup")
-	public ResponseEntity<ResponseObject> signUp(@RequestBody SignUpDto signUpDto) {
-		ResponseObject response = new ResponseObject();
-        
+	public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
+		ResponseObject response = new ResponseObject();       
 		try {
+			// check params
+	        if(signUpDto.getUsername().isEmpty() || signUpDto.getPassword().isEmpty()){
+	        	logger.error("Params invalid!");
+	        	response.setCode("400");
+	        	response.setMessage("sign up request: params invalid!");
+	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	        }
+			
 			// add check for user name exists in a DB
 	        if(userService.existsByUsername(signUpDto.getUsername())){
 	        	logger.error("User name has exits!");
@@ -53,10 +60,10 @@ public class AuthenticationController {
 	        }
 	            
 	        // save user
-			userService.createUser(signUpDto);
-			
+			UserModel user = userService.createUser(signUpDto);
 			response.setCode("200");
 			response.setMessage("sign up request: create user successfully!");
+			response.setResults(user);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 			
 		} catch (Exception e) {

@@ -33,9 +33,10 @@ public class UserPrincipal implements UserDetails{
 
 	public Collection<? extends GrantedAuthority> getAuthorities() {
         final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        for (final RoleModel role : this.user.getRoles()) {
-            authorities.add((GrantedAuthority)new SimpleGrantedAuthority(role.getRole()));
-        }
+//        for (final RoleModel role : this.user.getRole()) {
+//            authorities.add((GrantedAuthority)new SimpleGrantedAuthority(role.getRole()));
+//        }
+        authorities.add((GrantedAuthority)new SimpleGrantedAuthority(this.user.getRole().getRole()));
         return authorities;
     }
     

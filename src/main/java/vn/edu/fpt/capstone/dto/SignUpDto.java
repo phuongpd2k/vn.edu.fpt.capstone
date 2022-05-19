@@ -14,7 +14,7 @@ public class SignUpDto {
 	private String imageLink;
 	private boolean gender;
 	private Date dob;
-    private Set<RoleModel> roles;
+    private RoleModel role;
     
 	public String getUsername() {
 		return username;
@@ -70,10 +70,10 @@ public class SignUpDto {
 	public void setDob(Date dob) {
 		this.dob = dob;
 	}
-	public Set<RoleModel> getRoles() {
-		return roles;
+	public RoleModel getRole() {
+		return role;
 	}
-	public void setRoles(Set<RoleModel> roles) {
-		this.roles = roles;
+	public void setRole(RoleModel role) {
+		this.role = role;
 	}
 }

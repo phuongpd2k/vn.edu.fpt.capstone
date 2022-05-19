@@ -9,23 +9,23 @@ public class UserResponse {
 
     private String username;
     
-    private Set<String> roles;
+    private String role;
     
     public UserResponse() {
 	}
     
-    public UserResponse(String username, Set<String> roles) {
+    public UserResponse(String username, String role) {
     	this.username = username;
-    	this.roles = roles;
+    	this.role = role;
 	}
 
     
-    public UserResponse userResponse(UserDetails userDetails, Set<String> roles) {
-        UserResponse u = new UserResponse();
-        u.setUsername(userDetails.getUsername());
-        u.setRoles(roles);
-        return u;
-    }
+//    public UserResponse userResponse(UserDetails userDetails, Set<String> roles) {
+//        UserResponse u = new UserResponse();
+//        u.setUsername(userDetails.getUsername());
+//        u.setRoles(roles);
+//        return u;
+//    }
 
     public long getId() {
 		return id;
@@ -43,12 +43,13 @@ public class UserResponse {
 		this.username = username;
 	}
 
-	public Set<String> getRoles() {
-		return roles;
+	public String getRole() {
+		return role;
 	}
 
-	public void setRoles(Set<String> roles) {
-		this.roles = roles;
+	public void setRole(String role) {
+		this.role = role;
 	}
+
 
 }

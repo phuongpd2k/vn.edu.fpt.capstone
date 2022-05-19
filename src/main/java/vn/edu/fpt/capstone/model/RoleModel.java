@@ -7,6 +7,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Data
 @Entity
 @Table(name = "ROLE",
@@ -21,10 +23,7 @@ public class RoleModel {
     @Column(name = "ROLE")
     private String role;
     
-    @ManyToMany(fetch = FetchType.LAZY, 
-            cascade = CascadeType.ALL,
-            mappedBy= "roles",
-            targetEntity = UserModel.class)
+    @OneToMany(mappedBy = "role")
     private Set<UserModel> users = new HashSet<UserModel>();
 
 	public Long getId() {
@@ -43,6 +42,7 @@ public class RoleModel {
 		this.role = role;
 	}
 
+	@JsonManagedReference
 	public Set<UserModel> getUsers() {
 		return users;
 	}
