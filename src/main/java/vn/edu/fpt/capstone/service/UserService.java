@@ -2,6 +2,7 @@ package vn.edu.fpt.capstone.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.capstone.dto.SignUpDto;
@@ -16,4 +17,6 @@ public interface UserService {
 	boolean checkIdExist(Long id);
 	List<UserDto> getAllUser();
 	boolean existsByUsername(String username);
+	ResponseEntity<?> getUserInformationById(Long id, String jwtToken);
+	ResponseEntity<?> getUserInformationByToken(String jwtToken);
 }

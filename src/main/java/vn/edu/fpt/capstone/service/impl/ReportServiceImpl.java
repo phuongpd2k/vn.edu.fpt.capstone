@@ -62,20 +62,20 @@ public class ReportServiceImpl implements ReportService {
 	public ReportDto createReport(ReportDto reportDto) {
 		try {
 			ReportModel reportModel = modelMapper.map(reportDto, ReportModel.class);
-			if (reportModel.getCreatedAt() == null || reportModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				reportModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				reportModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				reportModel.setModifiedAt(reportModel.getCreatedAt());
-			}
-			if (reportModel.getCreatedBy() == null || reportModel.getCreatedBy().isEmpty()) {
-				reportModel.setCreatedBy("SYSTEM");
-				reportModel.setModifiedBy("SYSTEM");
-			} else {
-				reportModel.setModifiedBy(reportModel.getCreatedBy());
-			}
+//			if (reportModel.getCreatedAt() == null || reportModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				reportModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				reportModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				reportModel.setModifiedAt(reportModel.getCreatedAt());
+//			}
+//			if (reportModel.getCreatedBy() == null || reportModel.getCreatedBy().isEmpty()) {
+//				reportModel.setCreatedBy("SYSTEM");
+//				reportModel.setModifiedBy("SYSTEM");
+//			} else {
+//				reportModel.setModifiedBy(reportModel.getCreatedBy());
+//			}
 			ReportModel saveModel = reportRepository.save(reportModel);
 			return modelMapper.map(saveModel, ReportDto.class);
 		} catch (Exception e) {

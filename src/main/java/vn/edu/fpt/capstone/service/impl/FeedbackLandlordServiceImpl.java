@@ -62,20 +62,20 @@ public class FeedbackLandlordServiceImpl implements FeedbackLandlordService {
 	public FeedbackLandlordDto createFeedbackLandlord(FeedbackLandlordDto feedbackLandlordDto) {
 		try {
 			FeedbackLandlordModel feedbackLandlordModel = modelMapper.map(feedbackLandlordDto, FeedbackLandlordModel.class);
-			if (feedbackLandlordModel.getCreatedAt() == null || feedbackLandlordModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				feedbackLandlordModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				feedbackLandlordModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				feedbackLandlordModel.setModifiedAt(feedbackLandlordModel.getCreatedAt());
-			}
-			if (feedbackLandlordModel.getCreatedBy() == null || feedbackLandlordModel.getCreatedBy().isEmpty()) {
-				feedbackLandlordModel.setCreatedBy("SYSTEM");
-				feedbackLandlordModel.setModifiedBy("SYSTEM");
-			} else {
-				feedbackLandlordModel.setModifiedBy(feedbackLandlordModel.getCreatedBy());
-			}
+//			if (feedbackLandlordModel.getCreatedAt() == null || feedbackLandlordModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				feedbackLandlordModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				feedbackLandlordModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				feedbackLandlordModel.setModifiedAt(feedbackLandlordModel.getCreatedAt());
+//			}
+//			if (feedbackLandlordModel.getCreatedBy() == null || feedbackLandlordModel.getCreatedBy().isEmpty()) {
+//				feedbackLandlordModel.setCreatedBy("SYSTEM");
+//				feedbackLandlordModel.setModifiedBy("SYSTEM");
+//			} else {
+//				feedbackLandlordModel.setModifiedBy(feedbackLandlordModel.getCreatedBy());
+//			}
 			FeedbackLandlordModel saveModel = feedbackLandlordRepository.save(feedbackLandlordModel);
 			return modelMapper.map(saveModel, FeedbackLandlordDto.class);
 		} catch (Exception e) {

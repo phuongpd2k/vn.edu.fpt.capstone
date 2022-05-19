@@ -65,20 +65,20 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	public TypeOfRentalDto createTypeOfRental(TypeOfRentalDto typeOfRentalDto) {
 		try {
 			TypeOfRentalModel typeOfRentalModel = modelMapper.map(typeOfRentalDto, TypeOfRentalModel.class);
-			if (typeOfRentalModel.getCreatedAt() == null || typeOfRentalModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				typeOfRentalModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				typeOfRentalModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				typeOfRentalModel.setModifiedAt(typeOfRentalModel.getCreatedAt());
-			}
-			if (typeOfRentalModel.getCreatedBy() == null || typeOfRentalModel.getCreatedBy().isEmpty()) {
-				typeOfRentalModel.setCreatedBy("SYSTEM");
-				typeOfRentalModel.setModifiedBy("SYSTEM");
-			} else {
-				typeOfRentalModel.setModifiedBy(typeOfRentalModel.getCreatedBy());
-			}
+//			if (typeOfRentalModel.getCreatedAt() == null || typeOfRentalModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				typeOfRentalModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				typeOfRentalModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				typeOfRentalModel.setModifiedAt(typeOfRentalModel.getCreatedAt());
+//			}
+//			if (typeOfRentalModel.getCreatedBy() == null || typeOfRentalModel.getCreatedBy().isEmpty()) {
+//				typeOfRentalModel.setCreatedBy("SYSTEM");
+//				typeOfRentalModel.setModifiedBy("SYSTEM");
+//			} else {
+//				typeOfRentalModel.setModifiedBy(typeOfRentalModel.getCreatedBy());
+//			}
 			TypeOfRentalModel saveModel = typeOfRentalRepository.save(typeOfRentalModel);
 			return modelMapper.map(saveModel, TypeOfRentalDto.class);
 		} catch (Exception e) {

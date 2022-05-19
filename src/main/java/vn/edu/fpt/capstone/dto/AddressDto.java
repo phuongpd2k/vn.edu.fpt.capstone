@@ -3,10 +3,11 @@ package vn.edu.fpt.capstone.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import vn.edu.fpt.capstone.model.Auditable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class AddressDto extends BaseDto{
+public class AddressDto extends Auditable<String>{
     @JsonProperty("id")
     private Long id;
     @JsonProperty("xaId")

@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ROOM")
 @EqualsAndHashCode(callSuper = false)
-public class RoomModel extends BaseModel{
+public class RoomModel extends Auditable<String>{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "ROOM_SeqGen", strategy = GenerationType.SEQUENCE)

@@ -63,20 +63,20 @@ public class AddressServiceImpl implements AddressService {
 	public AddressDto createAddress(AddressDto addressDto) {
 		try {
 			AddressModel addressModel = modelMapper.map(addressDto, AddressModel.class);
-			if (addressModel.getCreatedAt() == null || addressModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				addressModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				addressModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				addressModel.setModifiedAt(addressModel.getCreatedAt());
-			}
-			if (addressModel.getCreatedBy() == null || addressModel.getCreatedBy().isEmpty()) {
-				addressModel.setCreatedBy("SYSTEM");
-				addressModel.setModifiedBy("SYSTEM");
-			} else {
-				addressModel.setModifiedBy(addressModel.getCreatedBy());
-			}
+//			if (addressModel.getCreatedAt() == null || addressModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				addressModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				addressModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				addressModel.setModifiedAt(addressModel.getCreatedAt());
+//			}
+//			if (addressModel.getCreatedBy() == null || addressModel.getCreatedBy().isEmpty()) {
+//				addressModel.setCreatedBy("SYSTEM");
+//				addressModel.setModifiedBy("SYSTEM");
+//			} else {
+//				addressModel.setModifiedBy(addressModel.getCreatedBy());
+//			}
 			AddressModel saveModel = addressRepository.save(addressModel);
 			return modelMapper.map(saveModel, AddressDto.class);
 		} catch (Exception e) {

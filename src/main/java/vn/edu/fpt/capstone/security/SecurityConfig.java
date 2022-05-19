@@ -22,16 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-//    @Override
-//    protected void configure(HttpSecurity security) throws Exception
-//    {
-//     security.httpBasic().disable();
-//     security.cors().and()
-//     .authorizeRequests()
-//     .antMatchers(HttpMethod.OPTIONS).permitAll();
-//     security.csrf().disable();
-//    }    
 	@Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 

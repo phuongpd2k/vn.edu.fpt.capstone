@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "FAVORITE")
 @EqualsAndHashCode(callSuper = false)
-public class FavoriteModel extends BaseModel{
+public class FavoriteModel extends Auditable<String>{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "FAVORITE_SeqGen", strategy = GenerationType.SEQUENCE)
