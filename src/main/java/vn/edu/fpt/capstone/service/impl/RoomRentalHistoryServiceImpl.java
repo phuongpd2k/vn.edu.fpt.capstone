@@ -1,6 +1,8 @@
 package vn.edu.fpt.capstone.service.impl;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.RoomRentalHistoryDto;
@@ -8,11 +10,16 @@ import vn.edu.fpt.capstone.model.RoomRentalHistoryModel;
 import vn.edu.fpt.capstone.repository.RoomRentalHistoryRepository;
 import vn.edu.fpt.capstone.service.RoomRentalHistoryService;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class RoomRentalHistoryServiceImpl implements RoomRentalHistoryService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RoomRentalHistoryServiceImpl.class.getName());
 
     @Autowired
     RoomRentalHistoryRepository roomRentalHistoryRepository;
@@ -36,27 +43,46 @@ public class RoomRentalHistoryServiceImpl implements RoomRentalHistoryService {
     }
 
     @Override
-    public RoomRentalHistoryDto updateRoomRentalHistory(RoomRentalHistoryDto roomRentalHistoryDto) {
-        RoomRentalHistoryModel roomRentalHistoryModel = modelMapper.map(roomRentalHistoryDto,RoomRentalHistoryModel.class);
-        RoomRentalHistoryModel saveModel = roomRentalHistoryRepository.save(roomRentalHistoryModel);
-        return modelMapper.map(saveModel,RoomRentalHistoryDto.class);
-    }
+	public RoomRentalHistoryDto updateRoomRentalHistory(RoomRentalHistoryDto roomRentalHistoryDto) {
+		RoomRentalHistoryModel roomRentalHistoryModel = modelMapper.map(roomRentalHistoryDto, RoomRentalHistoryModel.class);
+		RoomRentalHistoryModel saveModel = roomRentalHistoryRepository.save(roomRentalHistoryModel);
+		return modelMapper.map(saveModel, RoomRentalHistoryDto.class);
+	}
 
-    @Override
-    public boolean removeRoomRentalHistory(Long id) {
-        if(roomRentalHistoryRepository.existsById(id)){
-            roomRentalHistoryRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean removeRoomRentalHistory(Long id) {
+		if (roomRentalHistoryRepository.existsById(id)) {
+			roomRentalHistoryRepository.deleteById(id);
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    public RoomRentalHistoryDto createRoomRentalHistory(RoomRentalHistoryDto roomRentalHistoryDto) {
-        RoomRentalHistoryModel roomRentalHistoryModel = modelMapper.map(roomRentalHistoryDto,RoomRentalHistoryModel.class);
-        RoomRentalHistoryModel saveModel = roomRentalHistoryRepository.save(roomRentalHistoryModel);
-        return modelMapper.map(saveModel,RoomRentalHistoryDto.class);
-    }
+	@Override
+	public RoomRentalHistoryDto createRoomRentalHistory(RoomRentalHistoryDto roomRentalHistoryDto) {
+		try {
+			RoomRentalHistoryModel roomRentalHistoryModel = modelMapper.map(roomRentalHistoryDto, RoomRentalHistoryModel.class);
+			if (roomRentalHistoryModel.getCreatedAt() == null || roomRentalHistoryModel.getCreatedAt().toString().isEmpty()) {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+				roomRentalHistoryModel.setCreatedAt(formatter.parse(formatter.format(date)));
+				roomRentalHistoryModel.setModifiedAt(formatter.parse(formatter.format(date)));
+			} else {
+				roomRentalHistoryModel.setModifiedAt(roomRentalHistoryModel.getCreatedAt());
+			}
+			if (roomRentalHistoryModel.getCreatedBy() == null || roomRentalHistoryModel.getCreatedBy().isEmpty()) {
+				roomRentalHistoryModel.setCreatedBy("SYSTEM");
+				roomRentalHistoryModel.setModifiedBy("SYSTEM");
+			} else {
+				roomRentalHistoryModel.setModifiedBy(roomRentalHistoryModel.getCreatedBy());
+			}
+			RoomRentalHistoryModel saveModel = roomRentalHistoryRepository.save(roomRentalHistoryModel);
+			return modelMapper.map(saveModel, RoomRentalHistoryDto.class);
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return null;
+		}
+	}
 
     @Override
     public boolean isExist(Long id) {

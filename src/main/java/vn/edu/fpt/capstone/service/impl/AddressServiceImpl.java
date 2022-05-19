@@ -1,18 +1,26 @@
 package vn.edu.fpt.capstone.service.impl;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import vn.edu.fpt.capstone.dto.AddressDto;
 import vn.edu.fpt.capstone.model.AddressModel;
 import vn.edu.fpt.capstone.repository.AddressRepository;
 import vn.edu.fpt.capstone.service.AddressService;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class AddressServiceImpl implements AddressService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddressServiceImpl.class.getName());
 
     @Autowired
     AddressRepository addressRepository;
@@ -36,27 +44,46 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressDto updateAddress(AddressDto addressDto) {
-        AddressModel addressModel = modelMapper.map(addressDto,AddressModel.class);
-        AddressModel saveModel = addressRepository.save(addressModel);
-        return modelMapper.map(saveModel,AddressDto.class);
-    }
+	public AddressDto updateAddress(AddressDto addressDto) {
+		AddressModel addressModel = modelMapper.map(addressDto, AddressModel.class);
+		AddressModel saveModel = addressRepository.save(addressModel);
+		return modelMapper.map(saveModel, AddressDto.class);
+	}
 
-    @Override
-    public boolean removeAddress(Long id) {
-        if(addressRepository.existsById(id)){
-            addressRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean removeAddress(Long id) {
+		if (addressRepository.existsById(id)) {
+			addressRepository.deleteById(id);
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    public AddressDto createAddress(AddressDto addressDto) {
-        AddressModel addressModel = modelMapper.map(addressDto,AddressModel.class);
-        AddressModel saveModel = addressRepository.save(addressModel);
-        return modelMapper.map(saveModel,AddressDto.class);
-    }
+	@Override
+	public AddressDto createAddress(AddressDto addressDto) {
+		try {
+			AddressModel addressModel = modelMapper.map(addressDto, AddressModel.class);
+			if (addressModel.getCreatedAt() == null || addressModel.getCreatedAt().toString().isEmpty()) {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+				addressModel.setCreatedAt(formatter.parse(formatter.format(date)));
+				addressModel.setModifiedAt(formatter.parse(formatter.format(date)));
+			} else {
+				addressModel.setModifiedAt(addressModel.getCreatedAt());
+			}
+			if (addressModel.getCreatedBy() == null || addressModel.getCreatedBy().isEmpty()) {
+				addressModel.setCreatedBy("SYSTEM");
+				addressModel.setModifiedBy("SYSTEM");
+			} else {
+				addressModel.setModifiedBy(addressModel.getCreatedBy());
+			}
+			AddressModel saveModel = addressRepository.save(addressModel);
+			return modelMapper.map(saveModel, AddressDto.class);
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return null;
+		}
+	}
 
     @Override
     public boolean isExist(Long id) {

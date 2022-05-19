@@ -1,11 +1,13 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "FAVORITE")
+@EqualsAndHashCode(callSuper = false)
 public class FavoriteModel extends BaseModel{
     @Id
     @Column(name = "ID")

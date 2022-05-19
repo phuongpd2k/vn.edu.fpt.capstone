@@ -1,12 +1,15 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import vn.edu.fpt.capstone.dto.AmenityDto;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "ADDRESS")
+@EqualsAndHashCode(callSuper = false)
 public class AddressModel extends BaseModel{
     @Id
     @Column(name = "ID")

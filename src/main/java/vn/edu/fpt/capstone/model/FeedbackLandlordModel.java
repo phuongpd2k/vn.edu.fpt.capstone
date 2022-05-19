@@ -1,12 +1,14 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "FEEDBACK_LANDLORD")
+@EqualsAndHashCode(callSuper = false)
 public class FeedbackLandlordModel extends BaseModel{
     @Id
     @Column(name = "ID")

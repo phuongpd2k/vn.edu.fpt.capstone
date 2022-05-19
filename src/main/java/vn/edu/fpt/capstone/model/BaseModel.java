@@ -10,7 +10,6 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @MappedSuperclass
 @Data
@@ -18,7 +17,6 @@ public abstract class BaseModel
 {
     @CreatedDate  
     @Column(name = "CREATE_AT")
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date createdAt;
     
     @CreatedBy
@@ -27,7 +25,6 @@ public abstract class BaseModel
     
     @LastModifiedDate
     @Column(name = "MODIFIED_AT")
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date modifiedAt;
     
     @LastModifiedBy

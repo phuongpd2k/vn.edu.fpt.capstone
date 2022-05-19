@@ -30,7 +30,7 @@ import vn.edu.fpt.capstone.service.AuthenticationService;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService{
-	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class.getName());
 	
 	@Autowired
 	private UserRepository userRepository;

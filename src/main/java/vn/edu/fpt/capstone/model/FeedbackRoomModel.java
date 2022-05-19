@@ -1,12 +1,14 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "FEEDBACK_ROOM")
+@EqualsAndHashCode(callSuper = false)
 public class FeedbackRoomModel extends BaseModel{
     @Id
     @Column(name = "ID")

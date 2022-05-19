@@ -1,6 +1,8 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -9,6 +11,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "ROOM_RENTAL_HISTORY")
+@EqualsAndHashCode(callSuper = false)
 public class RoomRentalHistoryModel extends BaseModel{
     @Id
     @Column(name = "ID")

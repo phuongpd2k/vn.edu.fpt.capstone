@@ -1,14 +1,14 @@
 package vn.edu.fpt.capstone.model;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "ROOM")
+@EqualsAndHashCode(callSuper = false)
 public class RoomModel extends BaseModel{
     @Id
     @Column(name = "ID")

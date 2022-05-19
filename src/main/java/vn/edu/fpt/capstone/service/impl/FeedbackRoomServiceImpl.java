@@ -1,6 +1,8 @@
 package vn.edu.fpt.capstone.service.impl;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.FeedbackRoomDto;
@@ -8,11 +10,16 @@ import vn.edu.fpt.capstone.model.FeedbackRoomModel;
 import vn.edu.fpt.capstone.repository.FeedbackRoomRepository;
 import vn.edu.fpt.capstone.service.FeedbackRoomService;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class FeedbackRoomServiceImpl implements FeedbackRoomService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackRoomServiceImpl.class.getName());
 
     @Autowired
     FeedbackRoomRepository feedbackRoomRepository;
@@ -36,27 +43,46 @@ public class FeedbackRoomServiceImpl implements FeedbackRoomService {
     }
 
     @Override
-    public FeedbackRoomDto updateFeedbackRoom(FeedbackRoomDto feedbackRoomDto) {
-        FeedbackRoomModel feedbackRoomModel = modelMapper.map(feedbackRoomDto,FeedbackRoomModel.class);
-        FeedbackRoomModel saveModel = feedbackRoomRepository.save(feedbackRoomModel);
-        return modelMapper.map(saveModel,FeedbackRoomDto.class);
-    }
+	public FeedbackRoomDto updateFeedbackRoom(FeedbackRoomDto feedbackRoomDto) {
+		FeedbackRoomModel feedbackRoomModel = modelMapper.map(feedbackRoomDto, FeedbackRoomModel.class);
+		FeedbackRoomModel saveModel = feedbackRoomRepository.save(feedbackRoomModel);
+		return modelMapper.map(saveModel, FeedbackRoomDto.class);
+	}
 
-    @Override
-    public boolean removeFeedbackRoom(Long id) {
-        if(feedbackRoomRepository.existsById(id)){
-            feedbackRoomRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean removeFeedbackRoom(Long id) {
+		if (feedbackRoomRepository.existsById(id)) {
+			feedbackRoomRepository.deleteById(id);
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    public FeedbackRoomDto createFeedbackRoom(FeedbackRoomDto feedbackRoomDto) {
-        FeedbackRoomModel feedbackRoomModel = modelMapper.map(feedbackRoomDto,FeedbackRoomModel.class);
-        FeedbackRoomModel saveModel = feedbackRoomRepository.save(feedbackRoomModel);
-        return modelMapper.map(saveModel,FeedbackRoomDto.class);
-    }
+	@Override
+	public FeedbackRoomDto createFeedbackRoom(FeedbackRoomDto feedbackRoomDto) {
+		try {
+			FeedbackRoomModel feedbackRoomModel = modelMapper.map(feedbackRoomDto, FeedbackRoomModel.class);
+			if (feedbackRoomModel.getCreatedAt() == null || feedbackRoomModel.getCreatedAt().toString().isEmpty()) {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+				feedbackRoomModel.setCreatedAt(formatter.parse(formatter.format(date)));
+				feedbackRoomModel.setModifiedAt(formatter.parse(formatter.format(date)));
+			} else {
+				feedbackRoomModel.setModifiedAt(feedbackRoomModel.getCreatedAt());
+			}
+			if (feedbackRoomModel.getCreatedBy() == null || feedbackRoomModel.getCreatedBy().isEmpty()) {
+				feedbackRoomModel.setCreatedBy("SYSTEM");
+				feedbackRoomModel.setModifiedBy("SYSTEM");
+			} else {
+				feedbackRoomModel.setModifiedBy(feedbackRoomModel.getCreatedBy());
+			}
+			FeedbackRoomModel saveModel = feedbackRoomRepository.save(feedbackRoomModel);
+			return modelMapper.map(saveModel, FeedbackRoomDto.class);
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return null;
+		}
+	}
 
     @Override
     public boolean isExist(Long id) {

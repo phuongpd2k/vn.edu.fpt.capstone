@@ -18,9 +18,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
@@ -28,6 +27,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "USER", uniqueConstraints = {
         @UniqueConstraint(columnNames = "username")
 })
+@EqualsAndHashCode(callSuper = false)
 public class UserModel extends BaseModel{
 	@Id
 	@GeneratedValue(generator = "USER_SeqGen", strategy = GenerationType.SEQUENCE)
@@ -60,7 +60,6 @@ public class UserModel extends BaseModel{
 	private boolean gender;
 	
 	@Column(name = "DOB")
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date dob;
 	
 //	@Builder.Default
