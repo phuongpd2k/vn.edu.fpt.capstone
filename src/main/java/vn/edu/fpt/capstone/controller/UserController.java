@@ -28,7 +28,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	// Get all user
+	// Get all user accccc
 	@GetMapping(value = "/user")
 	@CrossOrigin(origins = "*")
 	public ResponseEntity<ResponseObject> getUser() {
