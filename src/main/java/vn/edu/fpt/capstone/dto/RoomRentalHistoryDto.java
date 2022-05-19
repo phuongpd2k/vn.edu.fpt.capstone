@@ -6,10 +6,11 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import vn.edu.fpt.capstone.model.Auditable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class RoomRentalHistoryDto extends BaseDto{
+public class RoomRentalHistoryDto extends Auditable<String>{
     private Long id;
     private Long roomId;
     private String roomRenterName;

@@ -62,20 +62,20 @@ public class FeedbackRoomServiceImpl implements FeedbackRoomService {
 	public FeedbackRoomDto createFeedbackRoom(FeedbackRoomDto feedbackRoomDto) {
 		try {
 			FeedbackRoomModel feedbackRoomModel = modelMapper.map(feedbackRoomDto, FeedbackRoomModel.class);
-			if (feedbackRoomModel.getCreatedAt() == null || feedbackRoomModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				feedbackRoomModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				feedbackRoomModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				feedbackRoomModel.setModifiedAt(feedbackRoomModel.getCreatedAt());
-			}
-			if (feedbackRoomModel.getCreatedBy() == null || feedbackRoomModel.getCreatedBy().isEmpty()) {
-				feedbackRoomModel.setCreatedBy("SYSTEM");
-				feedbackRoomModel.setModifiedBy("SYSTEM");
-			} else {
-				feedbackRoomModel.setModifiedBy(feedbackRoomModel.getCreatedBy());
-			}
+//			if (feedbackRoomModel.getCreatedAt() == null || feedbackRoomModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				feedbackRoomModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				feedbackRoomModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				feedbackRoomModel.setModifiedAt(feedbackRoomModel.getCreatedAt());
+//			}
+//			if (feedbackRoomModel.getCreatedBy() == null || feedbackRoomModel.getCreatedBy().isEmpty()) {
+//				feedbackRoomModel.setCreatedBy("SYSTEM");
+//				feedbackRoomModel.setModifiedBy("SYSTEM");
+//			} else {
+//				feedbackRoomModel.setModifiedBy(feedbackRoomModel.getCreatedBy());
+//			}
 			FeedbackRoomModel saveModel = feedbackRoomRepository.save(feedbackRoomModel);
 			return modelMapper.map(saveModel, FeedbackRoomDto.class);
 		} catch (Exception e) {

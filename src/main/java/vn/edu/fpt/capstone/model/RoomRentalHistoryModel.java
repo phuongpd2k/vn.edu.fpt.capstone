@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 @Table(name = "ROOM_RENTAL_HISTORY")
 @EqualsAndHashCode(callSuper = false)
-public class RoomRentalHistoryModel extends BaseModel{
+public class RoomRentalHistoryModel extends Auditable<String>{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "ROOM_RENTAL_HISTORY_SeqGen", strategy = GenerationType.SEQUENCE)

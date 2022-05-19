@@ -46,14 +46,14 @@ public class RoomServiceImpl implements RoomService {
 	public RoomDto updateRoom(RoomDto roomDto) {
 		try {
 			RoomModel roomModel = modelMapper.map(roomDto, RoomModel.class);
-			if (roomModel.getModifiedBy() == null || roomModel.getModifiedBy().isEmpty()) {
-				TimeZone timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				formatter.setTimeZone(timeZone);
-				Date date = new Date();
-				roomModel.setModifiedAt(formatter.parse(formatter.format(date)));
-				roomModel.setModifiedBy("SYSTEM");
-			}
+//			if (roomModel.getModifiedBy() == null || roomModel.getModifiedBy().isEmpty()) {
+//				TimeZone timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				formatter.setTimeZone(timeZone);
+//				Date date = new Date();
+//				roomModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//				roomModel.setModifiedBy("SYSTEM");
+//			}
 			RoomModel saveModel = roomRepository.save(roomModel);
 			return modelMapper.map(saveModel, RoomDto.class);
 		} catch (Exception e) {
@@ -75,22 +75,22 @@ public class RoomServiceImpl implements RoomService {
 	public RoomDto createRoom(RoomDto roomDto) {
 		try {
 			RoomModel roomModel = modelMapper.map(roomDto, RoomModel.class);
-			if (roomModel.getCreatedAt() == null || roomModel.getCreatedAt().toString().isEmpty()) {
-				TimeZone timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				formatter.setTimeZone(timeZone);
-				Date date = new Date();
-				roomModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				roomModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				roomModel.setModifiedAt(roomModel.getCreatedAt());
-			}
-			if (roomModel.getCreatedBy() == null || roomModel.getCreatedBy().isEmpty()) {
-				roomModel.setCreatedBy("SYSTEM");
-				roomModel.setModifiedBy("SYSTEM");
-			} else {
-				roomModel.setModifiedBy(roomModel.getCreatedBy());
-			}
+//			if (roomModel.getCreatedAt() == null || roomModel.getCreatedAt().toString().isEmpty()) {
+//				TimeZone timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				formatter.setTimeZone(timeZone);
+//				Date date = new Date();
+//				roomModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				roomModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				roomModel.setModifiedAt(roomModel.getCreatedAt());
+//			}
+//			if (roomModel.getCreatedBy() == null || roomModel.getCreatedBy().isEmpty()) {
+//				roomModel.setCreatedBy("SYSTEM");
+//				roomModel.setModifiedBy("SYSTEM");
+//			} else {
+//				roomModel.setModifiedBy(roomModel.getCreatedBy());
+//			}
 			RoomModel saveModel = roomRepository.save(roomModel);
 			return modelMapper.map(saveModel, RoomDto.class);
 		} catch (Exception e) {

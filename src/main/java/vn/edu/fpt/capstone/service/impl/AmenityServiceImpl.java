@@ -61,20 +61,20 @@ public class AmenityServiceImpl implements AmenityService {
 	public AmenityDto createAmenity(AmenityDto amenityDto) {
 		try {
 			AmenityModel amenityModel = modelMapper.map(amenityDto, AmenityModel.class);
-			if (amenityModel.getCreatedAt() == null || amenityModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				amenityModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				amenityModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				amenityModel.setModifiedAt(amenityModel.getCreatedAt());
-			}
-			if (amenityModel.getCreatedBy() == null || amenityModel.getCreatedBy().isEmpty()) {
-				amenityModel.setCreatedBy("SYSTEM");
-				amenityModel.setModifiedBy("SYSTEM");
-			} else {
-				amenityModel.setModifiedBy(amenityModel.getCreatedBy());
-			}
+//			if (amenityModel.getCreatedAt() == null || amenityModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				amenityModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				amenityModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				amenityModel.setModifiedAt(amenityModel.getCreatedAt());
+//			}
+//			if (amenityModel.getCreatedBy() == null || amenityModel.getCreatedBy().isEmpty()) {
+//				amenityModel.setCreatedBy("SYSTEM");
+//				amenityModel.setModifiedBy("SYSTEM");
+//			} else {
+//				amenityModel.setModifiedBy(amenityModel.getCreatedBy());
+//			}
 			AmenityModel saveModel = amenityRepository.save(amenityModel);
 			return modelMapper.map(saveModel, AmenityDto.class);
 		} catch (Exception e) {

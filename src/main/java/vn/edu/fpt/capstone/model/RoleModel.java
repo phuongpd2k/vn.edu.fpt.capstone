@@ -21,34 +21,7 @@ public class RoleModel {
     @Column(name = "ROLE")
     private String role;
     
-    @ManyToMany(fetch = FetchType.LAZY, 
-            cascade = CascadeType.ALL,
-            mappedBy= "roles",
-            targetEntity = UserModel.class)
+    @OneToMany(mappedBy = "role")
     private Set<UserModel> users = new HashSet<UserModel>();
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public Set<UserModel> getUsers() {
-		return users;
-	}
-
-	public void setUsers(Set<UserModel> users) {
-		this.users = users;
-	}
     
 }

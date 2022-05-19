@@ -14,33 +14,42 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
+import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.service.AuthenticationService;
 import vn.edu.fpt.capstone.service.UserService;
 
 @RestController
 @RequestMapping("api/v1/auth")
 public class AuthenticationController {
-	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
+private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
 	
 	@Autowired
 	private UserService userService;
 	
 	@Autowired
 	private AuthenticationService authenticationService;
+	
 	@CrossOrigin(origins = "*")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-    //@Secured({"ADMIN"})
     @RequestMapping({ "/hello" })
     public String firstPage() {
     	UserDetails u = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return "Hello World" + u.getUsername() + " " + u.getAuthorities();
     }
+	
 	@CrossOrigin(origins = "*")
 	@PostMapping(value = "/signup")
-	public ResponseEntity<ResponseObject> signUp(@RequestBody SignUpDto signUpDto) {
-		ResponseObject response = new ResponseObject();
-        
+	public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
+		ResponseObject response = new ResponseObject();       
 		try {
+			// check params
+	        if(signUpDto.getUsername().isEmpty() || signUpDto.getPassword().isEmpty()){
+	        	logger.error("Params invalid!");
+	        	response.setCode("400");
+	        	response.setMessage("sign up request: params invalid!");
+	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	        }
+			
 			// add check for user name exists in a DB
 	        if(userService.existsByUsername(signUpDto.getUsername())){
 	        	logger.error("User name has exits!");
@@ -50,10 +59,10 @@ public class AuthenticationController {
 	        }
 	            
 	        // save user
-			userService.createUser(signUpDto);
-			
+			UserModel user = userService.createUser(signUpDto);
 			response.setCode("200");
 			response.setMessage("sign up request: create user successfully!");
+			response.setResults(user);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 			
 		} catch (Exception e) {
@@ -63,6 +72,7 @@ public class AuthenticationController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
 	@CrossOrigin(origins = "*")
 	@PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody SignInDto signInDto) {

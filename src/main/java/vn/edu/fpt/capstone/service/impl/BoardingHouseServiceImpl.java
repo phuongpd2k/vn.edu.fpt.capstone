@@ -62,20 +62,20 @@ public class BoardingHouseServiceImpl implements BoardingHouseService {
 	public BoardingHouseDto createHouse(BoardingHouseDto boardingHouseDto) {
 		try {
 			BoardingHouseModel boardingHouseModel = modelMapper.map(boardingHouseDto, BoardingHouseModel.class);
-			if (boardingHouseModel.getCreatedAt() == null || boardingHouseModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				boardingHouseModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				boardingHouseModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				boardingHouseModel.setModifiedAt(boardingHouseModel.getCreatedAt());
-			}
-			if (boardingHouseModel.getCreatedBy() == null || boardingHouseModel.getCreatedBy().isEmpty()) {
-				boardingHouseModel.setCreatedBy("SYSTEM");
-				boardingHouseModel.setModifiedBy("SYSTEM");
-			} else {
-				boardingHouseModel.setModifiedBy(boardingHouseModel.getCreatedBy());
-			}
+//			if (boardingHouseModel.getCreatedAt() == null || boardingHouseModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				boardingHouseModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				boardingHouseModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				boardingHouseModel.setModifiedAt(boardingHouseModel.getCreatedAt());
+//			}
+//			if (boardingHouseModel.getCreatedBy() == null || boardingHouseModel.getCreatedBy().isEmpty()) {
+//				boardingHouseModel.setCreatedBy("SYSTEM");
+//				boardingHouseModel.setModifiedBy("SYSTEM");
+//			} else {
+//				boardingHouseModel.setModifiedBy(boardingHouseModel.getCreatedBy());
+//			}
 			BoardingHouseModel saveModel = boardingHouseRepository.save(boardingHouseModel);
 			return modelMapper.map(saveModel, BoardingHouseDto.class);
 		} catch (Exception e) {

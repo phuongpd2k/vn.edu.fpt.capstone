@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "FEEDBACK_ROOM")
 @EqualsAndHashCode(callSuper = false)
-public class FeedbackRoomModel extends BaseModel{
+public class FeedbackRoomModel extends Auditable<String>{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "FEEDBACK_ROOM_SeqGen", strategy = GenerationType.SEQUENCE)

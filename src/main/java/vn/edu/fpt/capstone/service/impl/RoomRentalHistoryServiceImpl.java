@@ -62,20 +62,20 @@ public class RoomRentalHistoryServiceImpl implements RoomRentalHistoryService {
 	public RoomRentalHistoryDto createRoomRentalHistory(RoomRentalHistoryDto roomRentalHistoryDto) {
 		try {
 			RoomRentalHistoryModel roomRentalHistoryModel = modelMapper.map(roomRentalHistoryDto, RoomRentalHistoryModel.class);
-			if (roomRentalHistoryModel.getCreatedAt() == null || roomRentalHistoryModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				roomRentalHistoryModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				roomRentalHistoryModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				roomRentalHistoryModel.setModifiedAt(roomRentalHistoryModel.getCreatedAt());
-			}
-			if (roomRentalHistoryModel.getCreatedBy() == null || roomRentalHistoryModel.getCreatedBy().isEmpty()) {
-				roomRentalHistoryModel.setCreatedBy("SYSTEM");
-				roomRentalHistoryModel.setModifiedBy("SYSTEM");
-			} else {
-				roomRentalHistoryModel.setModifiedBy(roomRentalHistoryModel.getCreatedBy());
-			}
+//			if (roomRentalHistoryModel.getCreatedAt() == null || roomRentalHistoryModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				roomRentalHistoryModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				roomRentalHistoryModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				roomRentalHistoryModel.setModifiedAt(roomRentalHistoryModel.getCreatedAt());
+//			}
+//			if (roomRentalHistoryModel.getCreatedBy() == null || roomRentalHistoryModel.getCreatedBy().isEmpty()) {
+//				roomRentalHistoryModel.setCreatedBy("SYSTEM");
+//				roomRentalHistoryModel.setModifiedBy("SYSTEM");
+//			} else {
+//				roomRentalHistoryModel.setModifiedBy(roomRentalHistoryModel.getCreatedBy());
+//			}
 			RoomRentalHistoryModel saveModel = roomRentalHistoryRepository.save(roomRentalHistoryModel);
 			return modelMapper.map(saveModel, RoomRentalHistoryDto.class);
 		} catch (Exception e) {

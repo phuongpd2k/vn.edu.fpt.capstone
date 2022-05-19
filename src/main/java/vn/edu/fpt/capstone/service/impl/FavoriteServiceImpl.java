@@ -62,20 +62,20 @@ public class FavoriteServiceImpl implements FavoriteService {
 	public FavoriteDto createFavorite(FavoriteDto favoriteDto) {
 		try {
 			FavoriteModel favoriteModel = modelMapper.map(favoriteDto, FavoriteModel.class);
-			if (favoriteModel.getCreatedAt() == null || favoriteModel.getCreatedAt().toString().isEmpty()) {
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-				favoriteModel.setCreatedAt(formatter.parse(formatter.format(date)));
-				favoriteModel.setModifiedAt(formatter.parse(formatter.format(date)));
-			} else {
-				favoriteModel.setModifiedAt(favoriteModel.getCreatedAt());
-			}
-			if (favoriteModel.getCreatedBy() == null || favoriteModel.getCreatedBy().isEmpty()) {
-				favoriteModel.setCreatedBy("SYSTEM");
-				favoriteModel.setModifiedBy("SYSTEM");
-			} else {
-				favoriteModel.setModifiedBy(favoriteModel.getCreatedBy());
-			}
+//			if (favoriteModel.getCreatedAt() == null || favoriteModel.getCreatedAt().toString().isEmpty()) {
+//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
+//				favoriteModel.setCreatedAt(formatter.parse(formatter.format(date)));
+//				favoriteModel.setModifiedAt(formatter.parse(formatter.format(date)));
+//			} else {
+//				favoriteModel.setModifiedAt(favoriteModel.getCreatedAt());
+//			}
+//			if (favoriteModel.getCreatedBy() == null || favoriteModel.getCreatedBy().isEmpty()) {
+//				favoriteModel.setCreatedBy("SYSTEM");
+//				favoriteModel.setModifiedBy("SYSTEM");
+//			} else {
+//				favoriteModel.setModifiedBy(favoriteModel.getCreatedBy());
+//			}
 			FavoriteModel saveModel = favoriteRepository.save(favoriteModel);
 			return modelMapper.map(saveModel, FavoriteDto.class);
 		} catch (Exception e) {
