@@ -15,10 +15,12 @@ public class RoomModel extends Auditable<String>{
     @GeneratedValue(generator = "ROOM_SeqGen", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "ROOM_SeqGen", sequenceName = "ROOM_Seq",allocationSize=1)
     private Long id;
-    @Column(name = "BOARDING_HOUSEID")
-    private Long boardingHouseId;
-    @Column(name = "TYPE")
-    private String type;
+    @Column(name = "HOUSEID")
+    private Long houseId;
+    @Column(name = "ROOMCATEGORYID")
+    private Long roomCategoryId;
+    @Column(name = "ROOMTYPEID")
+    private Long roomTypeId;
     @Column(name = "NAME")
     private String name;
     @Column(name = "AREA")

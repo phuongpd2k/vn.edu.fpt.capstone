@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "HOUSE")
 @EqualsAndHashCode(callSuper = false)
-public class BoardingHouseModel extends Auditable<String>{
+public class HouseModel extends Auditable<String>{
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "HOUSE_SeqGen", strategy = GenerationType.SEQUENCE)
@@ -19,12 +19,12 @@ public class BoardingHouseModel extends Auditable<String>{
     private String name;
     @Column(name = "ADDRESSID")
     private Long addressId;
-    @Column(name = "TYPE")
-    private String type;
-    @Column(name = "USERID")
-    private Long userId;
     @Column(name = "ENABLE")
     private boolean enable;
     @Column(name = "DESCRIPTION")
     private String description;
+    @Column(name = "TYPEOFRENTALID")
+    private Long typeOfRentalId;
+    @Column(name = "USERID")
+    private Long userId;
 }

@@ -6,31 +6,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.fpt.capstone.dto.FeedbackLandlordDto;
+import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
-import vn.edu.fpt.capstone.service.FeedbackLandlordService;
-import vn.edu.fpt.capstone.service.UserService;
+import vn.edu.fpt.capstone.service.ImageService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class FeedbackLandlordController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackLandlordController.class.getName());
+public class ImageController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageController.class.getName());
 
     @Autowired
-    FeedbackLandlordService feedbackLandlordService;
-    @Autowired
-    UserService userService;
-    @CrossOrigin(origins = "*")
-    @GetMapping(value = "/feedbackLandlord/{id}")
+    ImageService ImageService;
+
+    @GetMapping(value = "/Image/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
         try {
             Long lId = Long.valueOf(id);
-            if (feedbackLandlordService.isExist(lId)) {
-                FeedbackLandlordDto feedbackLandlordDto = feedbackLandlordService.findById(lId);
-                responseObject.setResults(feedbackLandlordDto);
+            if (ImageService.isExist(lId)) {
+                ImageDto ImageDto = ImageService.findById(lId);
+                responseObject.setResults(ImageDto);
                 responseObject.setCode("200");
                 responseObject.setMessage("Successfully");
                 return new ResponseEntity<>(responseObject, HttpStatus.OK);
@@ -51,18 +48,18 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
-    @GetMapping(value = "/feedbackLandlord")
+
+    @GetMapping(value = "/Image")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
         try {
-            List<FeedbackLandlordDto> feedbackLandlordDtos = feedbackLandlordService.findAll();
-            if (feedbackLandlordDtos == null || feedbackLandlordDtos.isEmpty()) {
+            List<ImageDto> ImageDtos = ImageService.findAll();
+            if (ImageDtos == null || ImageDtos.isEmpty()) {
                 responseObject.setCode("404");
                 responseObject.setMessage("No data");
                 return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
             }
-            responseObject.setResults(feedbackLandlordDtos);
+            responseObject.setResults(ImageDtos);
             responseObject.setCode("200");
             responseObject.setMessage("Successfully");
             return new ResponseEntity<>(responseObject, HttpStatus.OK);
@@ -73,17 +70,17 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
-    @PostMapping(value = "/feedbackLandlord")
-    public ResponseEntity<ResponseObject> postFeedbackLandlord(@RequestBody FeedbackLandlordDto feedbackLandlordDto) {
+
+    @PostMapping(value = "/Image")
+    public ResponseEntity<ResponseObject> postImage(@RequestBody ImageDto ImageDto) {
         ResponseObject response = new ResponseObject();
         try {
-            if (feedbackLandlordDto.getId() != null) {
-                response.setMessage("Invalid data");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+            if (ImageDto.getId() != null) {
+                response.setMessage("Not Found");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             response.setMessage("Create successfully");
-            feedbackLandlordService.createFeedbackLandlord(feedbackLandlordDto);
+            ImageService.createImage(ImageDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.toString());
@@ -92,40 +89,40 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
-    @PutMapping(value = "/feedbackLandlord")
-    public ResponseEntity<ResponseObject> putFeedbackLandlord(@RequestBody FeedbackLandlordDto feedbackLandlordDto) {
+
+    @PutMapping(value = "/Image")
+    public ResponseEntity<ResponseObject> putImage(@RequestBody ImageDto ImageDto) {
         ResponseObject response = new ResponseObject();
         try {
-            if (feedbackLandlordDto.getId() == null || !feedbackLandlordService.isExist(feedbackLandlordDto.getId())) {
+            if (ImageDto.getId() == null || !ImageService.isExist(ImageDto.getId())) {
                 response.setCode("404");
-                response.setMessage("Invalid data");
+                response.setMessage("Not found");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             response.setCode("200");
             response.setMessage("Update successfully");
-            feedbackLandlordService.updateFeedbackLandlord(feedbackLandlordDto);
+            ImageService.updateImage(ImageDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.toString());
-            response.setCode("200");
+            response.setCode("500");
             response.setMessage("Failed");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
-    @DeleteMapping(value = "/feedbackLandlord/{id}")
-    public ResponseEntity<ResponseObject> deleteFeedbackLandlord(@PathVariable String id) {
+
+    @DeleteMapping(value = "/Image/{id}")
+    public ResponseEntity<ResponseObject> deleteImage(@PathVariable String id) {
         ResponseObject response = new ResponseObject();
         try {
-            if (id == null || id.isEmpty() || !feedbackLandlordService.isExist(Long.valueOf(id))) {
+            if (id == null || id.isEmpty() || !ImageService.isExist(Long.valueOf(id))) {
                 response.setCode("404");
                 response.setMessage("Id is not exist");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             response.setCode("200");
             response.setMessage("Delete successfully");
-            feedbackLandlordService.removeFeedbackLandlord(Long.valueOf(id));
+            ImageService.removeImage(Long.valueOf(id));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (NumberFormatException ex) {
             LOGGER.error(ex.toString());
