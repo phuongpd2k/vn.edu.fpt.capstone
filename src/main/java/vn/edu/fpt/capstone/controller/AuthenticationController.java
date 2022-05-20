@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
-import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.service.AuthenticationService;
-import vn.edu.fpt.capstone.service.UserService;
 
 @RestController
 @RequestMapping("api/v1/auth")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthenticationController {
 private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
 	@Autowired

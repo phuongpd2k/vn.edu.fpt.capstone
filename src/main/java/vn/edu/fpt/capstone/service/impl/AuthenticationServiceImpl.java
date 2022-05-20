@@ -28,7 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class.getName());
 	
 	private String regex_username = "^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
-	private String regex_password = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
+	private String regex_password = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
 	
 	@Autowired
 	private UserRepository userRepository;
