@@ -22,10 +22,6 @@ import vn.edu.fpt.capstone.service.UserService;
 @RequestMapping("api/v1/auth")
 public class AuthenticationController {
 private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
-	
-	@Autowired
-	private UserService userService;
-	
 	@Autowired
 	private AuthenticationService authenticationService;
 	
@@ -42,29 +38,7 @@ private static final Logger logger = LoggerFactory.getLogger(AuthenticationContr
 	public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
 		ResponseObject response = new ResponseObject();       
 		try {
-			// check params
-	        if(signUpDto.getUsername().isEmpty() || signUpDto.getPassword().isEmpty()){
-	        	logger.error("Params invalid!");
-	        	response.setCode("400");
-	        	response.setMessage("sign up request: params invalid!");
-	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-	        }
-			
-			// add check for user name exists in a DB
-	        if(userService.existsByUsername(signUpDto.getUsername())){
-	        	logger.error("User name has exits!");
-	        	response.setCode("400");
-	        	response.setMessage("sign up request: user name has exits!");
-	            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-	        }
-	            
-	        // save user
-			UserModel user = userService.createUser(signUpDto);
-			response.setCode("200");
-			response.setMessage("sign up request: create user successfully!");
-			response.setResults(user);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-			
+			return authenticationService.signUpVerify(signUpDto);		
 		} catch (Exception e) {
 			logger.error(e.toString());
 			response.setCode("500");
