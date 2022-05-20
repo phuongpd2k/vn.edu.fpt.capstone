@@ -17,9 +17,7 @@ import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.RoleDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
-import vn.edu.fpt.capstone.model.RoleModel;
 import vn.edu.fpt.capstone.model.UserModel;
-import vn.edu.fpt.capstone.repository.RoleRepository;
 import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.security.JwtTokenUtil;
 import vn.edu.fpt.capstone.service.UserService;
@@ -32,45 +30,21 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private RoleRepository roleRepository;
-	
-	@Autowired
 	private ModelMapper modelMapper;
 	
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
 	private UserModel convertToEntity(SignUpDto signUpDto) {
-		//UserModel userModel = modelMapper.map(signUpDto, UserModel.class);
-		UserModel userModel = new UserModel();
-		userModel.setUsername(signUpDto.getUsername());
-		userModel.setEmail(signUpDto.getEmail());
-		userModel.setPassword(BCrypt.hashpw(signUpDto.getPassword(), BCrypt.gensalt(12)));
-		userModel.setFirstName(signUpDto.getFirstName());
-		userModel.setLastName(signUpDto.getLastName());
-		userModel.setPhoneNumber(signUpDto.getPhoneNumber());
-		userModel.setImageLink(signUpDto.getImageLink());
-		userModel.setGender(signUpDto.isGender());
-		userModel.setDob(signUpDto.getDob());
-		userModel.setRole(roleRepository.getRoleByCode(signUpDto.getRole().getRole()));
+		signUpDto.setPassword(BCrypt.hashpw(signUpDto.getPassword(), BCrypt.gensalt(12)));
 		
-		return userModel;
+		return modelMapper.map(signUpDto, UserModel.class);
 	}
 
 	private UserDto convertToDto(UserModel userModel) {
-		//UserDto userDto = modelMapper.map(userModel, UserDto.class);
-		UserDto userDto = new UserDto();
-		userDto.setUsername(userModel.getUsername());
-		userDto.setEmail(userModel.getEmail());
-		userDto.setFirstName(userModel.getFirstName());
-		userDto.setLastName(userModel.getLastName());
-		userDto.setPhoneNumber(userModel.getPhoneNumber());
-		userDto.setImageLink(userModel.getImageLink());
-		userDto.setGender(userModel.isGender());
-		userDto.setDob(userModel.getDob());
-		RoleModel roleModel = roleRepository.getRoleByCode(userModel.getRole().getRole());
-		RoleDto roleDto = new RoleDto(roleModel.getId(), roleModel.getRole());	
-		userDto.setRole(roleDto);
+		UserDto userDto = modelMapper.map(userModel, UserDto.class);	
+		userDto.setRole(new RoleDto(userModel.getRole().getId(), userModel.getRole().getRole()));
+		
 		return userDto;
 	}
 
