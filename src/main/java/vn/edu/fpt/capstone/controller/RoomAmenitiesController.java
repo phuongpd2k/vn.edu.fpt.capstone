@@ -6,31 +6,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.fpt.capstone.dto.FeedbackLandlordDto;
+import vn.edu.fpt.capstone.dto.RoomAmenitiesDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
-import vn.edu.fpt.capstone.service.FeedbackLandlordService;
-import vn.edu.fpt.capstone.service.UserService;
+import vn.edu.fpt.capstone.service.RoomAmenitiesService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class FeedbackLandlordController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackLandlordController.class.getName());
+public class RoomAmenitiesController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomAmenitiesController.class.getName());
 
     @Autowired
-    FeedbackLandlordService feedbackLandlordService;
-    @Autowired
-    UserService userService;
-    @CrossOrigin(origins = "*")
-    @GetMapping(value = "/feedbackLandlord/{id}")
+    RoomAmenitiesService roomAmenitiesService;
+
+    @GetMapping(value = "/roomAmenities/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
         try {
             Long lId = Long.valueOf(id);
-            if (feedbackLandlordService.isExist(lId)) {
-                FeedbackLandlordDto feedbackLandlordDto = feedbackLandlordService.findById(lId);
-                responseObject.setResults(feedbackLandlordDto);
+            if (roomAmenitiesService.isExist(lId)) {
+                RoomAmenitiesDto roomAmenitiesDto = roomAmenitiesService.findById(lId);
+                responseObject.setResults(roomAmenitiesDto);
                 responseObject.setCode("200");
                 responseObject.setMessage("Successfully");
                 return new ResponseEntity<>(responseObject, HttpStatus.OK);
@@ -51,18 +48,18 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
-    @GetMapping(value = "/feedbackLandlord")
+
+    @GetMapping(value = "/roomAmenities")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
         try {
-            List<FeedbackLandlordDto> feedbackLandlordDtos = feedbackLandlordService.findAll();
-            if (feedbackLandlordDtos == null || feedbackLandlordDtos.isEmpty()) {
+            List<RoomAmenitiesDto> roomAmenitiesDtos = roomAmenitiesService.findAll();
+            if (roomAmenitiesDtos == null || roomAmenitiesDtos.isEmpty()) {
                 responseObject.setCode("404");
                 responseObject.setMessage("No data");
                 return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
             }
-            responseObject.setResults(feedbackLandlordDtos);
+            responseObject.setResults(roomAmenitiesDtos);
             responseObject.setCode("200");
             responseObject.setMessage("Successfully");
             return new ResponseEntity<>(responseObject, HttpStatus.OK);
@@ -73,17 +70,17 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
-    @PostMapping(value = "/feedbackLandlord")
-    public ResponseEntity<ResponseObject> postFeedbackLandlord(@RequestBody FeedbackLandlordDto feedbackLandlordDto) {
+
+    @PostMapping(value = "/roomAmenities")
+    public ResponseEntity<ResponseObject> postRoomAmenities(@RequestBody RoomAmenitiesDto roomAmenitiesDto) {
         ResponseObject response = new ResponseObject();
         try {
-            if (feedbackLandlordDto.getId() != null) {
-                response.setMessage("Invalid data");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+            if (roomAmenitiesDto.getId() != null) {
+                response.setMessage("Not Found");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             response.setMessage("Create successfully");
-            feedbackLandlordService.createFeedbackLandlord(feedbackLandlordDto);
+            roomAmenitiesService.createRoomAmenities(roomAmenitiesDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.toString());
@@ -92,40 +89,40 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
-    @PutMapping(value = "/feedbackLandlord")
-    public ResponseEntity<ResponseObject> putFeedbackLandlord(@RequestBody FeedbackLandlordDto feedbackLandlordDto) {
+
+    @PutMapping(value = "/roomAmenities")
+    public ResponseEntity<ResponseObject> putRoomAmenities(@RequestBody RoomAmenitiesDto roomAmenitiesDto) {
         ResponseObject response = new ResponseObject();
         try {
-            if (feedbackLandlordDto.getId() == null || !feedbackLandlordService.isExist(feedbackLandlordDto.getId())) {
+            if (roomAmenitiesDto.getId() == null || !roomAmenitiesService.isExist(roomAmenitiesDto.getId())) {
                 response.setCode("404");
-                response.setMessage("Invalid data");
+                response.setMessage("Not found");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             response.setCode("200");
             response.setMessage("Update successfully");
-            feedbackLandlordService.updateFeedbackLandlord(feedbackLandlordDto);
+            roomAmenitiesService.updateRoomAmenities(roomAmenitiesDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.toString());
-            response.setCode("200");
+            response.setCode("500");
             response.setMessage("Failed");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
-    @DeleteMapping(value = "/feedbackLandlord/{id}")
-    public ResponseEntity<ResponseObject> deleteFeedbackLandlord(@PathVariable String id) {
+
+    @DeleteMapping(value = "/roomAmenities/{id}")
+    public ResponseEntity<ResponseObject> deleteRoomAmenities(@PathVariable String id) {
         ResponseObject response = new ResponseObject();
         try {
-            if (id == null || id.isEmpty() || !feedbackLandlordService.isExist(Long.valueOf(id))) {
+            if (id == null || id.isEmpty() || !roomAmenitiesService.isExist(Long.valueOf(id))) {
                 response.setCode("404");
                 response.setMessage("Id is not exist");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             response.setCode("200");
             response.setMessage("Delete successfully");
-            feedbackLandlordService.removeFeedbackLandlord(Long.valueOf(id));
+            roomAmenitiesService.removeRoomAmenities(Long.valueOf(id));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (NumberFormatException ex) {
             LOGGER.error(ex.toString());

@@ -1,15 +1,15 @@
 package vn.edu.fpt.capstone.service;
 
-import vn.edu.fpt.capstone.dto.BoardingHouseDto;
+import vn.edu.fpt.capstone.dto.HouseDto;
 
 import java.util.List;
 
-public interface BoardingHouseService {
-    BoardingHouseDto findById(Long id);
-    List<BoardingHouseDto> findAll();
-    BoardingHouseDto updateHouse(BoardingHouseDto boardingHouseDto);
+public interface HouseService {
+    HouseDto findById(Long id);
+    List<HouseDto> findAll();
+    HouseDto updateHouse(HouseDto houseDto);
     boolean removeHouse(Long id);
-    BoardingHouseDto createHouse(BoardingHouseDto boardingHouseDto);
+    HouseDto createHouse(HouseDto houseDto);
     boolean isExist(Long id);
 
 }

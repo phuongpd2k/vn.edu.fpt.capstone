@@ -5,10 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.edu.fpt.capstone.dto.BoardingHouseDto;
-import vn.edu.fpt.capstone.model.BoardingHouseModel;
-import vn.edu.fpt.capstone.repository.BoardingHouseRepository;
-import vn.edu.fpt.capstone.service.BoardingHouseService;
+import vn.edu.fpt.capstone.dto.HouseDto;
+import vn.edu.fpt.capstone.model.HouseModel;
+import vn.edu.fpt.capstone.repository.HouseRepository;
+import vn.edu.fpt.capstone.service.HouseService;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -18,50 +18,50 @@ import java.util.List;
 import java.util.TimeZone;
 
 @Service
-public class BoardingHouseServiceImpl implements BoardingHouseService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BoardingHouseServiceImpl.class.getName());
+public class HouseServiceImpl implements HouseService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(HouseServiceImpl.class.getName());
 
     @Autowired
-    BoardingHouseRepository boardingHouseRepository;
+    HouseRepository houseRepository;
     @Autowired
     ModelMapper modelMapper;
 
     @Override
-    public BoardingHouseDto findById(Long id) {
-        BoardingHouseDto boardingHouseDto = modelMapper.map(boardingHouseRepository.findById(id).get(), BoardingHouseDto.class);
-        return boardingHouseDto;
+    public HouseDto findById(Long id) {
+        HouseDto houseDto = modelMapper.map(houseRepository.findById(id).get(), HouseDto.class);
+        return houseDto;
     }
 
     @Override
-    public List<BoardingHouseDto> findAll() {
-        List<BoardingHouseModel> boardingHouseModels = boardingHouseRepository.findAll();
-        if (boardingHouseModels == null || boardingHouseModels.isEmpty()) {
+    public List<HouseDto> findAll() {
+        List<HouseModel> houseModels = houseRepository.findAll();
+        if (houseModels == null || houseModels.isEmpty()) {
             return null;
         }
-        List<BoardingHouseDto> boardingHouseDtos = Arrays.asList(modelMapper.map(boardingHouseModels, BoardingHouseDto[].class));
-        return boardingHouseDtos;
+        List<HouseDto> houseDtos = Arrays.asList(modelMapper.map(houseModels, HouseDto[].class));
+        return houseDtos;
     }
 
     @Override
-	public BoardingHouseDto updateHouse(BoardingHouseDto boardingHouseDto) {
-		BoardingHouseModel boardingHouseModel = modelMapper.map(boardingHouseDto, BoardingHouseModel.class);
-		BoardingHouseModel saveModel = boardingHouseRepository.save(boardingHouseModel);
-		return modelMapper.map(saveModel, BoardingHouseDto.class);
+	public HouseDto updateHouse(HouseDto houseDto) {
+		HouseModel houseModel = modelMapper.map(houseDto, HouseModel.class);
+		HouseModel saveModel = houseRepository.save(houseModel);
+		return modelMapper.map(saveModel, HouseDto.class);
 	}
 
 	@Override
 	public boolean removeHouse(Long id) {
-		if (boardingHouseRepository.existsById(id)) {
-			boardingHouseRepository.deleteById(id);
+		if (houseRepository.existsById(id)) {
+			houseRepository.deleteById(id);
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public BoardingHouseDto createHouse(BoardingHouseDto boardingHouseDto) {
+	public HouseDto createHouse(HouseDto houseDto) {
 		try {
-			BoardingHouseModel boardingHouseModel = modelMapper.map(boardingHouseDto, BoardingHouseModel.class);
+			HouseModel houseModel = modelMapper.map(houseDto, HouseModel.class);
 //			if (boardingHouseModel.getCreatedAt() == null || boardingHouseModel.getCreatedAt().toString().isEmpty()) {
 //				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 //				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
@@ -76,8 +76,8 @@ public class BoardingHouseServiceImpl implements BoardingHouseService {
 //			} else {
 //				boardingHouseModel.setModifiedBy(boardingHouseModel.getCreatedBy());
 //			}
-			BoardingHouseModel saveModel = boardingHouseRepository.save(boardingHouseModel);
-			return modelMapper.map(saveModel, BoardingHouseDto.class);
+			HouseModel saveModel = houseRepository.save(houseModel);
+			return modelMapper.map(saveModel, HouseDto.class);
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
 			return null;
@@ -86,7 +86,7 @@ public class BoardingHouseServiceImpl implements BoardingHouseService {
 
     @Override
     public boolean isExist(Long id) {
-    	if(boardingHouseRepository.existsById(id)){
+    	if(houseRepository.existsById(id)){
             return true;
         }
         return false;

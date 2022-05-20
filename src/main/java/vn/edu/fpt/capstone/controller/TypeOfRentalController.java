@@ -6,20 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 
 import vn.edu.fpt.capstone.dto.TypeOfRentalDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.TypeOfRentalService;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -40,22 +34,22 @@ public class TypeOfRentalController {
 			if (typeOfRentalService.isExist(lId)) {
 				TypeOfRentalDto typeOfRentalDto = typeOfRentalService.findById(lId);
 				responseObject.setResults(typeOfRentalDto);
-				responseObject.setCode("1001");
+				responseObject.setCode("200");
 				responseObject.setMessage("Successfully");
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
-				responseObject.setCode("1002");
+				responseObject.setCode("404");
 				responseObject.setMessage("Not found");
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.error(e.toString());
-			responseObject.setCode("1002");
+			responseObject.setCode("404");
 			responseObject.setMessage("Not found");
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
 			LOGGER.error(ex.toString());
-			responseObject.setCode("1003");
+			responseObject.setCode("500");
 			responseObject.setMessage("Internal Server Error");
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -68,17 +62,17 @@ public class TypeOfRentalController {
 		try {
 			List<TypeOfRentalDto> typeOfRentalDtos = typeOfRentalService.findAll();
 			if (typeOfRentalDtos == null || typeOfRentalDtos.isEmpty()) {
-				responseObject.setCode("1002");
+				responseObject.setCode("404");
 				responseObject.setMessage("No data");
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 			responseObject.setResults(typeOfRentalDtos);
-			responseObject.setCode("1001");
+			responseObject.setCode("200");
 			responseObject.setMessage("Successfully");
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
 			LOGGER.error(ex.toString());
-			responseObject.setCode("1003");
+			responseObject.setCode("500");
 			responseObject.setMessage("Internal Server Error");
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -86,26 +80,15 @@ public class TypeOfRentalController {
 
 	@CrossOrigin(origins = "*")
 	@PostMapping(value = "/typeOfRental")
-	public ResponseEntity<ResponseObject> postTypeOfRental(@RequestParam("name") String name,
-			@RequestParam("description") String description, @RequestParam("images") MultipartFile images) {
+	public ResponseEntity<ResponseObject> postTypeOfRental(@RequestBody TypeOfRentalDto typeOfRentalDto) {
 		ResponseObject response = new ResponseObject();
 		try {
-			File uploadFile = convertMultiPartToFile(images);
-			Map<String, String> uploadResult = cloudinaryConfig.uploader().upload(uploadFile, ObjectUtils.emptyMap());
-			boolean isDeleted = uploadFile.delete();
-			if (isDeleted) {
-				TypeOfRentalDto typeOfRentalDto = new TypeOfRentalDto();
-				typeOfRentalDto.setName(name);
-				typeOfRentalDto.setDescription(description);
-				typeOfRentalDto.setImageUrl(uploadResult.get("url").toString());
-				TypeOfRentalDto typeOfRentalNewDto=typeOfRentalService.createTypeOfRental(typeOfRentalDto);
-				response.setCode("200");
-				response.setMessage("Create successfully");
-				response.setResults(typeOfRentalDto);
-			} else {
-				response.setCode("200");
-				response.setMessage("Create failed");
-			}
+			  if (typeOfRentalDto.getId() != null) {
+	                response.setMessage("Invalid data");
+	                return new ResponseEntity<>(response, HttpStatus.OK);
+	            }
+	            response.setMessage("Create successfully");
+	            typeOfRentalService.createTypeOfRental(typeOfRentalDto);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
@@ -115,13 +98,6 @@ public class TypeOfRentalController {
 		}
 	}
 
-	private File convertMultiPartToFile(MultipartFile file) throws IOException {
-		File convFile = new File(file.getOriginalFilename());
-		FileOutputStream fos = new FileOutputStream(convFile);
-		fos.write(file.getBytes());
-		fos.close();
-		return convFile;
-	}
 
 	@CrossOrigin(origins = "*")
 	@PutMapping(value = "/typeOfRental")
