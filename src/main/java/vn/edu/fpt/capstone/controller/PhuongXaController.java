@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.edu.fpt.capstone.dto.PhuongXaDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.PhuongXaService;
+import vn.edu.fpt.capstone.service.QuanHuyenService;
 
 import java.util.List;
 
@@ -20,58 +21,88 @@ import java.util.List;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class PhuongXaController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PhuongXaController.class.getName());
-    @Autowired
-    private PhuongXaService phuongXaService;
-    
-    @GetMapping(value = "/phuongxa/{id}")
-    public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
-        ResponseObject responseObject = new ResponseObject();
-        try {
-            Long lId = Long.valueOf(id);
-            if (phuongXaService.isExist(lId)) {
-                PhuongXaDto phuongXaDto = phuongXaService.findById(lId);
-                responseObject.setResults(phuongXaDto);
-                responseObject.setCode("1001");
-                responseObject.setMessage("Successfully");
-                return new ResponseEntity<>(responseObject, HttpStatus.OK);
-            } else {
-                responseObject.setCode("1002");
-                responseObject.setMessage("Not found");
-                return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
-            }
-        } catch (NumberFormatException e) {
-            LOGGER.error(e.toString());
-            responseObject.setCode("1002");
-            responseObject.setMessage("Not found");
-            return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
-        } catch (Exception ex) {
-            LOGGER.error(ex.toString());
-            responseObject.setCode("1003");
-            responseObject.setMessage("Internal Server Error");
-            return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    
-    @GetMapping(value = "/phuongxa")
-    public ResponseEntity<ResponseObject> getAll() {
-        ResponseObject responseObject = new ResponseObject();
-        try {
-            List<PhuongXaDto> phuongXaDtos = phuongXaService.findAll();
-            if(phuongXaDtos==null || phuongXaDtos.isEmpty()){
-                responseObject.setCode("1002");
-                responseObject.setMessage("No data");
-                return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
-            }
-            responseObject.setResults(phuongXaDtos);
-            responseObject.setCode("1001");
-            responseObject.setMessage("Successfully");
-            return new ResponseEntity<>(responseObject, HttpStatus.OK);
-        } catch (Exception ex) {
-            LOGGER.error(ex.toString());
-            responseObject.setCode("1003");
-            responseObject.setMessage("Internal Server Error");
-            return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        }
-    }
+	private static final Logger LOGGER = LoggerFactory.getLogger(PhuongXaController.class.getName());
+	@Autowired
+	private PhuongXaService phuongXaService;
+	@Autowired
+	private QuanHuyenService quanHuyenService;
+	@GetMapping(value = "/phuongxa/{id}")
+	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			Long lId = Long.valueOf(id);
+			if (phuongXaService.isExist(lId)) {
+				PhuongXaDto phuongXaDto = phuongXaService.findById(lId);
+				responseObject.setResults(phuongXaDto);
+				responseObject.setCode("200");
+				responseObject.setMessage("OK");
+				return new ResponseEntity<>(responseObject, HttpStatus.OK);
+			} else {
+				responseObject.setCode("406");
+				responseObject.setMessage("NOT_ACCEPTABLE");
+				return new ResponseEntity<>(responseObject, HttpStatus.NOT_ACCEPTABLE);
+			}
+		} catch (NumberFormatException e) {
+			LOGGER.error(e.toString());
+			responseObject.setCode("406");
+			responseObject.setMessage("NOT_ACCEPTABLE");
+			return new ResponseEntity<>(responseObject, HttpStatus.NOT_ACCEPTABLE);
+		} catch (Exception ex) {
+			LOGGER.error(ex.toString());
+			responseObject.setCode("500");
+			responseObject.setMessage("INTERNAL_SERVER_ERROR");
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping(value = "/phuongxa")
+	public ResponseEntity<ResponseObject> getAll() {
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			List<PhuongXaDto> phuongXaDtos = phuongXaService.findAll();
+			if (phuongXaDtos == null || phuongXaDtos.isEmpty()) {
+				responseObject.setCode("204");
+				responseObject.setMessage("NO_CONTENT");
+				return new ResponseEntity<>(responseObject, HttpStatus.NO_CONTENT);
+			}
+			responseObject.setResults(phuongXaDtos);
+			responseObject.setCode("200");
+			responseObject.setMessage("OK");
+			return new ResponseEntity<>(responseObject, HttpStatus.OK);
+		} catch (Exception ex) {
+			LOGGER.error(ex.toString());
+			responseObject.setCode("500");
+			responseObject.setMessage("INTERNAL_SERVER_ERROR");
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping(value = "/phuongxa/quanhuyen/{id}")
+	public ResponseEntity<ResponseObject> getAllByQuanHuyenId(@PathVariable String id) {
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			Long lId = Long.valueOf(id);
+			if (quanHuyenService.isExist(lId)) {
+				List<PhuongXaDto> phuongXaDtos = phuongXaService.findAllByMaQh(lId);
+				responseObject.setResults(phuongXaDtos);
+				responseObject.setCode("200");
+				responseObject.setMessage("OK");
+				return new ResponseEntity<>(responseObject, HttpStatus.OK);
+			} else {
+				responseObject.setCode("204");
+				responseObject.setMessage("NO_CONTENT");
+				return new ResponseEntity<>(responseObject, HttpStatus.NO_CONTENT);
+			}
+		} catch (NumberFormatException e) {
+			LOGGER.error(e.toString());
+			responseObject.setCode("204");
+			responseObject.setMessage("NO_CONTENT");
+			return new ResponseEntity<>(responseObject, HttpStatus.NO_CONTENT);
+		} catch (Exception ex) {
+			LOGGER.error(ex.toString());
+			responseObject.setCode("500");
+			responseObject.setMessage("INTERNAL_SERVER_ERROR");
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+}

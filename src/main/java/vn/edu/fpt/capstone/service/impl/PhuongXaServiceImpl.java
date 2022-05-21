@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.PhuongXaDto;
+import vn.edu.fpt.capstone.dto.PhuongXaDto;
+import vn.edu.fpt.capstone.model.PhuongXaModel;
 import vn.edu.fpt.capstone.model.PhuongXaModel;
 import vn.edu.fpt.capstone.repository.PhuongXaRepository;
 import vn.edu.fpt.capstone.service.PhuongXaService;
@@ -50,5 +52,16 @@ public class PhuongXaServiceImpl implements PhuongXaService {
     public boolean isExist(Long id) {
         return phuongXaRepository.existsById(id);
     }
+
+	@Override
+	public List<PhuongXaDto> findAllByMaQh(Long maQh) {
+		// TODO Auto-generated method stub
+				List<PhuongXaModel> phuongXaModels = phuongXaRepository.findAllByMaQh(maQh);
+				if (phuongXaModels == null || phuongXaModels.isEmpty()) {
+					return null;
+				}
+				List<PhuongXaDto> phuongXaDtos = Arrays.asList(modelMapper.map(phuongXaModels, PhuongXaDto[].class));
+				return phuongXaDtos;
+	}
 
 }
