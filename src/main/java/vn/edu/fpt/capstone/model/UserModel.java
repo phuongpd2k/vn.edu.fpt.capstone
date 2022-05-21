@@ -33,6 +33,9 @@ public class UserModel extends Auditable<String>{
 	@Column(name = "EMAIL")
 	private String email;
 	
+	@Column(name = "ggid")
+	private String ggid;
+	
 	@Column(name = "PASSWORD")
 	private String password;
 	
@@ -168,6 +171,12 @@ public class UserModel extends Auditable<String>{
 	public void setRole(RoleModel role) {
 		this.role = role;
 	}
-	
-	
+
+	public String getGgid() {
+		return ggid;
+	}
+
+	public void setGgid(String ggid) {
+		this.ggid = ggid;
+	}
 }
