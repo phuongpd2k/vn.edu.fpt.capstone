@@ -14,13 +14,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AddressController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AddressController.class.getName());
 
     @Autowired
     AddressService addressService;
 
-    @CrossOrigin(origins = "*")
     @GetMapping(value = "/address/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -50,7 +50,7 @@ public class AddressController {
         }
     }
 
-    @CrossOrigin(origins = "*")
+    
     @GetMapping(value = "/address")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -73,7 +73,7 @@ public class AddressController {
         }
     }
 
-    @CrossOrigin(origins = "*")
+    
     @PostMapping(value = "/address")
     public ResponseEntity<ResponseObject> postAddress(@RequestBody AddressDto addressDto) {
         ResponseObject response = new ResponseObject();
@@ -93,7 +93,7 @@ public class AddressController {
         }
     }
 
-    @CrossOrigin(origins = "*")
+    
     @PutMapping(value = "/address")
     public ResponseEntity<ResponseObject> putAddress(@RequestBody AddressDto addressDto) {
         ResponseObject response = new ResponseObject();
@@ -115,7 +115,7 @@ public class AddressController {
         }
     }
 
-    @CrossOrigin(origins = "*")
+    
     @DeleteMapping(value = "/address/{id}")
     public ResponseEntity<ResponseObject> deleteAddress(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class TypeOfRentalController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TypeOfRentalController.class.getName());
 
@@ -25,7 +26,7 @@ public class TypeOfRentalController {
 	@Autowired
 	Cloudinary cloudinaryConfig;
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/typeOfRental/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
 		ResponseObject responseObject = new ResponseObject();
@@ -55,7 +56,7 @@ public class TypeOfRentalController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/typeOfRental")
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
@@ -78,7 +79,7 @@ public class TypeOfRentalController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PostMapping(value = "/typeOfRental")
 	public ResponseEntity<ResponseObject> postTypeOfRental(@RequestBody TypeOfRentalDto typeOfRentalDto) {
 		ResponseObject response = new ResponseObject();
@@ -99,7 +100,7 @@ public class TypeOfRentalController {
 	}
 
 
-	@CrossOrigin(origins = "*")
+	
 	@PutMapping(value = "/typeOfRental")
 	public ResponseEntity<ResponseObject> putTypeOfRental(@RequestBody TypeOfRentalDto typeOfRentalDto) {
 		ResponseObject response = new ResponseObject();
@@ -121,7 +122,7 @@ public class TypeOfRentalController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@DeleteMapping(value = "/typeOfRental/{id}")
 	public ResponseEntity<ResponseObject> deleteTypeOfRental(@PathVariable String id) {
 		ResponseObject response = new ResponseObject();

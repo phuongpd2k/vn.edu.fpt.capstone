@@ -14,12 +14,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class RoomController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomController.class.getName());
 
     @Autowired
     RoomService roomService;
-    @CrossOrigin(origins = "*")
+ 
     @GetMapping(value = "/room/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -48,7 +49,7 @@ public class RoomController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+ 
     @GetMapping(value = "/room")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -70,7 +71,7 @@ public class RoomController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+ 
     @PostMapping(value = "/room")
     public ResponseEntity<ResponseObject> postRoom(@RequestBody RoomDto roomDto) {
         ResponseObject response = new ResponseObject();
@@ -89,7 +90,7 @@ public class RoomController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+ 
     @PutMapping(value = "/room")
     public ResponseEntity<ResponseObject> putRoom(@RequestBody RoomDto roomDto) {
         ResponseObject response = new ResponseObject();
@@ -110,7 +111,7 @@ public class RoomController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+ 
     @DeleteMapping(value = "/room/{id}")
     public ResponseEntity<ResponseObject> deleteRoom(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

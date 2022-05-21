@@ -26,13 +26,14 @@ import vn.edu.fpt.capstone.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getName());
 	@Autowired
 	private UserService userService;
 
 	// Get user by id
-	@CrossOrigin(origins = "*")
+
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping(value = "/user/{id}")
 	public ResponseEntity<?> getUserByIdHasRole(
@@ -52,7 +53,7 @@ public class UserController {
 		}
 	}
 	
-	@CrossOrigin(origins = "*")
+//	@CrossOrigin(origins = "*")
 	@GetMapping(value = "/user")
 	public ResponseEntity<?> getUser(
             @RequestHeader(value = "Authorization") String jwtToken) {
@@ -70,7 +71,7 @@ public class UserController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+
 	@PutMapping(value = "/user")
 	public ResponseEntity<ResponseObject> putUser(@RequestBody UserDto userDto) {
 		ResponseObject response = new ResponseObject();
@@ -86,7 +87,7 @@ public class UserController {
 		}
 	}
 	
-	@CrossOrigin(origins = "*")
+
 	@DeleteMapping(value = "/user")
 	public ResponseEntity<ResponseObject> deleteUser(@RequestParam(required=true) String id) {
 		ResponseObject response = new ResponseObject();

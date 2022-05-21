@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class FeedbackRoomController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackRoomController.class.getName());
 
@@ -26,7 +27,7 @@ public class FeedbackRoomController {
 	@Autowired
 	UserService userService;
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/feedbackRoom/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
 		ResponseObject responseObject = new ResponseObject();
@@ -56,7 +57,7 @@ public class FeedbackRoomController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/feedbackRoom")
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
@@ -79,7 +80,7 @@ public class FeedbackRoomController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PostMapping(value = "/feedbackRoom")
 	public ResponseEntity<ResponseObject> postFeedbackRoom(@RequestBody FeedbackRoomDto feedbackRoomDto) {
 		ResponseObject response = new ResponseObject();
@@ -103,7 +104,7 @@ public class FeedbackRoomController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PutMapping(value = "/feedbackRoom")
 	public ResponseEntity<ResponseObject> putFeedbackRoom(@RequestBody FeedbackRoomDto feedbackRoomDto) {
 		ResponseObject response = new ResponseObject();
@@ -127,7 +128,7 @@ public class FeedbackRoomController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@DeleteMapping(value = "/feedbackRoom/{id}")
 	public ResponseEntity<ResponseObject> deleteFeedbackRoom(@PathVariable String id) {
 		ResponseObject response = new ResponseObject();

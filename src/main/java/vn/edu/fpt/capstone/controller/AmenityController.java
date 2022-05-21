@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AmenityController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AmenityController.class.getName());
 
@@ -28,22 +29,22 @@ public class AmenityController {
             if (amenityService.isExist(lId)) {
                 AmenityDto amenityDto = amenityService.findById(lId);
                 responseObject.setResults(amenityDto);
-                responseObject.setCode("1001");
+                responseObject.setCode("200");
                 responseObject.setMessage("Successfully");
                 return new ResponseEntity<>(responseObject, HttpStatus.OK);
             } else {
-                responseObject.setCode("1002");
-                responseObject.setMessage("Not found");
-                return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+                responseObject.setCode("204");
+                responseObject.setMessage("Not data");
+                return new ResponseEntity<>(responseObject, HttpStatus.NO_CONTENT);
             }
         } catch (NumberFormatException e) {
             LOGGER.error(e.toString());
-            responseObject.setCode("1002");
+            responseObject.setCode("404");
             responseObject.setMessage("Not found");
             return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             LOGGER.error(ex.toString());
-            responseObject.setCode("1003");
+            responseObject.setCode("500");
             responseObject.setMessage("Internal Server Error");
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -55,17 +56,17 @@ public class AmenityController {
         try {
             List<AmenityDto> amenityDtos = amenityService.findAll();
             if (amenityDtos == null || amenityDtos.isEmpty()) {
-                responseObject.setCode("1002");
+                responseObject.setCode("204");
                 responseObject.setMessage("No data");
-                return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(responseObject, HttpStatus.NO_CONTENT);
             }
             responseObject.setResults(amenityDtos);
-            responseObject.setCode("1001");
+            responseObject.setCode("200");
             responseObject.setMessage("Successfully");
             return new ResponseEntity<>(responseObject, HttpStatus.OK);
         } catch (Exception ex) {
             LOGGER.error(ex.toString());
-            responseObject.setCode("1003");
+            responseObject.setCode("500");
             responseObject.setMessage("Internal Server Error");
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -76,15 +77,17 @@ public class AmenityController {
         ResponseObject response = new ResponseObject();
         try {
             if (amenityDto.getId() != null) {
+            	 response.setCode("406");
                 response.setMessage("Invalid data");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
+            response.setCode("200");
             response.setMessage("Create successfully");
             amenityService.createAmenity(amenityDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.toString());
-            response.setCode("1001");
+            response.setCode("500");
             response.setMessage("Failed");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -95,17 +98,17 @@ public class AmenityController {
         ResponseObject response = new ResponseObject();
         try {
             if (amenityDto.getId() == null || !amenityService.isExist(amenityDto.getId())) {
-                response.setCode("1001");
+                response.setCode("406");
                 response.setMessage("Invalid data");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
-            response.setCode("1000");
+            response.setCode("200");
             response.setMessage("Update successfully");
             amenityService.updateAmenity(amenityDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.toString());
-            response.setCode("1001");
+            response.setCode("500");
             response.setMessage("Failed");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -116,22 +119,22 @@ public class AmenityController {
         ResponseObject response = new ResponseObject();
         try {
             if (id == null || id.isEmpty() || !amenityService.isExist(Long.valueOf(id))) {
-                response.setCode("1001");
+                response.setCode("406");
                 response.setMessage("Id is not exist");
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
-            response.setCode("1000");
+            response.setCode("200");
             response.setMessage("Delete successfully");
             amenityService.removeAmenity(Long.valueOf(id));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (NumberFormatException ex) {
             LOGGER.error(ex.toString());
-            response.setCode("1001");
+            response.setCode("406");
             response.setMessage("Id is not exist");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
         } catch (Exception e) {
             LOGGER.error(e.toString());
-            response.setCode("1001");
+            response.setCode("500");
             response.setMessage("Failed");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
