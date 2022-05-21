@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class HouseController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HouseController.class.getName());
 
@@ -29,7 +30,7 @@ public class HouseController {
 	@Autowired
 	UserService userService;
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/boardingHouse/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
 		ResponseObject responseObject = new ResponseObject();
@@ -59,7 +60,7 @@ public class HouseController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/boardingHouse")
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
@@ -82,7 +83,7 @@ public class HouseController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PostMapping(value = "/boardingHouse")
 	public ResponseEntity<ResponseObject> postBoardingHouse(@RequestBody HouseDto houseDto) {
 		ResponseObject response = new ResponseObject();
@@ -108,7 +109,7 @@ public class HouseController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PutMapping(value = "/boardingHouse")
 	public ResponseEntity<ResponseObject> putBoardingHouse(@RequestBody HouseDto houseDto) {
 		ResponseObject response = new ResponseObject();
@@ -134,7 +135,7 @@ public class HouseController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@DeleteMapping(value = "/boardingHouse/{id}")
 	public ResponseEntity<ResponseObject> deleteBoardingHouse(@PathVariable String id) {
 		ResponseObject response = new ResponseObject();

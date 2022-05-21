@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class FeedbackLandlordController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackLandlordController.class.getName());
 
@@ -22,7 +23,7 @@ public class FeedbackLandlordController {
     FeedbackLandlordService feedbackLandlordService;
     @Autowired
     UserService userService;
-    @CrossOrigin(origins = "*")
+    
     @GetMapping(value = "/feedbackLandlord/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -51,7 +52,7 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @GetMapping(value = "/feedbackLandlord")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -73,7 +74,7 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @PostMapping(value = "/feedbackLandlord")
     public ResponseEntity<ResponseObject> postFeedbackLandlord(@RequestBody FeedbackLandlordDto feedbackLandlordDto) {
         ResponseObject response = new ResponseObject();
@@ -92,7 +93,7 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @PutMapping(value = "/feedbackLandlord")
     public ResponseEntity<ResponseObject> putFeedbackLandlord(@RequestBody FeedbackLandlordDto feedbackLandlordDto) {
         ResponseObject response = new ResponseObject();
@@ -113,7 +114,7 @@ public class FeedbackLandlordController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @DeleteMapping(value = "/feedbackLandlord/{id}")
     public ResponseEntity<ResponseObject> deleteFeedbackLandlord(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

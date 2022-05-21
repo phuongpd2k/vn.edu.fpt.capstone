@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class ReportController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class.getName());
 
@@ -23,7 +24,7 @@ public class ReportController {
 	@Autowired
 	UserService userService;
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/report/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
 		ResponseObject responseObject = new ResponseObject();
@@ -53,7 +54,7 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/report")
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
@@ -76,7 +77,7 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PostMapping(value = "/report")
 	public ResponseEntity<ResponseObject> postReport(@RequestBody ReportDto reportDto) {
 		ResponseObject response = new ResponseObject();
@@ -97,7 +98,7 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PutMapping(value = "/report")
 	public ResponseEntity<ResponseObject> putReport(@RequestBody ReportDto reportDto) {
 		ResponseObject response = new ResponseObject();
@@ -120,7 +121,7 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@DeleteMapping(value = "/report/{id}")
 	public ResponseEntity<ResponseObject> deleteReport(@PathVariable String id) {
 		ResponseObject response = new ResponseObject();

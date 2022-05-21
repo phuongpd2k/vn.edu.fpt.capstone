@@ -14,12 +14,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class RoomRentalHistoryController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomRentalHistoryController.class.getName());
 
     @Autowired
     RoomRentalHistoryService roomRentalHistoryService;
-    @CrossOrigin(origins = "*")
+    
     @GetMapping(value = "/roomRentalHistory/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -48,7 +49,7 @@ public class RoomRentalHistoryController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @GetMapping(value = "/roomRentalHistory")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();
@@ -70,7 +71,7 @@ public class RoomRentalHistoryController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @PostMapping(value = "/roomRentalHistory")
     public ResponseEntity<ResponseObject> postRoomRentalHistory(@RequestBody RoomRentalHistoryDto roomRentalHistoryDto) {
         ResponseObject response = new ResponseObject();
@@ -89,7 +90,7 @@ public class RoomRentalHistoryController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @PutMapping(value = "/roomRentalHistory")
     public ResponseEntity<ResponseObject> putRoomRentalHistory(@RequestBody RoomRentalHistoryDto roomRentalHistoryDto) {
         ResponseObject response = new ResponseObject();
@@ -110,7 +111,7 @@ public class RoomRentalHistoryController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @DeleteMapping(value = "/roomRentalHistory/{id}")
     public ResponseEntity<ResponseObject> deleteRoomRentalHistory(@PathVariable String id) {
         ResponseObject response = new ResponseObject();

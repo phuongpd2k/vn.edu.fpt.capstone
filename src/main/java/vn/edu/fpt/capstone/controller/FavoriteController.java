@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class FavoriteController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FavoriteController.class.getName());
 
@@ -26,7 +27,7 @@ public class FavoriteController {
 	@Autowired
 	RoomService roomService;
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/favorite/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
 		ResponseObject responseObject = new ResponseObject();
@@ -56,7 +57,7 @@ public class FavoriteController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@GetMapping(value = "/favorite")
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
@@ -79,7 +80,7 @@ public class FavoriteController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PostMapping(value = "/favorite")
 	public ResponseEntity<ResponseObject> postFavorite(@RequestBody FavoriteDto favoriteDto) {
 		ResponseObject response = new ResponseObject();
@@ -101,7 +102,7 @@ public class FavoriteController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@PutMapping(value = "/favorite")
 	public ResponseEntity<ResponseObject> putFavorite(@RequestBody FavoriteDto favoriteDto) {
 		ResponseObject response = new ResponseObject();
@@ -125,7 +126,7 @@ public class FavoriteController {
 		}
 	}
 
-	@CrossOrigin(origins = "*")
+	
 	@DeleteMapping(value = "/favorite/{id}")
 	public ResponseEntity<ResponseObject> deleteFavorite(@PathVariable String id) {
 		ResponseObject response = new ResponseObject();

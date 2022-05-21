@@ -18,11 +18,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class PhuongXaController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PhuongXaController.class.getName());
     @Autowired
     private PhuongXaService phuongXaService;
-    @CrossOrigin(origins = "*")
+    
     @GetMapping(value = "/phuongxa/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -51,7 +52,7 @@ public class PhuongXaController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @CrossOrigin(origins = "*")
+    
     @GetMapping(value = "/phuongxa")
     public ResponseEntity<ResponseObject> getAll() {
         ResponseObject responseObject = new ResponseObject();

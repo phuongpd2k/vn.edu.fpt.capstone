@@ -24,7 +24,7 @@ private static final Logger logger = LoggerFactory.getLogger(AuthenticationContr
 	@Autowired
 	private AuthenticationService authenticationService;
 	
-	@CrossOrigin(origins = "*")
+	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping({ "/hello" })
     public String firstPage() {
@@ -32,7 +32,7 @@ private static final Logger logger = LoggerFactory.getLogger(AuthenticationContr
         return "Hello World" + u.getUsername() + " " + u.getAuthorities();
     }
 	
-	@CrossOrigin(origins = "*")
+	
 	@PostMapping(value = "/signup")
 	public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
 		ResponseObject response = new ResponseObject();       
@@ -46,7 +46,7 @@ private static final Logger logger = LoggerFactory.getLogger(AuthenticationContr
 		}
 	}
 	
-	@CrossOrigin(origins = "*")
+	
 	@PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody SignInDto signInDto) {
 		ResponseObject response = new ResponseObject();

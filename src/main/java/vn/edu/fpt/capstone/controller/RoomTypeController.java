@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class RoomTypeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomTypeController.class.getName());
 
