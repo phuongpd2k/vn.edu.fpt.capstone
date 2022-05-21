@@ -16,5 +16,5 @@ public class PhuongXaModel {
 	@Column(name = "TYPE")
 	private String type;
 	@Column(name = "MAQH")
-	private Long maQH;
+	private Long maQh;
 }

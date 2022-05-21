@@ -11,6 +11,8 @@ import vn.edu.fpt.capstone.service.QuanHuyenService;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 @Service
 public class QuanHuyenServiceImpl implements QuanHuyenService {
     @Autowired
@@ -39,4 +41,14 @@ public class QuanHuyenServiceImpl implements QuanHuyenService {
         return quanHuyenRepository.existsById(id);
     }
 
+	@Override
+	public List<QuanHuyenDto> findAllByMaTp(Long maTp) {
+		// TODO Auto-generated method stub
+		List<QuanHuyenModel> quanHuyenModels = quanHuyenRepository.findAllByMaTp(maTp);
+		if (quanHuyenModels == null || quanHuyenModels.isEmpty()) {
+			return null;
+		}
+		List<QuanHuyenDto> quanHuyenDtos = Arrays.asList(modelMapper.map(quanHuyenModels, QuanHuyenDto[].class));
+		return quanHuyenDtos;
+	}
 }

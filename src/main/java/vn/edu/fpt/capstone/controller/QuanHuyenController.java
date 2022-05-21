@@ -14,6 +14,7 @@ import vn.edu.fpt.capstone.dto.PhuongXaDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.QuanHuyenService;
+import vn.edu.fpt.capstone.service.ThanhPhoService;
 
 import java.util.List;
 
@@ -25,7 +26,8 @@ public class QuanHuyenController {
 
     @Autowired
     QuanHuyenService quanHuyenService;
-   
+    @Autowired
+    ThanhPhoService thanhPhoService;
     @GetMapping(value = "/quanhuyen/{id}")
     public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
         ResponseObject responseObject = new ResponseObject();
@@ -76,4 +78,32 @@ public class QuanHuyenController {
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping(value = "/quanhuyen/thanhpho/{id}")
+	public ResponseEntity<ResponseObject> getAllByQuanHuyenId(@PathVariable String id) {
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			Long lId = Long.valueOf(id);
+			if (thanhPhoService.isExist(lId)) {
+				List<QuanHuyenDto> quanHuyenDtos = quanHuyenService.findAllByMaTp(lId);
+				responseObject.setResults(quanHuyenDtos);
+				responseObject.setCode("200");
+				responseObject.setMessage("OK");
+				return new ResponseEntity<>(responseObject, HttpStatus.OK);
+			} else {
+				responseObject.setCode("204");
+				responseObject.setMessage("NO_CONTENT");
+				return new ResponseEntity<>(responseObject, HttpStatus.NO_CONTENT);
+			}
+		} catch (NumberFormatException e) {
+			LOGGER.error(e.toString());
+			responseObject.setCode("204");
+			responseObject.setMessage("NO_CONTENT");
+			return new ResponseEntity<>(responseObject, HttpStatus.NO_CONTENT);
+		} catch (Exception ex) {
+			LOGGER.error(ex.toString());
+			responseObject.setCode("500");
+			responseObject.setMessage("INTERNAL_SERVER_ERROR");
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
