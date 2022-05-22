@@ -94,6 +94,11 @@ public class HouseAmenitiesController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			HouseAmenitiesDto houseAmenitiesDto2 = houseAmenitiesService.createHouseAmenities(houseAmenitiesDto);
+			if (houseAmenitiesDto2 == null) {
+				response.setCode("500");
+				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(houseAmenitiesDto2);

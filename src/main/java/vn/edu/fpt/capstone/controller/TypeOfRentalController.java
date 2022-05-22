@@ -89,9 +89,15 @@ public class TypeOfRentalController {
 				response.setMessage(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
+
+			TypeOfRentalDto typeOfRentalDto2 = typeOfRentalService.createTypeOfRental(typeOfRentalDto);
+			if (typeOfRentalDto2 == null) {
+				response.setCode("500");
+				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 			response.setCode("200");
 			response.setMessage(Message.OK);
-			TypeOfRentalDto typeOfRentalDto2 = typeOfRentalService.createTypeOfRental(typeOfRentalDto);
 			response.setResults(typeOfRentalDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {

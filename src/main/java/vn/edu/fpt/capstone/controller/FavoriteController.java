@@ -91,6 +91,11 @@ public class FavoriteController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			FavoriteDto favoriteDto2 = favoriteService.createFavorite(favoriteDto);
+			if (favoriteDto2 == null) {
+				response.setCode("500");
+				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(favoriteDto2);
