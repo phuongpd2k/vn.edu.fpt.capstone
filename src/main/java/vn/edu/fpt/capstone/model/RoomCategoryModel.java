@@ -17,7 +17,7 @@ public class RoomCategoryModel extends Auditable<String>{
     private Long id;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "DESCRIPTION")
+	@Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT NULL")
     private String description;
     @Column(name = "IMAGE_URL")
     private String imageUrl;

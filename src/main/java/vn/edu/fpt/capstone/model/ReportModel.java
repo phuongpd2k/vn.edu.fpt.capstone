@@ -17,6 +17,6 @@ public class ReportModel extends Auditable<String>{
     private Long id;
     @Column(name = "USERID")
     private Long userId;
-    @Column(name = "CONTENT")
+	@Column(name = "CONTENT", columnDefinition = "LONGTEXT NULL")
     private String content;
 }

@@ -1,12 +1,10 @@
 package vn.edu.fpt.capstone.configuration;
 
-import java.util.HashMap;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.cloudinary.Cloudinary;
 
 @Configuration
 public class InitBean {

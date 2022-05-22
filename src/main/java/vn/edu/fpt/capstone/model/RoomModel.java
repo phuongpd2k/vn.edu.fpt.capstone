@@ -39,6 +39,10 @@ public class RoomModel extends Auditable<String>{
     private String electricityPriceByNumber;
     @Column(name = "WATER_PRICE_PER_MONTH")
     private String waterPricePerMonth;
-    @Column(name = "DESCRIPTION")
+	@Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT NULL")
     private String description;
+	@Column(name = "INTRO_IMAGE_URL")
+    private String introImageUrl;
+	@Column(name = "ROOMIMAGEID")
+    private Long roomImageId;
 }
