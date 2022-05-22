@@ -24,6 +24,7 @@ import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.response.JwtResponse;
 import vn.edu.fpt.capstone.security.JwtTokenUtil;
 import vn.edu.fpt.capstone.service.AuthenticationService;
+import vn.edu.fpt.capstone.service.RoleService;
 import vn.edu.fpt.capstone.validate.Validation;
 import vn.edu.fpt.capstone.random.RandomString;
 
@@ -55,7 +56,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Autowired
 	private Constant constant;
 	
-	@Autowired RandomString random;
+	@Autowired 
+	private RandomString random;
+	
+	@Autowired
+	private RoleService roleService;
 
 	@Override
 	public ResponseEntity<?> authenticate(SignInDto signInDto) throws AuthenticationException {
@@ -104,8 +109,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		// save user in to DB
 		UserModel user = userServiceImpl.createUser(signUpDto);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-				.message("sign up request: create user successfully!").results(user).build());
+		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
+				.loadUserByUsername(user.getUsername());
+
+		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
+
+		return ResponseEntity.status(HttpStatus.OK).body(
+				ResponseObject.builder().code("200").message("Get token: successfully!").results(jwtResponse).build());
+
 	}
 
 	private SignUpDto convertToSignUpDto(SignInDto signInDto) {
@@ -114,10 +125,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		signUpDto.setFirstName(signInDto.getFirstName());
 		signUpDto.setLastName(signInDto.getLastName());
 		signUpDto.setImageLink(signInDto.getImageLink());
-		signUpDto.setRole(signInDto.getRole());
+		signUpDto.setRole(roleService.getRoleByCode("ROLE_USER"));
 		signUpDto.setUsername("hola"+ random.generateUsername(4));
-		String password = random.generatePassword(8);
-		signUpDto.setPassword(password);
+		signUpDto.setPassword(random.generatePassword(8));
 		return signUpDto;
 	}
 
