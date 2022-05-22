@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.cloudinary.Cloudinary;
-
 import vn.edu.fpt.capstone.dto.TypeOfRentalDto;
 import vn.edu.fpt.capstone.common.Message;
 import vn.edu.fpt.capstone.dto.ResponseObject;
@@ -142,7 +140,7 @@ public class TypeOfRentalController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			response.setCode("200");
-			response.setMessage("Delete successfully");
+			response.setMessage(Message.OK);
 			typeOfRentalService.removeTypeOfRental(Long.valueOf(id));
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {

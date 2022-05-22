@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.common.Message;
-import vn.edu.fpt.capstone.dto.FeedbackLandlordDto;
 import vn.edu.fpt.capstone.dto.FeedbackRoomDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.FeedbackRoomService;

@@ -21,7 +21,7 @@ public class HouseModel extends Auditable<String>{
     private Long addressId;
     @Column(name = "ENABLE")
     private boolean enable;
-    @Column(name = "DESCRIPTION")
+	@Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT NULL")
     private String description;
     @Column(name = "TYPEOFRENTALID")
     private Long typeOfRentalId;
