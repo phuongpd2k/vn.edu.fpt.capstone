@@ -90,6 +90,11 @@ public class FeedbackLandlordController {
 			}
 			FeedbackLandlordDto feedbackLandlordDto2 = feedbackLandlordService
 					.createFeedbackLandlord(feedbackLandlordDto);
+			if (feedbackLandlordDto2 == null) {
+				response.setCode("500");
+				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(feedbackLandlordDto2);

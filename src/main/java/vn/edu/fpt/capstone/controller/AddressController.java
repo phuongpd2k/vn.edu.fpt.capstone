@@ -89,6 +89,11 @@ public class AddressController {
 			}
 
 			AddressDto addressDto2 = addressService.createAddress(addressDto);
+			if (addressDto2 == null) {
+				response.setCode("500");
+				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(addressDto2);

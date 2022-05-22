@@ -84,6 +84,11 @@ public class AmenityController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			AmenityDto amenityDto2 = amenityService.createAmenity(amenityDto);
+			if (amenityDto2 == null) {
+				response.setCode("500");
+				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(amenityDto2);
