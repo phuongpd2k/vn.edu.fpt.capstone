@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.fpt.capstone.dto.PhuongXaDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
@@ -76,7 +77,7 @@ public class PhuongXaController {
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@ResponseBody
 	@GetMapping(value = "/phuongxa/quanhuyen/{id}")
 	public ResponseEntity<ResponseObject> getAllByQuanHuyenId(@PathVariable String id) {
 		ResponseObject responseObject = new ResponseObject();

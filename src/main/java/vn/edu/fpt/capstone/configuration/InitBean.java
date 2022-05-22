@@ -15,15 +15,15 @@ public class InitBean {
 		return new ModelMapper();
 	}
 
-	@Bean
-	public Cloudinary cloudinaryConfig() {
-		Cloudinary cloudinary = null;
-		java.util.Map<String, String> config = new HashMap<String, String>();
-		config.put("cloud_name", "dplsph2oc");
-		config.put("api_key", "724686778355764");
-		config.put("api_secret", "uRYWm-XyG4Po9EyDlrQ208HTjd8");
-		cloudinary = new Cloudinary(config);
-		return cloudinary;
-	}
+//	@Bean
+//	public Cloudinary cloudinaryConfig() {
+//		Cloudinary cloudinary = null;
+//		java.util.Map<String, String> config = new HashMap<String, String>();
+//		config.put("cloud_name", "dplsph2oc");
+//		config.put("api_key", "724686778355764");
+//		config.put("api_secret", "uRYWm-XyG4Po9EyDlrQ208HTjd8");
+//		cloudinary = new Cloudinary(config);
+//		return cloudinary;
+//	}
 	
 }
