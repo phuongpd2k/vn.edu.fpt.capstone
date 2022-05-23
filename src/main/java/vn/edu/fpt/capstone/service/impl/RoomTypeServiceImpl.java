@@ -78,7 +78,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 			RoomTypeModel saveModel = roomTypeRepository.save(roomTypeModel);
 			return modelMapper.map(saveModel, RoomTypeDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createRoomType: {}", e);
 			return null;
 		}
 	}

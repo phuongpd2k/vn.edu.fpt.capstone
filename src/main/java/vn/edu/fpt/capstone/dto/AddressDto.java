@@ -13,7 +13,7 @@ public class AddressDto extends Auditable<String>{
     @JsonProperty("xaId")
     private Long xaId;
     @JsonProperty("street")
-    private Long street;
+    private String street;
     @JsonProperty("longiude")
     private String longiude;
     @JsonProperty("latitude")

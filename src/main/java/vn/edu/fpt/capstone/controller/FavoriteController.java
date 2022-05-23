@@ -7,13 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.FavoriteDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.FavoriteService;
 import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -39,19 +40,21 @@ public class FavoriteController {
 				responseObject.setResults(favoriteDto);
 				responseObject.setCode("200");
 				responseObject.setMessage(Message.OK);
+				LOGGER.info("getById: {}",favoriteDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
 				responseObject.setCode("404");
 				responseObject.setMessage(Message.NOT_FOUND);
+				LOGGER.error("getById: {}","ID Favorite is not exist");
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("getById: {}",e);
 			responseObject.setCode("404");
 			responseObject.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getById: {}",ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,16 +67,16 @@ public class FavoriteController {
 		try {
 			List<FavoriteDto> favoriteDtos = favoriteService.findAll();
 			if (favoriteDtos == null || favoriteDtos.isEmpty()) {
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			} else {
+				responseObject.setResults(favoriteDtos);
 			}
-			responseObject.setResults(favoriteDtos);
+			LOGGER.info("getAll: {}",favoriteDtos);
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getAll: {}",ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -87,7 +90,9 @@ public class FavoriteController {
 			if (favoriteDto.getId() != null
 					|| (favoriteDto.getUserId() == null || !userService.checkIdExist(favoriteDto.getUserId()))
 					|| (favoriteDto.getRoomId() == null || !roomService.isExist(favoriteDto.getRoomId()))) {
+				response.setCode("406");
 				response.setMessage(Message.NOT_ACCEPTABLE);
+				LOGGER.error("postFavorite: {}","Wrong body format or ID User or ID Room is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			FavoriteDto favoriteDto2 = favoriteService.createFavorite(favoriteDto);
@@ -99,9 +104,10 @@ public class FavoriteController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(favoriteDto2);
+			LOGGER.info("postFavorite: {}",favoriteDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("postFavorite: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -113,6 +119,7 @@ public class FavoriteController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (favoriteDto.getId() == null || !favoriteService.isExist(favoriteDto.getId())) {
+				LOGGER.error("putFavorite: {}","ID Favorite is not exist");
 				response.setCode("404");
 				response.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -121,17 +128,17 @@ public class FavoriteController {
 					|| (favoriteDto.getRoomId() == null || !roomService.isExist(favoriteDto.getRoomId()))) {
 				response.setCode("406");
 				response.setMessage(Message.NOT_ACCEPTABLE);
+				LOGGER.error("putFavorite: {}","ID User or ID Room is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
-			response.setCode("200");
-			response.setMessage("Update successfully");
 			FavoriteDto favoriteDto2 = favoriteService.updateFavorite(favoriteDto);
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(favoriteDto2);
+			LOGGER.info("putFavorite: {}",favoriteDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("putFavorite: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -143,6 +150,7 @@ public class FavoriteController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (id == null || id.isEmpty() || !favoriteService.isExist(Long.valueOf(id))) {
+				LOGGER.error("deleteFavorite: {}","ID Favorite is not exist");
 				response.setCode("404");
 				response.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -150,14 +158,15 @@ public class FavoriteController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			favoriteService.removeFavorite(Long.valueOf(id));
+			LOGGER.error("deleteFavorite: {}","DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("deleteFavorite: {}",ex);
 			response.setCode("404");
 			response.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("deleteFavorite: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

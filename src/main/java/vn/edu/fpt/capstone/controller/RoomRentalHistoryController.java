@@ -7,11 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.capstone.dto.RoomRentalHistoryDto;
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.RoomRentalHistoryService;
 import vn.edu.fpt.capstone.service.RoomService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -62,12 +63,10 @@ public class RoomRentalHistoryController {
 		try {
 			List<RoomRentalHistoryDto> roomRentalHistoryDtos = roomRentalHistoryService.findAll();
 			if (roomRentalHistoryDtos == null || roomRentalHistoryDtos.isEmpty()) {
-				LOGGER.error("getAll: {}", "Data is empty");
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			}else {
+				responseObject.setResults(roomRentalHistoryDtos);
 			}
-			responseObject.setResults(roomRentalHistoryDtos);
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
 			LOGGER.error("getAll: {}", roomRentalHistoryDtos);

@@ -79,7 +79,7 @@ public class HouseServiceImpl implements HouseService {
 			HouseModel saveModel = houseRepository.save(houseModel);
 			return modelMapper.map(saveModel, HouseDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createHouse: {}", e);
 			return null;
 		}
 	}

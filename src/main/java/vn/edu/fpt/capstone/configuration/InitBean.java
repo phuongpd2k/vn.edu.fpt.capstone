@@ -1,10 +1,11 @@
 package vn.edu.fpt.capstone.configuration;
 
-
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
 
+import vn.edu.fpt.capstone.service.impl.SpringSecurityAuditorAware;
 
 @Configuration
 public class InitBean {
@@ -13,6 +14,10 @@ public class InitBean {
 		return new ModelMapper();
 	}
 
+	@Bean
+	public AuditorAware<String> auditorAware() {
+		return new SpringSecurityAuditorAware();
+	}
 //	@Bean
 //	public Cloudinary cloudinaryConfig() {
 //		Cloudinary cloudinary = null;
@@ -23,5 +28,5 @@ public class InitBean {
 //		cloudinary = new Cloudinary(config);
 //		return cloudinary;
 //	}
-	
+
 }

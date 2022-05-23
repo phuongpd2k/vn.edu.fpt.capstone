@@ -74,7 +74,7 @@ public class ImageServiceImpl implements ImageService {
 			ImageModel saveModel = ImageRepository.save(ImageModel);
 			return modelMapper.map(saveModel, ImageDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createImage: {}", e);
 			return null;
 		}
 	}

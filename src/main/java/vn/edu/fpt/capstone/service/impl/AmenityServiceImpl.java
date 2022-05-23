@@ -78,7 +78,7 @@ public class AmenityServiceImpl implements AmenityService {
 			AmenityModel saveModel = amenityRepository.save(amenityModel);
 			return modelMapper.map(saveModel, AmenityDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createAmenity: {}", e);
 			return null;
 		}
 	}

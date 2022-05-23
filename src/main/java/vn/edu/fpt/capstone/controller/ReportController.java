@@ -7,12 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.ReportDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.ReportService;
 import vn.edu.fpt.capstone.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -45,12 +46,12 @@ public class ReportController {
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.error("getById: {}", e.toString());
+			LOGGER.error("getById: {}", e);
 			responseObject.setCode("404");
 			responseObject.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
-			LOGGER.error("getById: {}", ex.toString());
+			LOGGER.error("getById: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -63,18 +64,16 @@ public class ReportController {
 		try {
 			List<ReportDto> reportDtos = reportService.findAll();
 			if (reportDtos == null || reportDtos.isEmpty()) {
-				LOGGER.error("getAll: {}", "Data is empty");
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			}else {
+				responseObject.setResults(reportDtos);
 			}
-			responseObject.setResults(reportDtos);
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
 			LOGGER.info("getAll: {}", reportDtos);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
-			LOGGER.error("getAll: {}", ex.toString());
+			LOGGER.error("getAll: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,7 +103,7 @@ public class ReportController {
 			LOGGER.info("postReport: {}", reportDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error("postReport: {}", e.toString());
+			LOGGER.error("postReport: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -134,7 +133,7 @@ public class ReportController {
 			LOGGER.info("putReport: {}", reportDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error("putReport: {}", e.toString());
+			LOGGER.error("putReport: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -157,12 +156,12 @@ public class ReportController {
 			LOGGER.info("deleteReport: {}", "DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
-			LOGGER.error("deleteReport: {}", ex.toString());
+			LOGGER.error("deleteReport: {}", ex);
 			response.setCode("404");
 			response.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			LOGGER.error("deleteReport: {}", e.toString());
+			LOGGER.error("deleteReport: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

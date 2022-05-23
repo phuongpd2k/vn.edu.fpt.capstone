@@ -7,10 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.capstone.dto.RoomCategoryDto;
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.RoomCategoryService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -59,12 +60,10 @@ public class RoomCategoryController {
 		try {
 			List<RoomCategoryDto> roomCategoryDtos = roomCategoryService.findAll();
 			if (roomCategoryDtos == null || roomCategoryDtos.isEmpty()) {
-				LOGGER.error("getAll: {}","Data is empty");
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			}else {
+				responseObject.setResults(roomCategoryDtos);
 			}
-			responseObject.setResults(roomCategoryDtos);
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
 			LOGGER.info("getAll: {}",roomCategoryDtos);

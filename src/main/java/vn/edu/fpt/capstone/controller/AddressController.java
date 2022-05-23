@@ -7,12 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.AddressDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.AddressService;
 import vn.edu.fpt.capstone.service.PhuongXaService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,19 +37,21 @@ public class AddressController {
 				responseObject.setResults(addressDto);
 				responseObject.setCode("200");
 				responseObject.setMessage(Message.OK);
+				LOGGER.info("getById: {}",addressDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
+				LOGGER.error("getById: {}","ID Address is not exist");
 				responseObject.setCode("404");
 				responseObject.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("getById: {}",e);
 			responseObject.setCode("404");
 			responseObject.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getById: {}",ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,16 +64,17 @@ public class AddressController {
 		try {
 			List<AddressDto> addressDtos = addressService.findAll();
 			if (addressDtos == null || addressDtos.isEmpty()) {
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			}else {
+				responseObject.setResults(addressDtos);
 			}
-			responseObject.setResults(addressDtos);
+			
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
+			LOGGER.info("getAll: {}",addressDtos);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getAll: {}",ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -83,6 +87,7 @@ public class AddressController {
 		try {
 			if (addressDto.getId() != null
 					|| (addressDto.getXaId() == null || !phuongXaService.isExist(addressDto.getXaId()))) {
+				LOGGER.error("postAddress: {}","Wrong body format or ID Phuong Xa is not exist");
 				response.setCode("406");
 				response.setMessage(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
@@ -97,9 +102,10 @@ public class AddressController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(addressDto2);
+			LOGGER.info("postAddress: {}",addressDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("postAddress: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -111,11 +117,13 @@ public class AddressController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (addressDto.getId() == null || !addressService.isExist(addressDto.getId())) {
+				LOGGER.error("putAddress: {}","ID Address is not exist");
 				response.setCode("404");
 				response.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			if (addressDto.getXaId() == null || !phuongXaService.isExist(addressDto.getXaId())) {
+				LOGGER.error("putAddress: {}","ID Phuong Xa is not exist");
 				response.setCode("406");
 				response.setMessage(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
@@ -124,10 +132,10 @@ public class AddressController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(addressDto2);
-
+			LOGGER.info("putAddress: {}",addressDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("putAddress: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -139,6 +147,7 @@ public class AddressController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (id == null || id.isEmpty() || !addressService.isExist(Long.valueOf(id))) {
+				LOGGER.error("deleteAddress: {}","ID Address is not exist");
 				response.setCode("404");
 				response.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -146,13 +155,15 @@ public class AddressController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			addressService.removeAddress(Long.valueOf(id));
+			LOGGER.error("deleteAddress: {}","DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
+			LOGGER.error("deleteAddress: {}",ex);
 			response.setCode("404");
 			response.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("deleteAddress: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

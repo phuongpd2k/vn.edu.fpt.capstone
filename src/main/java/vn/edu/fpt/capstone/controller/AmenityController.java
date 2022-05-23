@@ -7,11 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.AmenityDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.AmenityService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,19 +34,21 @@ public class AmenityController {
 				responseObject.setResults(amenityDto);
 				responseObject.setCode("200");
 				responseObject.setMessage(Message.OK);
+				LOGGER.info("getById: {}",amenityDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
+				LOGGER.error("getById: {}","ID Amenity is not exist");
 				responseObject.setCode("404");
 				responseObject.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("getById: {}",e);
 			responseObject.setCode("404");
 			responseObject.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getById: {}",ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -58,16 +61,16 @@ public class AmenityController {
 		try {
 			List<AmenityDto> amenityDtos = amenityService.findAll();
 			if (amenityDtos == null || amenityDtos.isEmpty()) {
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			} else {
+				responseObject.setResults(amenityDtos);
 			}
-			responseObject.setResults(amenityDtos);
+			LOGGER.info("getAll: {}",amenityDtos);
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getAll: {}",ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -79,6 +82,7 @@ public class AmenityController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (amenityDto.getId() != null) {
+				LOGGER.error("postAmenity: {}","Wrong body format");
 				response.setCode("406");
 				response.setMessage(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
@@ -92,9 +96,10 @@ public class AmenityController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(amenityDto2);
+			LOGGER.info("postAmenity: {}",amenityDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("postAmenity: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -106,17 +111,19 @@ public class AmenityController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (amenityDto.getId() == null || !amenityService.isExist(amenityDto.getId())) {
-				response.setCode("406");
-				response.setMessage("Invalid data");
-				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				LOGGER.error("putAmenity: {}","ID Amenity is not exist");
+				response.setCode("404");
+				response.setMessage(Message.NOT_FOUND);
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			AmenityDto amenityDto2 = amenityService.updateAmenity(amenityDto);
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(amenityDto2);
+			LOGGER.info("putAmenity: {}",amenityDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("putAmenity: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -128,21 +135,23 @@ public class AmenityController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (id == null || id.isEmpty() || !amenityService.isExist(Long.valueOf(id))) {
-				response.setCode("406");
-				response.setMessage(Message.NOT_ACCEPTABLE);
-				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				LOGGER.error("deleteAmenity: {}","ID Amenity is not exist");
+				response.setCode("404");
+				response.setMessage(Message.NOT_FOUND);
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			amenityService.removeAmenity(Long.valueOf(id));
+			LOGGER.error("deleteAmenity: {}","DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("deleteAmenity: {}",ex);
 			response.setCode("404");
 			response.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("deleteAmenity: {}",e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

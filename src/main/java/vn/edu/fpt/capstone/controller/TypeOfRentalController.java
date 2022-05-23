@@ -9,10 +9,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.dto.TypeOfRentalDto;
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.TypeOfRentalService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -61,11 +62,10 @@ public class TypeOfRentalController {
 		try {
 			List<TypeOfRentalDto> typeOfRentalDtos = typeOfRentalService.findAll();
 			if (typeOfRentalDtos == null || typeOfRentalDtos.isEmpty()) {
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			}else {
+				responseObject.setResults(typeOfRentalDtos);
 			}
-			responseObject.setResults(typeOfRentalDtos);
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);

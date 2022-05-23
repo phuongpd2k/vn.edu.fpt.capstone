@@ -4,6 +4,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.capstone.dto.TypeOfRentalDto;
@@ -28,6 +31,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	ModelMapper modelMapper;
 
 	@Override
+	@Cacheable("typeOfRental")
 	public TypeOfRentalDto findById(Long id) {
 		TypeOfRentalDto typeOfRentalDto = modelMapper.map(typeOfRentalRepository.findById(id).get(),
 				TypeOfRentalDto.class);
@@ -35,6 +39,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	}
 
 	@Override
+	@Cacheable("listTypeOfRental")
 	public List<TypeOfRentalDto> findAll() {
 		List<TypeOfRentalModel> typeOfRentalModels = typeOfRentalRepository.findAll();
 		if (typeOfRentalModels == null || typeOfRentalModels.isEmpty()) {
@@ -46,6 +51,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	}
 
 	@Override
+	@CachePut("typeOfRental")
 	public TypeOfRentalDto updateTypeOfRental(TypeOfRentalDto typeOfRentalDto) {
 		TypeOfRentalModel typeOfRentalModel = modelMapper.map(typeOfRentalDto, TypeOfRentalModel.class);
 		TypeOfRentalModel saveModel = typeOfRentalRepository.save(typeOfRentalModel);
@@ -53,6 +59,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	}
 
 	@Override
+	@CacheEvict("typeOfRental")
 	public boolean removeTypeOfRental(Long id) {
 		if (typeOfRentalRepository.existsById(id)) {
 			typeOfRentalRepository.deleteById(id);
@@ -82,7 +89,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 			TypeOfRentalModel saveModel = typeOfRentalRepository.save(typeOfRentalModel);
 			return modelMapper.map(saveModel, TypeOfRentalDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createTypeOfRental: {}", e);
 			return null;
 		}
 	}

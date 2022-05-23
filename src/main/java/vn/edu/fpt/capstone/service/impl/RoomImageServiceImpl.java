@@ -78,7 +78,7 @@ public class RoomImageServiceImpl implements RoomImageService {
 			RoomImageModel saveModel = roomImageRepository.save(roomImageModel);
 			return modelMapper.map(saveModel, RoomImageDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createRoomImage: {}", e);
 			return null;
 		}
 	}

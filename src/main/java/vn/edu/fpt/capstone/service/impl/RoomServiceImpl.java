@@ -94,7 +94,7 @@ public class RoomServiceImpl implements RoomService {
 			RoomModel saveModel = roomRepository.save(roomModel);
 			return modelMapper.map(saveModel, RoomDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createRoom: {}", e);
 			return null;
 		}
 	}

@@ -79,7 +79,7 @@ public class RoomRentalHistoryServiceImpl implements RoomRentalHistoryService {
 			RoomRentalHistoryModel saveModel = roomRentalHistoryRepository.save(roomRentalHistoryModel);
 			return modelMapper.map(saveModel, RoomRentalHistoryDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createRoomRentalHistory: {}", e);
 			return null;
 		}
 	}
