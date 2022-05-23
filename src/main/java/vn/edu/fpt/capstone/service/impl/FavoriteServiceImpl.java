@@ -21,28 +21,28 @@ import java.util.TimeZone;
 public class FavoriteServiceImpl implements FavoriteService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FavoriteServiceImpl.class.getName());
 
-    @Autowired
-    FavoriteRepository favoriteRepository;
-    @Autowired
-    ModelMapper modelMapper;
+	@Autowired
+	FavoriteRepository favoriteRepository;
+	@Autowired
+	ModelMapper modelMapper;
 
-    @Override
-    public FavoriteDto findById(Long id) {
-        FavoriteDto favoriteDto = modelMapper.map(favoriteRepository.findById(id).get(), FavoriteDto.class);
-        return favoriteDto;
-    }
+	@Override
+	public FavoriteDto findById(Long id) {
+		FavoriteDto favoriteDto = modelMapper.map(favoriteRepository.findById(id).get(), FavoriteDto.class);
+		return favoriteDto;
+	}
 
-    @Override
-    public List<FavoriteDto> findAll() {
-        List<FavoriteModel> favoriteModels = favoriteRepository.findAll();
-        if (favoriteModels == null || favoriteModels.isEmpty()) {
-            return null;
-        }
-        List<FavoriteDto> favoriteDtos = Arrays.asList(modelMapper.map(favoriteModels, FavoriteDto[].class));
-        return favoriteDtos;
-    }
+	@Override
+	public List<FavoriteDto> findAll() {
+		List<FavoriteModel> favoriteModels = favoriteRepository.findAll();
+		if (favoriteModels == null || favoriteModels.isEmpty()) {
+			return null;
+		}
+		List<FavoriteDto> favoriteDtos = Arrays.asList(modelMapper.map(favoriteModels, FavoriteDto[].class));
+		return favoriteDtos;
+	}
 
-    @Override
+	@Override
 	public FavoriteDto updateFavorite(FavoriteDto favoriteDto) {
 		FavoriteModel favoriteModel = modelMapper.map(favoriteDto, FavoriteModel.class);
 		FavoriteModel saveModel = favoriteRepository.save(favoriteModel);
@@ -79,16 +79,16 @@ public class FavoriteServiceImpl implements FavoriteService {
 			FavoriteModel saveModel = favoriteRepository.save(favoriteModel);
 			return modelMapper.map(saveModel, FavoriteDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createFavorite: {}", e);
 			return null;
 		}
 	}
 
-    @Override
-    public boolean isExist(Long id) {
-        if(favoriteRepository.existsById(id)){
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean isExist(Long id) {
+		if (favoriteRepository.existsById(id)) {
+			return true;
+		}
+		return false;
+	}
 }

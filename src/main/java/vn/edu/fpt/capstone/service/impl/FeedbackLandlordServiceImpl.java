@@ -79,7 +79,7 @@ public class FeedbackLandlordServiceImpl implements FeedbackLandlordService {
 			FeedbackLandlordModel saveModel = feedbackLandlordRepository.save(feedbackLandlordModel);
 			return modelMapper.map(saveModel, FeedbackLandlordDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createFeedbackLandlord: {}", e);
 			return null;
 		}
 	}

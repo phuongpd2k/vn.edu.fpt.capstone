@@ -79,7 +79,7 @@ public class ReportServiceImpl implements ReportService {
 			ReportModel saveModel = reportRepository.save(reportModel);
 			return modelMapper.map(saveModel, ReportDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createReport: {}", e);
 			return null;
 		}
 	}

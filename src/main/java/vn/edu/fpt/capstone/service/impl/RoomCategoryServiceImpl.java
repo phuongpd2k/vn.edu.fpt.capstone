@@ -78,7 +78,7 @@ public class RoomCategoryServiceImpl implements RoomCategoryService {
 			RoomCategoryModel saveModel = roomCategoryRepository.save(roomCategoryModel);
 			return modelMapper.map(saveModel, RoomCategoryDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createRoomCategory: {}", e);
 			return null;
 		}
 	}

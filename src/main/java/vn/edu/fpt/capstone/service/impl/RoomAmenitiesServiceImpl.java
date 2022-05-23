@@ -78,7 +78,7 @@ public class RoomAmenitiesServiceImpl implements RoomAmenitiesService {
 			RoomAmenitiesModel saveModel = roomAmenitiesRepository.save(roomAmenitiesModel);
 			return modelMapper.map(saveModel, RoomAmenitiesDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createRoomAmenities: {}", e);
 			return null;
 		}
 	}

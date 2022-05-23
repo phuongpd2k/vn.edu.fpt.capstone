@@ -7,11 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.ImageService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,19 +34,21 @@ public class ImageController {
 				responseObject.setResults(ImageDto);
 				responseObject.setCode("200");
 				responseObject.setMessage(Message.OK);
+				LOGGER.info("getById: {}", ImageDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
+				LOGGER.error("getById: {}", "ID Image is not exist");
 				responseObject.setCode("404");
 				responseObject.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("getById: {}", e);
 			responseObject.setCode("404");
 			responseObject.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getById: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -58,16 +61,16 @@ public class ImageController {
 		try {
 			List<ImageDto> ImageDtos = imageService.findAll();
 			if (ImageDtos == null || ImageDtos.isEmpty()) {
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			} else {
+				responseObject.setResults(ImageDtos);
 			}
-			responseObject.setResults(ImageDtos);
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
+			LOGGER.info("getAll: {}", ImageDtos);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getAll: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -79,6 +82,7 @@ public class ImageController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (ImageDto.getId() != null) {
+				LOGGER.error("postImage: {}", "Wrong body format");
 				response.setCode("406");
 				response.setMessage(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
@@ -93,9 +97,10 @@ public class ImageController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(imageDto2);
+			LOGGER.info("postImage: {}", imageDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("postImage: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -107,6 +112,7 @@ public class ImageController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (ImageDto.getId() == null || !imageService.isExist(ImageDto.getId())) {
+				LOGGER.error("putImage: {}", "ID Image is not exist");
 				response.setCode("404");
 				response.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -115,10 +121,10 @@ public class ImageController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(imageDto2);
-
+			LOGGER.info("putImage: {}", imageDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("putImage: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -130,6 +136,7 @@ public class ImageController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (id == null || id.isEmpty() || !imageService.isExist(Long.valueOf(id))) {
+				LOGGER.error("deleteImage: {}", "ID Image is not exist");
 				response.setCode("404");
 				response.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -137,14 +144,15 @@ public class ImageController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			imageService.removeImage(Long.valueOf(id));
+			LOGGER.error("deleteImage: {}", "DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("deleteImage: {}", ex);
 			response.setCode("404");
 			response.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("deleteImage: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

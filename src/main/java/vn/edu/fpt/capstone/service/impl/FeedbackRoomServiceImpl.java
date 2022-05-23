@@ -79,7 +79,7 @@ public class FeedbackRoomServiceImpl implements FeedbackRoomService {
 			FeedbackRoomModel saveModel = feedbackRoomRepository.save(feedbackRoomModel);
 			return modelMapper.map(saveModel, FeedbackRoomDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createFeedbackRoom: {}", e);
 			return null;
 		}
 	}

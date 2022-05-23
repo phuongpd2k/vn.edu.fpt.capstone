@@ -7,12 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.FeedbackLandlordDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.FeedbackLandlordService;
 import vn.edu.fpt.capstone.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,19 +37,21 @@ public class FeedbackLandlordController {
 				responseObject.setResults(feedbackLandlordDto);
 				responseObject.setCode("200");
 				responseObject.setMessage(Message.OK);
+				LOGGER.info("getById: {}", feedbackLandlordDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
+				LOGGER.error("getById: {}", "ID Feedback Landlord is not exist");
 				responseObject.setCode("404");
 				responseObject.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("getById: {}", e);
 			responseObject.setCode("404");
 			responseObject.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getById: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,16 +64,16 @@ public class FeedbackLandlordController {
 		try {
 			List<FeedbackLandlordDto> feedbackLandlordDtos = feedbackLandlordService.findAll();
 			if (feedbackLandlordDtos == null || feedbackLandlordDtos.isEmpty()) {
-				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				responseObject.setResults(new ArrayList<>());
+			} else {
+				responseObject.setResults(feedbackLandlordDtos);
 			}
-			responseObject.setResults(feedbackLandlordDtos);
+			LOGGER.info("getAll: {}", feedbackLandlordDtos);
 			responseObject.setCode("200");
 			responseObject.setMessage(Message.OK);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("getAll: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -85,7 +88,7 @@ public class FeedbackLandlordController {
 					|| userService.checkIdExist(feedbackLandlordDto.getUserId()))) {
 				response.setCode("406");
 				response.setMessage(Message.NOT_ACCEPTABLE);
-				LOGGER.error("postFeedbackLandlord: {}","Body create Feedback Landlord must not have ID");
+				LOGGER.error("postFeedbackLandlord: {}", "Wrong body format or ID User is not exist");
 				return new ResponseEntity<>(response, HttpStatus.OK);
 			}
 			FeedbackLandlordDto feedbackLandlordDto2 = feedbackLandlordService
@@ -98,9 +101,10 @@ public class FeedbackLandlordController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(feedbackLandlordDto2);
+			LOGGER.info("postFeedbackLandlord: {}", feedbackLandlordDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("postFeedbackLandlord: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -114,11 +118,13 @@ public class FeedbackLandlordController {
 			if (feedbackLandlordDto.getId() == null || !feedbackLandlordService.isExist(feedbackLandlordDto.getId())) {
 				response.setCode("404");
 				response.setMessage(Message.NOT_FOUND);
+				LOGGER.error("putFeedbackLandlord: {}", "ID Feedback Landlord is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			if (feedbackLandlordDto.getUserId() == null || userService.checkIdExist(feedbackLandlordDto.getUserId())) {
 				response.setCode("406");
 				response.setMessage(Message.NOT_ACCEPTABLE);
+				LOGGER.error("putFeedbackLandlord: {}", "ID User is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 
@@ -127,9 +133,10 @@ public class FeedbackLandlordController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			response.setResults(feedbackLandlordDto2);
+			LOGGER.info("putFeedbackLandlord: {}", feedbackLandlordDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("putFeedbackLandlord: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -141,6 +148,7 @@ public class FeedbackLandlordController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (id == null || id.isEmpty() || !feedbackLandlordService.isExist(Long.valueOf(id))) {
+				LOGGER.error("deleteFeedbackLandlord: {}", "ID Feedback Landlord is not exist");
 				response.setCode("404");
 				response.setMessage(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -148,14 +156,15 @@ public class FeedbackLandlordController {
 			response.setCode("200");
 			response.setMessage(Message.OK);
 			feedbackLandlordService.removeFeedbackLandlord(Long.valueOf(id));
+			LOGGER.error("deleteFeedbackLandlord: {}", "DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
-			LOGGER.error(ex.toString());
+			LOGGER.error("deleteFeedbackLandlord: {}", ex);
 			response.setCode("404");
 			response.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("deleteFeedbackLandlord: {}", e);
 			response.setCode("500");
 			response.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

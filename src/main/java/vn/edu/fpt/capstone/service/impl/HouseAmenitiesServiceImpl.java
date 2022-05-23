@@ -74,7 +74,7 @@ public class HouseAmenitiesServiceImpl implements HouseAmenitiesService {
 			HouseAmenitiesModel saveModel = houseAmenitiesRepository.save(houseAmenitiesModel);
 			return modelMapper.map(saveModel, HouseAmenitiesDto.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.error("createHouseAmenities: {}", e);
 			return null;
 		}
 	}

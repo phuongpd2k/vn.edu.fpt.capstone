@@ -1,4 +1,4 @@
-package vn.edu.fpt.capstone.common;
+package vn.edu.fpt.capstone.constant;
 
 public class Message {
 	public static final String OK = "OK";

@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import vn.edu.fpt.capstone.common.Message;
+import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.ThanhPhoService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -48,12 +49,12 @@ public class QuanHuyenController {
                 return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
             }
         } catch (NumberFormatException e) {
-        	LOGGER.error("getById: {}",e.toString());
+        	LOGGER.error("getById: {}",e);
             responseObject.setCode("404");
             responseObject.setMessage(Message.NOT_FOUND);
             return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
-        	LOGGER.error("getById: {}",ex.toString());
+        	LOGGER.error("getById: {}",ex);
             responseObject.setCode("500");
             responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -66,18 +67,17 @@ public class QuanHuyenController {
         try {
             List<QuanHuyenDto> quanHuyenDtos = quanHuyenService.findAll();
             if(quanHuyenDtos==null || quanHuyenDtos.isEmpty()){
-            	LOGGER.error("getAll: {}","Data is empty");
-                responseObject.setCode("404");
-                responseObject.setMessage(Message.NOT_FOUND);
-                return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
-            }
-            LOGGER.info("getAll: {}",quanHuyenDtos);
+            	responseObject.setResults(new ArrayList<>());
+			}else {
+				responseObject.setResults(quanHuyenDtos);
+			}
             responseObject.setResults(quanHuyenDtos);
             responseObject.setCode("200");
             responseObject.setMessage(Message.OK);
+            LOGGER.info("getAll: {}",quanHuyenDtos);
             return new ResponseEntity<>(responseObject, HttpStatus.OK);
         } catch (Exception ex) {
-        	LOGGER.error("getAll: {}",ex.toString());
+        	LOGGER.error("getAll: {}",ex);
             responseObject.setCode("500");
             responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -102,12 +102,12 @@ public class QuanHuyenController {
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.error("getAllByThanhPhoId: {}",e.toString());
+			LOGGER.error("getAllByThanhPhoId: {}",e);
 			responseObject.setCode("404");
 			responseObject.setMessage(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
-			LOGGER.error("getAllByThanhPhoId: {}",ex.toString());
+			LOGGER.error("getAllByThanhPhoId: {}",ex);
 			responseObject.setCode("500");
 			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
