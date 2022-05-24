@@ -3,6 +3,7 @@ package vn.edu.fpt.capstone.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,52 +21,54 @@ import vn.edu.fpt.capstone.service.AuthenticationService;
 @RequestMapping("api/v1/auth")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthenticationController {
-private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
 	@Autowired
 	private AuthenticationService authenticationService;
-	
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping({ "/hello" })
-    public String firstPage() {
-    	UserDetails u = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return "Hello World" + u.getUsername() + " " + u.getAuthorities();
-    }
-	
-	
+
 	@PostMapping(value = "/signup")
 	public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
-		ResponseObject response = new ResponseObject();       
 		try {
-			return authenticationService.signUpVerify(signUpDto);		
+			return authenticationService.signUpVerify(signUpDto);
 		} catch (Exception e) {
 			logger.error(e.toString());
-			response.setCode("500");
-			response.setMessage("sign up request: " + e.getMessage());
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Sign up failed: " + e.getMessage()).messageCode("SIGN_UP_FAILED").build());
 		}
 	}
-	
-	
+
 	@PostMapping("/signin")
-    public ResponseEntity<?> authenticate(@RequestBody SignInDto signInDto) {
-		ResponseObject response = new ResponseObject();
-        try {
-            return authenticationService.authenticate(signInDto);
-        } catch (AuthenticationException e) {
-            logger.error("Authenticate failed for username: " + signInDto.getUsername());
-            logger.error(e.getMessage());
-            
-            response.setCode("401");
-			response.setMessage("sign in request: username or pasword wrong!");
-			return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        } catch (Exception e) {
-            logger.error("Undefined error");
-            logger.error(e.getMessage());
-            
-            response.setCode("401");
-			response.setMessage("sign in request: username or pasword wrong!");
-			return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-    }
+	public ResponseEntity<?> authenticate(@RequestBody SignInDto signInDto) {
+		try {
+			return authenticationService.authenticate(signInDto);
+		} catch (AuthenticationException e) {
+			logger.error("Authenticate failed for username: " + signInDto.getUsername());
+			logger.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401").message("sign in request: username or pasword wrong!")
+							.messageCode("USERNAME_PASSWORD_WRONG").build());
+		} catch (Exception e) {
+			logger.error("Undefined error");
+			logger.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401").message("sign in undefined error: " + e.getMessage())
+							.messageCode("SIGN_IN_FAIL").build());
+
+		}
+	}
+
+	@PutMapping("/verify")
+	public ResponseEntity<?> verify(@Param("code") String code) {
+		try {
+			return authenticationService.verify(code);
+		} catch (Exception e) {
+			logger.error("Verify code new account!");
+			logger.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
+					.message("Verify code: verify code fail!").messageCode("VERIFY_CODE_FAIL").build());
+		}
+	}
 }

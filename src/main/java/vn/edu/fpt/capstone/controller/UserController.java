@@ -40,16 +40,16 @@ public class UserController {
 			@PathVariable long id,
             @RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get info id: " + id);
-		ResponseObject response = new ResponseObject();
 		try {
 			return userService.getUserInformationById(id, jwtToken);
 			
 		} catch (Exception e) {
 			LOGGER.error("Get user information");
 			LOGGER.error(e.getMessage());
-			response.setCode("1001");
-			response.setMessage("Get user info fail!");
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get user info fail:" + e.getMessage()).messageCode("GET_USER_INFORMATION_FAIL").build());
+			
 		}
 	}
 	
@@ -58,32 +58,34 @@ public class UserController {
 	public ResponseEntity<?> getUser(
             @RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get info user");
-		ResponseObject response = new ResponseObject();
 		try {
 			return userService.getUserInformationByToken(jwtToken.substring(7));
 			
 		} catch (Exception e) {
 			LOGGER.error("Get user information");
 			LOGGER.error(e.getMessage());
-			response.setCode("1001");
-			response.setMessage("Get user info fail!");
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get user info fail:" + e.getMessage()).messageCode("GET_USER_INFORMATION_FAIL").build());
 		}
 	}
 
 
 	@PutMapping(value = "/user")
-	public ResponseEntity<ResponseObject> putUser(@RequestBody UserDto userDto) {
-		ResponseObject response = new ResponseObject();
+	public ResponseEntity<?> putUser(@RequestBody UserDto userDto) {
 		try {
-			response.setMessage("put request");
-			userService.updateUser(userDto);
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			if(userService.updateUser(userDto)!=null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Update user: successfully!").messageCode("UPDATE_USER_SUCCESSFULLY").build());
+			}else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
+						.message("Update user: fail!").messageCode("UPDATE_USER_FAIL").build()); 
+			}			
+			
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
-			response.setCode("1001");
-			response.setMessage("Failed");
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
+					.message("Update user: fail!").messageCode("UPDATE_USER_FAIL").build());
 		}
 	}
 	
@@ -97,9 +99,9 @@ public class UserController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
-			response.setCode("1001");
-			response.setMessage("Failed");
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Delete user fail:" + e.getMessage()).messageCode("DELETE_USER_FAIL").build());
 		}
 	}
 }

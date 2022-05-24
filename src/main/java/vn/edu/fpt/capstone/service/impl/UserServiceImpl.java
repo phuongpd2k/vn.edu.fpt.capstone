@@ -2,12 +2,9 @@ package vn.edu.fpt.capstone.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -40,6 +37,10 @@ public class UserServiceImpl implements UserService {
 		
 		return modelMapper.map(signUpDto, UserModel.class);
 	}
+	
+	private UserModel convertToEntity(UserDto userDto) {	
+		return modelMapper.map(userDto, UserModel.class);
+	}
 
 	private UserDto convertToDto(UserModel userModel) {
 		UserDto userDto = modelMapper.map(userModel, UserDto.class);	
@@ -60,6 +61,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserModel updateUser(UserDto userDto) {
+		UserModel user = userRepository.getById(userDto.getId());
+		if(user!=null) {
+			userDto.setPassword(user.getPassword());
+			return userRepository.save(convertToEntity(userDto));
+		}
 		return null;
 	}
 
@@ -91,44 +97,37 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<?> getUserInformationById(Long id, String jwtToken) {
-		ResponseObject response = new ResponseObject();
-		
+	public ResponseEntity<?> getUserInformationById(Long id, String jwtToken) {	
 		UserModel user = userRepository.findById(id).orElse(null);
         if (user == null) {
-        	response.setCode("404");
-        	response.setMessage("Get user info by id: not found!");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
+					.message("Get user info by id: not found!").messageCode("GET_USER_INFORMATION_FAIL").build());
         }
         
         UserDto userDto = convertToDto(user);
-        response.setCode("200");
-        response.setMessage("Get user info: Successfully!");
-        response.setResults(userDto);
         
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+				.message("Get user info: Successfully!").results(userDto).build());
         
 	}
 
 	@Override
 	public ResponseEntity<?> getUserInformationByToken(String jwtToken) {
-		ResponseObject response = new ResponseObject();
-
 		String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-		System.out.println("aa: " + username);
 		UserModel user = userRepository.findByUsername(username).orElse(null);
-        if (user == null) {
-        	response.setCode("404");
-        	response.setMessage("Get user info by id: not found!");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        if (user == null) {      
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
+    				.message("Get user info by id: not found!").build());
         }
         
         UserDto userDto = convertToDto(user);
-        response.setCode("200");
-        response.setMessage("Get user info: Successfully!");
-        response.setResults(userDto);
         
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+				.message("Get user info: Successfully!").results(userDto).build());
 	}
 
+	@Override
+	public UserModel findByVerificationCode(String code) {
+		return userRepository.findByVerificationCode(code).orElse(null);
+	}
 }

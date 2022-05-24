@@ -43,4 +43,24 @@ public class RandomString {
 		return username;
 	}
 
+	public String generateCode(int length) {
+		String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
+		String specialCharacters = "!@#$";
+		String numbers = "1234567890";
+		String combinedChars = capitalCaseLetters + lowerCaseLetters + specialCharacters + numbers;
+		Random random = new Random();
+		String code = "";
+
+		code += lowerCaseLetters.charAt(random.nextInt(lowerCaseLetters.length()));
+		code += capitalCaseLetters.charAt(random.nextInt(capitalCaseLetters.length()));
+		code += specialCharacters.charAt(random.nextInt(specialCharacters.length()));
+		code += numbers.charAt(random.nextInt(numbers.length()));
+
+		for (int i = 4; i < length; i++) {
+			code += combinedChars.charAt(random.nextInt(combinedChars.length()));
+		}
+		return code.trim();
+	}
+
 }

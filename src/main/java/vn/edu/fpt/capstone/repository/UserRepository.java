@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<UserModel, Long>{
 //	@Query("SELECT * FROM USER u WHERE u.EMAIL = :email")
 //	 UserModel findByEmail(@Param("email") String email);
 	boolean existsByUsername(String username);
+	boolean existsByEmail(String email);
 	Optional<UserModel> findByUsername(String username);
 	Optional<UserModel> findByEmail(String email);
+	Optional<UserModel> findByVerificationCode(String verificationCode);
 }
