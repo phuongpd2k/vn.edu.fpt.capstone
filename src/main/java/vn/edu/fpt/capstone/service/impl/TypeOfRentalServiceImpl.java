@@ -31,7 +31,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	ModelMapper modelMapper;
 
 	@Override
-	@Cacheable("typeOfRental")
+//	@Cacheable("typeOfRental")
 	public TypeOfRentalDto findById(Long id) {
 		TypeOfRentalDto typeOfRentalDto = modelMapper.map(typeOfRentalRepository.findById(id).get(),
 				TypeOfRentalDto.class);
@@ -39,7 +39,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	}
 
 	@Override
-	@Cacheable("listTypeOfRental")
+//	@Cacheable("listTypeOfRental")
 	public List<TypeOfRentalDto> findAll() {
 		List<TypeOfRentalModel> typeOfRentalModels = typeOfRentalRepository.findAll();
 		if (typeOfRentalModels == null || typeOfRentalModels.isEmpty()) {
@@ -51,7 +51,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	}
 
 	@Override
-	@CachePut("typeOfRental")
+//	@CachePut("typeOfRental")
 	public TypeOfRentalDto updateTypeOfRental(TypeOfRentalDto typeOfRentalDto) {
 		TypeOfRentalModel typeOfRentalModel = modelMapper.map(typeOfRentalDto, TypeOfRentalModel.class);
 		TypeOfRentalModel saveModel = typeOfRentalRepository.save(typeOfRentalModel);
@@ -59,7 +59,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	}
 
 	@Override
-	@CacheEvict("typeOfRental")
+//	@CacheEvict("typeOfRental")
 	public boolean removeTypeOfRental(Long id) {
 		if (typeOfRentalRepository.existsById(id)) {
 			typeOfRentalRepository.deleteById(id);

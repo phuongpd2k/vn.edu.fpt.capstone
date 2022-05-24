@@ -2,6 +2,7 @@ package vn.edu.fpt.capstone.service.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.capstone.dto.ThanhPhoDto;
@@ -31,6 +32,7 @@ public class ThanhPhoServiceImpl implements ThanhPhoService{
 	}
 
 	@Override
+	@Cacheable("thanhPho")
 	public List<ThanhPhoDto> findAll() {
 		List<ThanhPhoModel> thanhPhoModels = thanhPhoRepository.findAll();
 		if (thanhPhoModels == null || thanhPhoModels.isEmpty()) {
