@@ -1,5 +1,6 @@
 package vn.edu.fpt.capstone.model;
 
+import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
@@ -22,10 +23,12 @@ import lombok.Data;
 public abstract class Auditable<U> {
 
     @CreatedBy
+    @Column(name = "created_by", updatable = false, nullable = false)
     protected U createdBy;
 
     @CreatedDate
     @Temporal(TIMESTAMP)
+    @Column(name = "created_date", updatable = false, nullable = false)
     protected Date createdDate;
 
     @LastModifiedBy
@@ -33,5 +36,6 @@ public abstract class Auditable<U> {
 
     @LastModifiedDate
     @Temporal(TIMESTAMP)
+    @Column(name = "last_modified_date", nullable = false)
     protected Date lastModifiedDate;
 }

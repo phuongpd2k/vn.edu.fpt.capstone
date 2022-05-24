@@ -12,4 +12,6 @@ public interface AuthenticationService {
 	ResponseEntity<?> authenticate(SignInDto signInDto) throws AuthenticationException;
 
 	ResponseEntity<?> signUpVerify(SignUpDto signUpDto);
+	
+	ResponseEntity<?> verify(String code);
 }

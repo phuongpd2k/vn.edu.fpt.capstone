@@ -19,4 +19,5 @@ public interface UserService {
 	boolean existsByUsername(String username);
 	ResponseEntity<?> getUserInformationById(Long id, String jwtToken);
 	ResponseEntity<?> getUserInformationByToken(String jwtToken);
+	UserModel findByVerificationCode(String code);
 }

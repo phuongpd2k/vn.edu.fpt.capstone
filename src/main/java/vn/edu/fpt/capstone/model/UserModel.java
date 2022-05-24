@@ -33,9 +33,6 @@ public class UserModel extends Auditable<String>{
 	@Column(name = "EMAIL")
 	private String email;
 	
-	@Column(name = "ggid")
-	private String ggid;
-	
 	@Column(name = "PASSWORD")
 	private String password;
 	
@@ -66,6 +63,9 @@ public class UserModel extends Auditable<String>{
 	@ManyToOne
     @JoinColumn(name = "role_id")
     private RoleModel role;
+	
+	@Column(name = "verification_code", updatable = false)
+	private String verificationCode;
 
 	public Long getId() {
 		return id;
@@ -172,11 +172,11 @@ public class UserModel extends Auditable<String>{
 		this.role = role;
 	}
 
-	public String getGgid() {
-		return ggid;
+	public String getVerificationCode() {
+		return verificationCode;
 	}
 
-	public void setGgid(String ggid) {
-		this.ggid = ggid;
+	public void setVerificationCode(String verificationCode) {
+		this.verificationCode = verificationCode;
 	}
 }
