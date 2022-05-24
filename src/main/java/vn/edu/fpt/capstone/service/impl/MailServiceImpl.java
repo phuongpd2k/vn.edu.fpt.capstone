@@ -32,7 +32,7 @@ public class MailServiceImpl implements MailService{
 //		mailContent += "<h3><a href=\"" + verifyURL +"\">VERIFY</a></h3>";
 //		mailContent += "<p>Thank you<br>The Hola Team!</p>";
 		
-		String mailContent = "Dear [[name]],<br>"
+		String mailContent = "Dear [[name]],<br><br>"
 	            + "Please click the link below to verify your registration:<br>"
 	            + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
 	            + "Thank you,<br>"
