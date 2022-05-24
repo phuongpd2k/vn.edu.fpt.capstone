@@ -4,10 +4,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.PhuongXaDto;
-import vn.edu.fpt.capstone.dto.PhuongXaDto;
-import vn.edu.fpt.capstone.model.PhuongXaModel;
 import vn.edu.fpt.capstone.model.PhuongXaModel;
 import vn.edu.fpt.capstone.repository.PhuongXaRepository;
 import vn.edu.fpt.capstone.service.PhuongXaService;
@@ -39,6 +38,7 @@ public class PhuongXaServiceImpl implements PhuongXaService {
     }
 
     @Override
+    @Cacheable("phuongXa")
     public List<PhuongXaDto> findAll() {
         List<PhuongXaModel> phuongXaModels = phuongXaRepository.findAll();
         if (phuongXaModels == null || phuongXaModels.isEmpty()) {

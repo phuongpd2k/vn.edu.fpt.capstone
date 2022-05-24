@@ -2,6 +2,7 @@ package vn.edu.fpt.capstone.service.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.model.QuanHuyenModel;
@@ -11,7 +12,6 @@ import vn.edu.fpt.capstone.service.QuanHuyenService;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 
 @Service
 public class QuanHuyenServiceImpl implements QuanHuyenService {
@@ -27,6 +27,7 @@ public class QuanHuyenServiceImpl implements QuanHuyenService {
     }
 
     @Override
+    @Cacheable("quanHuyen")
     public List<QuanHuyenDto> findAll() {
 		List<QuanHuyenModel> quanHuyenModels = quanHuyenRepository.findAll();
 		if (quanHuyenModels == null || quanHuyenModels.isEmpty()) {

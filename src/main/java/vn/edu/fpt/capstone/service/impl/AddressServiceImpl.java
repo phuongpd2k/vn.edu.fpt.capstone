@@ -4,9 +4,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.capstone.dto.AddressDto;
@@ -27,14 +24,14 @@ public class AddressServiceImpl implements AddressService {
 	ModelMapper modelMapper;
 
 	@Override
-	@Cacheable("address")
+//	@Cacheable("address")
 	public AddressDto findById(Long id) {
 		AddressDto addressDto = modelMapper.map(addressRepository.findById(id).get(), AddressDto.class);
 		return addressDto;
 	}
 
 	@Override
-	@Cacheable("listAddress")
+//	@Cacheable("listAddress")
 	public List<AddressDto> findAll() {
 		List<AddressModel> boardingHouseModels = addressRepository.findAll();
 		if (boardingHouseModels == null || boardingHouseModels.isEmpty()) {
@@ -45,7 +42,7 @@ public class AddressServiceImpl implements AddressService {
 	}
 
 	@Override
-	@CachePut("address")
+//	@CachePut("address")
 	public AddressDto updateAddress(AddressDto addressDto) {
 		AddressModel addressModel = modelMapper.map(addressDto, AddressModel.class);
 		AddressModel saveModel = addressRepository.save(addressModel);
@@ -53,7 +50,7 @@ public class AddressServiceImpl implements AddressService {
 	}
 
 	@Override
-	@CacheEvict("address")
+//	@CacheEvict("address")
 	public boolean removeAddress(Long id) {
 		if (addressRepository.existsById(id)) {
 			addressRepository.deleteById(id);

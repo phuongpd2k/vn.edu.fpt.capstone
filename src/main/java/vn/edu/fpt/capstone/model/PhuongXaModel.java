@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "VN_XAPHUONGTHITRAN")
+@Table(name = "PHUONG_XA")
 public class PhuongXaModel {
 	@Id
 	@Column(name = "XAID")

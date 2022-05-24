@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "VN_QUANHUYEN")
+@Table(name = "QUAN_HUYEN")
 public class QuanHuyenModel {
 	@Id
 	@Column(name = "MAQH")
