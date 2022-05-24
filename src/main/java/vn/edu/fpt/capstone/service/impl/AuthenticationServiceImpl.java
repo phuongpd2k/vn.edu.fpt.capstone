@@ -94,9 +94,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private ResponseEntity<?> signInByEmail(UserModel user, SignInDto signInDto) {
 		if (!user.getEmail().equalsIgnoreCase(signInDto.getEmail())) {
-			logger.error("Authenticate request: email or ggid not mapping in db!");
+			logger.error("Authenticate request: email not exist in db!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("Authenticate request: email or ggid not mapping in db!").build());
+					.message("Authenticate request: email not exist in db!").messageCode("EMAIL_NOT_EXIST").build());
 		}
 
 		if (!user.isActive()) {
@@ -123,6 +123,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private ResponseEntity<?> createByEmail(SignInDto signInDto) {
 		SignUpDto signUpDto = convertToSignUpDto(signInDto);
+		signUpDto.setActive(true);
 
 		// save user in to DB
 		UserModel user = userService.createUser(signUpDto);
