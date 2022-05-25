@@ -17,7 +17,8 @@ public interface UserService {
 	boolean checkIdExist(Long id);
 	List<UserDto> getAllUser();
 	boolean existsByUsername(String username);
-	ResponseEntity<?> getUserInformationById(Long id, String jwtToken);
+	ResponseEntity<?> getUserInformationById(Long id);
 	ResponseEntity<?> getUserInformationByToken(String jwtToken);
 	UserModel findByVerificationCode(String code);
+	ResponseEntity<?> userUpdateRole(UserDto userDto);
 }

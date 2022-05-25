@@ -36,62 +36,58 @@ public class UserController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping(value = "/user/{id}")
-	public ResponseEntity<?> getUserByIdHasRole(
-			@PathVariable long id,
-            @RequestHeader(value = "Authorization") String jwtToken) {
+	public ResponseEntity<?> getUserByIdHasRole(@PathVariable long id,
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get info id: " + id);
 		try {
-			return userService.getUserInformationById(id, jwtToken);
-			
+			return userService.getUserInformationById(id);
+
 		} catch (Exception e) {
 			LOGGER.error("Get user information");
 			LOGGER.error(e.getMessage());
-			
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Get user info fail:" + e.getMessage()).messageCode("GET_USER_INFORMATION_FAIL").build());
-			
-		}
-	}
-	
-//	@CrossOrigin(origins = "*")
-	@GetMapping(value = "/user")
-	public ResponseEntity<?> getUser(
-            @RequestHeader(value = "Authorization") String jwtToken) {
-		LOGGER.info("Get info user");
-		try {
-			return userService.getUserInformationByToken(jwtToken.substring(7));
-			
-		} catch (Exception e) {
-			LOGGER.error("Get user information");
-			LOGGER.error(e.getMessage());
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-					.message("Get user info fail:" + e.getMessage()).messageCode("GET_USER_INFORMATION_FAIL").build());
+
 		}
 	}
 
+//	@CrossOrigin(origins = "*")
+	@GetMapping(value = "/user")
+	public ResponseEntity<?> getUser(@RequestHeader(value = "Authorization") String jwtToken) {
+		LOGGER.info("Get info user");
+		try {
+			return userService.getUserInformationByToken(jwtToken.substring(7));
+
+		} catch (Exception e) {
+			LOGGER.error("Get user information");
+			LOGGER.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get user info fail:" + e.getMessage()).messageCode("GET_USER_INFORMATION_FAIL").build());
+		}
+	}
 
 	@PutMapping(value = "/user")
 	public ResponseEntity<?> putUser(@RequestBody UserDto userDto) {
 		try {
-			if(userService.updateUser(userDto)!=null) {
+			if (userService.updateUser(userDto) != null) {
 				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 						.message("Update user: successfully!").messageCode("UPDATE_USER_SUCCESSFULLY").build());
-			}else {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
-						.message("Update user: fail!").messageCode("UPDATE_USER_FAIL").build()); 
-			}			
-			
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
+						.code("1001").message("Update user: fail!").messageCode("UPDATE_USER_FAIL").build());
+			}
+
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
 					.message("Update user: fail!").messageCode("UPDATE_USER_FAIL").build());
 		}
 	}
-	
 
 	@DeleteMapping(value = "/user")
-	public ResponseEntity<ResponseObject> deleteUser(@RequestParam(required=true) String id) {
+	public ResponseEntity<ResponseObject> deleteUser(@RequestParam(required = true) String id) {
 		ResponseObject response = new ResponseObject();
 		try {
 			response.setMessage("put request");
@@ -99,9 +95,20 @@ public class UserController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
-			
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Delete user fail:" + e.getMessage()).messageCode("DELETE_USER_FAIL").build());
+		}
+	}
+
+	@PutMapping(value = "/user/update-role")
+	public ResponseEntity<?> putUserUpdateRole(@RequestBody UserDto userDto, @RequestHeader(value = "Authorization") String jwtToken) {
+		try {
+			return userService.userUpdateRole(userDto);				
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
+					.message("Update user: fail!").messageCode("UPDATE_USER_FAIL").build());
 		}
 	}
 }
