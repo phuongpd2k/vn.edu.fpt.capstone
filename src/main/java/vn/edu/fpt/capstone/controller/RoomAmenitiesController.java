@@ -38,24 +38,24 @@ public class RoomAmenitiesController {
 				RoomAmenitiesDto roomAmenitiesDto = roomAmenitiesService.findById(lId);
 				responseObject.setResults(roomAmenitiesDto);
 				responseObject.setCode("200");
-				responseObject.setMessage(Message.OK);
+				responseObject.setMessageCode(Message.OK);
 				LOGGER.info("getById: {}", roomAmenitiesDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
 				LOGGER.error("getById: {}", "ID Room Amenities is not exist");
 				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
+				responseObject.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.error("getById: {}", e);
 			responseObject.setCode("404");
-			responseObject.setMessage(Message.NOT_FOUND);
+			responseObject.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
 			LOGGER.error("getById: {}", ex);
 			responseObject.setCode("500");
-			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -71,13 +71,13 @@ public class RoomAmenitiesController {
 				responseObject.setResults(roomAmenitiesDtos);
 			}
 			responseObject.setCode("200");
-			responseObject.setMessage(Message.OK);
+			responseObject.setMessageCode(Message.OK);
 			LOGGER.info("getAll: {}", roomAmenitiesDtos);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
 			LOGGER.error("getAll: {}", ex);
 			responseObject.setCode("500");
-			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -92,25 +92,25 @@ public class RoomAmenitiesController {
 					|| (roomAmenitiesDto.getRoomId() == null || !roomService.isExist(roomAmenitiesDto.getRoomId()))) {
 				LOGGER.error("postRoomAmenities: {}", "ID Room is not exist or Wrong body format");
 				response.setCode("406");
-				response.setMessage(Message.NOT_ACCEPTABLE);
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 
 			RoomAmenitiesDto roomAmenitiesDto2 = roomAmenitiesService.createRoomAmenities(roomAmenitiesDto);
 			if (roomAmenitiesDto2 == null) {
 				response.setCode("500");
-				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			response.setResults(roomAmenitiesDto2);
 			LOGGER.info("postRoomAmenities: {}", roomAmenitiesDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error("postRoomAmenities: {}", e);
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -122,26 +122,26 @@ public class RoomAmenitiesController {
 			if (roomAmenitiesDto.getId() == null || !roomAmenitiesService.isExist(roomAmenitiesDto.getId())) {
 				LOGGER.error("putRoomAmenities: {}", "ID Room Amenities is not exist");
 				response.setCode("404");
-				response.setMessage(Message.NOT_FOUND);
+				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			if ((roomAmenitiesDto.getAmenityId() == null || !amenityService.isExist(roomAmenitiesDto.getAmenityId()))
 					|| (roomAmenitiesDto.getRoomId() == null || !roomService.isExist(roomAmenitiesDto.getRoomId()))) {
 				LOGGER.error("putRoomAmenities: {}", "ID Amenities or ID Room is not exist");
 				response.setCode("406");
-				response.setMessage(Message.NOT_ACCEPTABLE);
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			RoomAmenitiesDto roomAmenitiesDto2 = roomAmenitiesService.updateRoomAmenities(roomAmenitiesDto);
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			response.setResults(roomAmenitiesDto2);
 			LOGGER.info("putRoomAmenities: {}", roomAmenitiesDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error("putRoomAmenities: {}", e);
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -153,23 +153,23 @@ public class RoomAmenitiesController {
 			if (id == null || id.isEmpty() || !roomAmenitiesService.isExist(Long.valueOf(id))) {
 				LOGGER.error("deleteRoomAmenities: {}", "ID Room Amenities is not exist");
 				response.setCode("404");
-				response.setMessage(Message.NOT_FOUND);
+				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			roomAmenitiesService.removeRoomAmenities(Long.valueOf(id));
 			LOGGER.info("deleteRoomAmenities: {}", "DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
 			LOGGER.error("deleteRoomAmenities: {}", ex);
 			response.setCode("404");
-			response.setMessage(Message.NOT_FOUND);
+			response.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			LOGGER.error("deleteRoomAmenities: {}", e);
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

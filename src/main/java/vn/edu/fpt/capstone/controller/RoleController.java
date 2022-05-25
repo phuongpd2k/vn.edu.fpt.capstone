@@ -30,22 +30,22 @@ public class RoleController {
                 RoleDto roleDto = roleService.findById(lId);
                 responseObject.setResults(roleDto);
                 responseObject.setCode("1001");
-                responseObject.setMessage("Successfully");
+                responseObject.setMessageCode("Successfully");
                 return new ResponseEntity<>(responseObject, HttpStatus.OK);
             } else {
                 responseObject.setCode("1002");
-                responseObject.setMessage("Not found");
+                responseObject.setMessageCode("Not found");
                 return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
             }
         } catch (NumberFormatException e) {
             LOGGER.error(e.toString());
             responseObject.setCode("1002");
-            responseObject.setMessage("Not found");
+            responseObject.setMessageCode("Not found");
             return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             LOGGER.error(ex.toString());
             responseObject.setCode("1003");
-            responseObject.setMessage("Internal Server Error");
+            responseObject.setMessageCode("Internal Server Error");
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -57,17 +57,17 @@ public class RoleController {
             List<RoleDto> roleDtos = roleService.findAll();
             if (roleDtos == null || roleDtos.isEmpty()) {
                 responseObject.setCode("1002");
-                responseObject.setMessage("No data");
+                responseObject.setMessageCode("No data");
                 return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
             }
             responseObject.setResults(roleDtos);
             responseObject.setCode("1001");
-            responseObject.setMessage("Successfully");
+            responseObject.setMessageCode("Successfully");
             return new ResponseEntity<>(responseObject, HttpStatus.OK);
         } catch (Exception ex) {
             LOGGER.error(ex.toString());
             responseObject.setCode("1003");
-            responseObject.setMessage("Internal Server Error");
+            responseObject.setMessageCode("Internal Server Error");
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -77,16 +77,16 @@ public class RoleController {
         ResponseObject response = new ResponseObject();
         try {
             if (roleDto.getId() != null) {
-                response.setMessage("Invalid data");
+                response.setMessageCode("Invalid data");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
-            response.setMessage("Create successfully");
+            response.setMessageCode("Create successfully");
             roleService.createRole(roleDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             response.setCode("1001");
-            response.setMessage("Failed");
+            response.setMessageCode("Failed");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -97,17 +97,17 @@ public class RoleController {
         try {
             if (roleDto.getId() == null || !roleService.isExist(roleDto.getId())) {
                 response.setCode("1001");
-                response.setMessage("Invalid data");
+                response.setMessageCode("Invalid data");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
             response.setCode("1000");
-            response.setMessage("Update successfully");
+            response.setMessageCode("Update successfully");
             roleService.updateRole(roleDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             response.setCode("1001");
-            response.setMessage("Failed");
+            response.setMessageCode("Failed");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -118,22 +118,22 @@ public class RoleController {
         try {
             if (id == null || id.isEmpty() || !roleService.isExist(Long.valueOf(id))) {
                 response.setCode("1001");
-                response.setMessage("Id is not exist");
+                response.setMessageCode("Id is not exist");
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
             response.setCode("1000");
-            response.setMessage("Delete successfully");
+            response.setMessageCode("Delete successfully");
             roleService.removeRole(Long.valueOf(id));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (NumberFormatException ex) {
             LOGGER.error(ex.toString());
             response.setCode("1001");
-            response.setMessage("Id is not exist");
+            response.setMessageCode("Id is not exist");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             response.setCode("1001");
-            response.setMessage("Failed");
+            response.setMessageCode("Failed");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -16,7 +16,6 @@ public class RoleModel {
     @GeneratedValue(generator = "ROLE_SeqGen", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "ROLE_SeqGen", sequenceName = "ROLE_Seq",allocationSize=1)
     private Long id;
-    
     @Column(name = "ROLE")
     private String role;
     
@@ -46,6 +45,8 @@ public class RoleModel {
 
 	public void setUsers(Set<UserModel> users) {
 		this.users = users;
-	}   
+	}
+
+
     
 }

@@ -8,14 +8,14 @@ import vn.edu.fpt.capstone.model.Auditable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class AddressDto extends Auditable<String>{
-    @JsonProperty("id")
+    @JsonProperty(index = 0)
     private Long id;
-    @JsonProperty("xaId")
+    @JsonProperty(index = 1)
     private Long xaId;
-    @JsonProperty("street")
+    @JsonProperty(index = 2)
     private String street;
-    @JsonProperty("longiude")
+    @JsonProperty(index = 3)
     private String longiude;
-    @JsonProperty("latitude")
+    @JsonProperty(index = 4)
     private String latitude;
 }

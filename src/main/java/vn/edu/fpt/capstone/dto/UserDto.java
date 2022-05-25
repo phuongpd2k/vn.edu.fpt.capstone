@@ -1,53 +1,54 @@
 package vn.edu.fpt.capstone.dto;
 
-
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import vn.edu.fpt.capstone.model.Auditable;
 
 @Data
-@JsonIgnoreProperties({"password"})
-public class UserDto extends Auditable<String>{
-	@JsonProperty("id")
+@JsonIgnoreProperties({ "password" })
+@EqualsAndHashCode(callSuper = false)
+public class UserDto extends Auditable<String> {
+	@JsonProperty(index = 0)
 	private Long id;
-	
-	@JsonProperty("username")
+
+	@JsonProperty(index = 1)
 	private String username;
-	
-	@JsonProperty("email")
+
+	@JsonProperty(index = 2)
 	private String email;
-	
-	@JsonProperty("password")
+
+	@JsonProperty(index = 3)
 	private String password;
-	
-	@JsonProperty("firstName")
+
+	@JsonProperty(index = 4)
 	private String firstName;
-	
-	@JsonProperty("lastName")
+
+	@JsonProperty(index = 5)
 	private String lastName;
-	
-	@JsonProperty("phoneNumber")
+
+	@JsonProperty(index = 6)
 	private String phoneNumber;
-	
-	@JsonProperty("imageLink")
+
+	@JsonProperty(index = 7)
 	private String imageLink;
-	
-	@JsonProperty("gender")
+
+	@JsonProperty(index = 8)
 	private boolean gender;
-	
-	@JsonProperty("dob")
+
+	@JsonProperty(index = 9)
 	private Date dob;
-	
-	@JsonProperty("isActive")
+
+	@JsonProperty(index = 10)
 	private boolean isActive;
-	
-	@JsonProperty("isDelete")
+
+	@JsonProperty(index = 11)
 	private boolean isDelete;
-	
-	@JsonProperty("role")
+
+	@JsonProperty(index = 12)
 	private RoleDto role;
 }
