@@ -38,24 +38,24 @@ public class RoomImageController {
 				RoomImageDto roomImageDto = roomImageService.findById(lId);
 				responseObject.setResults(roomImageDto);
 				responseObject.setCode("200");
-				responseObject.setMessage(Message.OK);
+				responseObject.setMessageCode(Message.OK);
 				LOGGER.info("getById: {}", roomImageDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
 				LOGGER.error("getById: {}", "ID Room Image is not exist");
 				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
+				responseObject.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.error("getById: {}", e);
 			responseObject.setCode("404");
-			responseObject.setMessage(Message.NOT_FOUND);
+			responseObject.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
 			LOGGER.error("getById: {}", ex);
 			responseObject.setCode("500");
-			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -71,13 +71,13 @@ public class RoomImageController {
 				responseObject.setResults(roomImageDtos);
 			}
 			responseObject.setCode("200");
-			responseObject.setMessage(Message.OK);
+			responseObject.setMessageCode(Message.OK);
 			LOGGER.error("getAll: {}", roomImageDtos);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
 			LOGGER.error("getAll: {}", ex);
 			responseObject.setCode("500");
-			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -91,25 +91,25 @@ public class RoomImageController {
 					|| (roomImageDto.getImageId() == null || !imageService.isExist(roomImageDto.getImageId()))) {
 				LOGGER.error("postRoomImage: {}", "Wrong body format or ID Room or ID Image is not exist");
 				response.setCode("406");
-				response.setMessage(Message.NOT_ACCEPTABLE);
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 
 			RoomImageDto roomImageDto2 = roomImageService.createRoomImage(roomImageDto);
 			if (roomImageDto2 == null) {
 				response.setCode("500");
-				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			response.setResults(roomImageDto2);
 			LOGGER.info("postRoomImage: {}", roomImageDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error("postRoomImage: {}", e);
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -121,27 +121,27 @@ public class RoomImageController {
 			if (roomImageDto.getId() == null || !roomImageService.isExist(roomImageDto.getId())) {
 				LOGGER.error("putRoomImage: {}", "ID Room Image is not exist");
 				response.setCode("404");
-				response.setMessage(Message.NOT_FOUND);
+				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			if ((roomImageDto.getRoomId() == null || !roomService.isExist(roomImageDto.getRoomId()))
 					|| (roomImageDto.getImageId() == null || !imageService.isExist(roomImageDto.getImageId()))) {
 				LOGGER.error("putRoomImage: {}", "ID Room or ID Image is not exist");
 				response.setCode("406");
-				response.setMessage(Message.NOT_ACCEPTABLE);
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 
 			RoomImageDto roomImageDto2 = roomImageService.updateRoomImage(roomImageDto);
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			response.setResults(roomImageDto2);
 			LOGGER.info("putRoomImage: {}", roomImageDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error("putRoomImage: {}", e);
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -153,23 +153,23 @@ public class RoomImageController {
 			if (id == null || id.isEmpty() || !roomImageService.isExist(Long.valueOf(id))) {
 				LOGGER.error("deleteRoomImage: {}", "ID Room Image is not exist");
 				response.setCode("404");
-				response.setMessage(Message.NOT_FOUND);
+				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			roomImageService.removeRoomImage(Long.valueOf(id));
 			LOGGER.info("deleteRoomImage: {}", "DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
 			LOGGER.error("deleteRoomImage: {}", ex);
 			response.setCode("404");
-			response.setMessage(Message.NOT_FOUND);
+			response.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			LOGGER.error("deleteRoomImage: {}", e);
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

@@ -1,9 +1,12 @@
 package vn.edu.fpt.capstone.configuration;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import vn.edu.fpt.capstone.service.impl.SpringSecurityAuditorAware;
 
@@ -11,12 +14,19 @@ import vn.edu.fpt.capstone.service.impl.SpringSecurityAuditorAware;
 public class InitBean {
 	@Bean
 	public ModelMapper modelMapper() {
-		return new ModelMapper();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		return modelMapper;
 	}
 
 	@Bean
 	public AuditorAware<String> auditorAware() {
 		return new SpringSecurityAuditorAware();
+	}
+
+	@Bean
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
 	}
 //	@Bean
 //	public Cloudinary cloudinaryConfig() {

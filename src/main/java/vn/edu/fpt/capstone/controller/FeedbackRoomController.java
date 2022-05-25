@@ -39,24 +39,24 @@ public class FeedbackRoomController {
 				FeedbackRoomDto feedbackRoomDto = feedbackRoomService.findById(lId);
 				responseObject.setResults(feedbackRoomDto);
 				responseObject.setCode("200");
-				responseObject.setMessage(Message.OK);
+				responseObject.setMessageCode(Message.OK);
 				LOGGER.info("getById: {}", feedbackRoomDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
 				LOGGER.error("getById: {}", "ID Feedback Room is not exist");
 				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
+				responseObject.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.error("getById: {}", e);
 			responseObject.setCode("404");
-			responseObject.setMessage(Message.NOT_FOUND);
+			responseObject.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
 			LOGGER.error("getById: {}", ex);
 			responseObject.setCode("500");
-			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -72,13 +72,13 @@ public class FeedbackRoomController {
 				responseObject.setResults(feedbackRoomDtos);
 			}
 			responseObject.setCode("200");
-			responseObject.setMessage(Message.OK);
+			responseObject.setMessageCode(Message.OK);
 			LOGGER.info("getAll: {}", feedbackRoomDtos);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
 			LOGGER.error("getAll: {}", ex);
 			responseObject.setCode("500");
-			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -91,7 +91,7 @@ public class FeedbackRoomController {
 					|| (feedbackRoomDto.getUserId() == null || !userService.checkIdExist(feedbackRoomDto.getUserId()))
 					|| (feedbackRoomDto.getRoomId() == null || !roomService.isExist(feedbackRoomDto.getRoomId()))) {
 				response.setCode("406");
-				response.setMessage(Message.NOT_ACCEPTABLE);
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				LOGGER.error("postFeedbackRoom: {}", "Wrong body format or ID User is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
@@ -99,18 +99,18 @@ public class FeedbackRoomController {
 			FeedbackRoomDto feedbackRoomDto2 = feedbackRoomService.createFeedbackRoom(feedbackRoomDto);
 			if (feedbackRoomDto2 == null) {
 				response.setCode("500");
-				response.setMessage(Message.INTERNAL_SERVER_ERROR);
+				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			response.setResults(feedbackRoomDto2);
 			LOGGER.info("postFeedbackRoom: {}", feedbackRoomDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error("postFeedbackRoom: {}", e);
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -121,27 +121,27 @@ public class FeedbackRoomController {
 		try {
 			if (feedbackRoomDto.getId() == null || !feedbackRoomService.isExist(feedbackRoomDto.getId())) {
 				response.setCode("404");
-				response.setMessage(Message.NOT_FOUND);
+				response.setMessageCode(Message.NOT_FOUND);
 				LOGGER.error("putFeedbackRoom: {}", "ID Feedback Room is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			if ((feedbackRoomDto.getUserId() == null || !userService.checkIdExist(feedbackRoomDto.getUserId()))
 					|| (feedbackRoomDto.getRoomId() == null || !roomService.isExist(feedbackRoomDto.getRoomId()))) {
 				response.setCode("406");
-				response.setMessage(Message.NOT_ACCEPTABLE);
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				LOGGER.error("putFeedbackRoom: {}", "ID User or ID Room is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			FeedbackRoomDto feedbackRoomDto2 = feedbackRoomService.updateFeedbackRoom(feedbackRoomDto);
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			response.setResults(feedbackRoomDto2);
 			LOGGER.info("putFeedbackRoom: {}", feedbackRoomDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error("putFeedbackRoom: {}", e);
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -153,22 +153,22 @@ public class FeedbackRoomController {
 			if (id == null || id.isEmpty() || !feedbackRoomService.isExist(Long.valueOf(id))) {
 				LOGGER.error("deleteFeedbackRoom: {}", "ID Feedback Room is not exist");
 				response.setCode("404");
-				response.setMessage(Message.NOT_FOUND);
+				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			response.setCode("200");
-			response.setMessage(Message.OK);
+			response.setMessageCode(Message.OK);
 			feedbackRoomService.removeFeedbackRoom(Long.valueOf(id));
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
 			LOGGER.error(ex.toString());
 			response.setCode("404");
-			response.setMessage(Message.NOT_FOUND);
+			response.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
 			response.setCode("500");
-			response.setMessage(Message.INTERNAL_SERVER_ERROR);
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

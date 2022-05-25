@@ -3,17 +3,19 @@ package vn.edu.fpt.capstone.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "IMAGE")
+@Table(name = "ROOM_TYPE")
 @EqualsAndHashCode(callSuper = false)
 public class RoomTypeModel extends Auditable<String>{
     @Id
     @Column(name = "ID")
-    @GeneratedValue(generator = "IMAGE_SeqGen", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "IMAGE_SeqGen", sequenceName = "IMAGE_Seq",allocationSize=1)
+    @GeneratedValue(generator = "ROOM_TYPE_SeqGen", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "ROOM_TYPE_SeqGen", sequenceName = "ROOM_TYPE_Seq",allocationSize=1)
     private Long id;
     @Column(name = "NAME")
     private String name;
@@ -21,4 +23,7 @@ public class RoomTypeModel extends Auditable<String>{
     private String description;
     @Column(name = "IMAGE_URL")
     private String imageUrl;
+    @OneToMany(mappedBy = "roomType")
+    private List<RoomModel> room;
+   
 }

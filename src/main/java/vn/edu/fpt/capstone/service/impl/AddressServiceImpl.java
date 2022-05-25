@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import vn.edu.fpt.capstone.dto.AddressDto;
 import vn.edu.fpt.capstone.model.AddressModel;
@@ -60,6 +61,7 @@ public class AddressServiceImpl implements AddressService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	public AddressDto createAddress(AddressDto addressDto) {
 		try {
 			AddressModel addressModel = modelMapper.map(addressDto, AddressModel.class);

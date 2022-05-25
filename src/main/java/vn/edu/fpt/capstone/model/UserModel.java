@@ -1,6 +1,7 @@
 package vn.edu.fpt.capstone.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -63,6 +65,9 @@ public class UserModel extends Auditable<String>{
 	@ManyToOne
     @JoinColumn(name = "role_id")
     private RoleModel role;
+	
+	@OneToMany(mappedBy = "user")
+	private List<HouseModel> house;
 	
 	@Column(name = "verification_code", updatable = false)
 	private String verificationCode;

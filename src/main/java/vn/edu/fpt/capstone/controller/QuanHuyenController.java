@@ -39,24 +39,24 @@ public class QuanHuyenController {
                 QuanHuyenDto quanHuyenDto = quanHuyenService.findById(lId);
                 responseObject.setResults(quanHuyenDto);
                 responseObject.setCode("200");
-                responseObject.setMessage(Message.OK);
+                responseObject.setMessageCode(Message.OK);
                 LOGGER.info("getById: {}",quanHuyenDto);
                 return new ResponseEntity<>(responseObject, HttpStatus.OK);
             } else {
             	LOGGER.error("getById: {}","ID Quan Huyen is not exist");
                 responseObject.setCode("404");
-                responseObject.setMessage(Message.NOT_FOUND);
+                responseObject.setMessageCode(Message.NOT_FOUND);
                 return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
             }
         } catch (NumberFormatException e) {
         	LOGGER.error("getById: {}",e);
             responseObject.setCode("404");
-            responseObject.setMessage(Message.NOT_FOUND);
+            responseObject.setMessageCode(Message.NOT_FOUND);
             return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
         	LOGGER.error("getById: {}",ex);
             responseObject.setCode("500");
-            responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+            responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -73,13 +73,13 @@ public class QuanHuyenController {
 			}
             responseObject.setResults(quanHuyenDtos);
             responseObject.setCode("200");
-            responseObject.setMessage(Message.OK);
+            responseObject.setMessageCode(Message.OK);
             LOGGER.info("getAll: {}",quanHuyenDtos);
             return new ResponseEntity<>(responseObject, HttpStatus.OK);
         } catch (Exception ex) {
         	LOGGER.error("getAll: {}",ex);
             responseObject.setCode("500");
-            responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+            responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -92,24 +92,24 @@ public class QuanHuyenController {
 				List<QuanHuyenDto> quanHuyenDtos = quanHuyenService.findAllByMaTp(lId);
 				responseObject.setResults(quanHuyenDtos);
 				responseObject.setCode("200");
-				responseObject.setMessage(Message.OK);
+				responseObject.setMessageCode(Message.OK);
 				LOGGER.info("getAllByThanhPhoId: {}",quanHuyenDtos);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
 				LOGGER.error("getAllByThanhPhoId: {}","ID Thanh Pho is not exist");
 				responseObject.setCode("404");
-				responseObject.setMessage(Message.NOT_FOUND);
+				responseObject.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.error("getAllByThanhPhoId: {}",e);
 			responseObject.setCode("404");
-			responseObject.setMessage(Message.NOT_FOUND);
+			responseObject.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
 			LOGGER.error("getAllByThanhPhoId: {}",ex);
 			responseObject.setCode("500");
-			responseObject.setMessage(Message.INTERNAL_SERVER_ERROR);
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
