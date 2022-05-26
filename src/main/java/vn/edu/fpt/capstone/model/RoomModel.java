@@ -24,14 +24,17 @@ public class RoomModel extends Auditable<String> {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "roomType_id")
+	@JsonManagedReference
 	private RoomTypeModel roomType;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "roomCategory_id")
+	@JsonManagedReference
 	private RoomCategoryModel roomCategory;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "house_id")
+	@JsonManagedReference
 	private HouseModel house;
 
 //	@OneToMany(mappedBy = "room")

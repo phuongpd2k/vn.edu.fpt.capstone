@@ -19,14 +19,14 @@ public class RoomDto extends Auditable<String> {
 	@JsonProperty("id")
 	private Long id;
 	
-	@JsonProperty("roomType")
-	private RoomTypeDto roomType;
+	@JsonProperty("roomTypeId")
+	private Long roomTypeId;
 	
-	@JsonProperty("roomCategory")
-	private RoomCategoryDto roomCategory;
+	@JsonProperty("roomCategoryId")
+	private Long roomCategoryId;
 	
-	@JsonProperty("house")
-	private HouseDto house;
+	@JsonProperty("houseId")
+	private Long houseId;
 
 	@JsonProperty("name")
 	private String name;
@@ -61,11 +61,11 @@ public class RoomDto extends Auditable<String> {
 	@JsonProperty("introImageUrl")
 	private String introImageUrl;
 	
-	@JsonProperty("amenities")
-	private Set<AmenityDto> amenities;
+	@JsonProperty("amenitiesId")
+	private Set<Long> amenitiesI;
 	
-	@JsonProperty("images")
-	private Set<ImageDto> images;
+	@JsonProperty("imagesId")
+	private Set<Long> imagesID;
 	
 //	private Long roomImageId;
 //	private Long roomTypeId;

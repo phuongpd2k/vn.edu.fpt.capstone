@@ -7,6 +7,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Data
 @Entity
 @Table(name = "HOUSE")
@@ -34,5 +36,6 @@ public class HouseModel extends Auditable<String> {
 	@JoinColumn(name = "user_id")
 	private UserModel user;
 	@OneToMany(mappedBy = "house")
+	@JsonBackReference
 	private Set<RoomModel> room;
 }

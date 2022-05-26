@@ -7,6 +7,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Data
 @Entity
 @Table(name = "ROOM_TYPE")
@@ -24,5 +26,6 @@ public class RoomTypeModel extends Auditable<String>{
     @Column(name = "IMAGE_URL")
     private String imageUrl;
     @OneToMany(mappedBy = "roomType")
+    @JsonBackReference
     private Set<RoomModel> room;
 }

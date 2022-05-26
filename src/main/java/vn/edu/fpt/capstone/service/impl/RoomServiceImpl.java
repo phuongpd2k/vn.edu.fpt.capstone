@@ -84,22 +84,25 @@ public class RoomServiceImpl implements RoomService {
 
 	@Override
 	public ResponseEntity<?> create(RoomDto roomDto) {
-		if ((roomDto.getRoomCategory().getId() != null)
-				&& (!roomCategoryRepository.findById(roomDto.getRoomCategory().getId()).isPresent())) {
+		if ((roomDto.getRoomCategoryId() != null)
+				&& (!roomCategoryRepository.findById(roomDto.getRoomCategoryId()).isPresent())) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(ResponseObject.builder().code("400").message("Create room: id room category not exist!")
 							.messageCode("ID_ROOM_CATEGORY_NOT_EXIST").build());
 		}
-		if ((roomDto.getRoomType().getId() != null)
-				&& (!roomTypeRepository.findById(roomDto.getRoomType().getId()).isPresent())) {
+		if ((roomDto.getRoomTypeId() != null)
+				&& (!roomTypeRepository.findById(roomDto.getRoomTypeId()).isPresent())) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 					.message("Create room: id room type not exist!").messageCode("ID_ROOM_TYPE_NOT_EXIST").build());
 		}
-		if (houseRepository.findById(roomDto.getHouse().getId()) == null) {
+		if (houseRepository.findById(roomDto.getHouseId()) == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 					.message("Create room: id house not exist!").messageCode("ID_HOUSE_NOT_EXIST").build());
 		}
 		RoomModel roomModel = modelMapper.map(roomDto, RoomModel.class);
+		roomModel.setRoomType(roomTypeRepository.findById(roomDto.getRoomTypeId()).get());
+		roomModel.setRoomCategory(roomCategoryRepository.findById(roomDto.getRoomCategoryId()).get());
+		roomModel.setHouse(houseRepository.findById(roomDto.getHouseId()).get());
 
 		try {
 			roomModel = roomRepository.save(roomModel);
@@ -119,23 +122,28 @@ public class RoomServiceImpl implements RoomService {
 					.message("Update room fail: room id not exist!").messageCode("ID_ROOM_NOT_EXIST").build());
 		}
 
-		if ((roomDto.getRoomCategory().getId() != null)
-				&& (!roomCategoryRepository.findById(roomDto.getRoomCategory().getId()).isPresent())) {
+		if ((roomDto.getRoomCategoryId() != null)
+				&& (!roomCategoryRepository.findById(roomDto.getRoomCategoryId()).isPresent())) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(ResponseObject.builder().code("400").message("Update room: id room category not exist!")
 							.messageCode("ID_ROOM_CATEGORY_NOT_EXIST").build());
 		}
-		if ((roomDto.getRoomType().getId() != null)
-				&& (!roomTypeRepository.findById(roomDto.getRoomType().getId()).isPresent())) {
+		if ((roomDto.getRoomTypeId() != null)
+				&& (!roomTypeRepository.findById(roomDto.getRoomTypeId()).isPresent())) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 					.message("Update room: id room type not exist!").messageCode("ID_ROOM_TYPE_NOT_EXIST").build());
 		}
-		if (!houseRepository.findById(roomDto.getHouse().getId()).isPresent()) {
+		if (!houseRepository.findById(roomDto.getHouseId()).isPresent()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 					.message("Update room: id house not exist!").messageCode("ID_HOUSE_NOT_EXIST").build());
 		}
 
-		RoomModel roomModel = convertDtoToEntity(roomDto);
+		RoomModel roomModel = modelMapper.map(roomDto, RoomModel.class);
+		roomModel.setId(roomDto.getId());
+		roomModel.setRoomType(roomTypeRepository.findById(roomDto.getRoomTypeId()).get());
+		roomModel.setRoomCategory(roomCategoryRepository.findById(roomDto.getRoomCategoryId()).get());
+		roomModel.setHouse(houseRepository.findById(roomDto.getHouseId()).get());
+		//RoomModel roomModel = convertDtoToEntity(roomDto);
 		//roomModel.setId(roomDto.getId());
 		
 //		Set<AmenityModel> amenities = new HashSet<AmenityModel>();
