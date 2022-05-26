@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import vn.edu.fpt.capstone.dto.ChangePasswordDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
@@ -69,6 +70,22 @@ public class AuthenticationController {
 
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
 					.message("Verify code: verify code fail!").messageCode("VERIFY_CODE_FAIL").build());
+		}
+	}
+	
+	@PostMapping("/change-password")
+	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto changePasswordDto
+				, @RequestHeader(value = "Authorization") String jwtToken) {
+		try {
+			return authenticationService.changePassword(changePasswordDto, jwtToken);
+		} catch (Exception e) {
+			logger.error("Undefined error change password");
+			logger.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(ResponseObject.builder().code("400").message("Change password undefined error: " + e.getMessage())
+							.messageCode("CHANGE_PASSWORD_FAIL").build());
+
 		}
 	}
 }

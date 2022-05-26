@@ -1,49 +1,72 @@
 package vn.edu.fpt.capstone.dto;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import vn.edu.fpt.capstone.model.AmenityModel;
 import vn.edu.fpt.capstone.model.Auditable;
+import vn.edu.fpt.capstone.model.HouseModel;
+import vn.edu.fpt.capstone.model.ImageModel;
+import vn.edu.fpt.capstone.model.RoomCategoryModel;
+import vn.edu.fpt.capstone.model.RoomTypeModel;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class RoomDto extends Auditable<String> {
-	@JsonProperty(index = 0)
+	@JsonProperty("id")
 	private Long id;
-	@JsonProperty(index = 1)
-	private RoomCategoryDto roomCategory;
-	@JsonProperty(index = 2)
-	private RoomTypeDto roomType;
-	@JsonProperty(index = 3)
-	private List<RoomImageDto> roomImages = new ArrayList<>();
-	@JsonProperty(index = 4)
-	private HouseDto house;
-	@JsonProperty(index = 5)
+	
+	@JsonProperty("roomTypeId")
+	private Long roomTypeId;
+	
+	@JsonProperty("roomCategoryId")
+	private Long roomCategoryId;
+	
+	@JsonProperty("houseId")
+	private Long houseId;
+
+	@JsonProperty("name")
 	private String name;
-	@JsonProperty(index = 6)
+	
+	@JsonProperty("area")
 	private String area;
-	@JsonProperty(index = 7)
+	
+	@JsonProperty("maximumNumberOfPeople")
 	private int maximumNumberOfPeople;
-	@JsonProperty(index = 8)
+	
+	@JsonProperty("rentalPrice")
 	private String rentalPrice;
-	@JsonProperty(index = 9)
+	
+	@JsonProperty("deposit")
 	private boolean deposit;
-	@JsonProperty(index = 10)
-	private String status;
-	@JsonProperty(index = 11)
+	
+	@JsonProperty("status")
+	private Integer status;
+	
+	@JsonProperty("enable")
 	private boolean enable;
-	@JsonProperty(index = 12)
+	
+	@JsonProperty("electricityPriceByNumber")
 	private String electricityPriceByNumber;
-	@JsonProperty(index = 13)
+	
+	@JsonProperty("waterPricePerMonth")
 	private String waterPricePerMonth;
-	@JsonProperty(index = 14)
+	
+	@JsonProperty("description")
 	private String description;
-	@JsonProperty(index = 15)
+	
+	@JsonProperty("introImageUrl")
 	private String introImageUrl;
+	
+	@JsonProperty("amenitiesId")
+	private Set<Long> amenitiesI;
+	
+	@JsonProperty("imagesId")
+	private Set<Long> imagesID;
+	
 //	private Long roomImageId;
 //	private Long roomTypeId;
 //	private Long houseId;

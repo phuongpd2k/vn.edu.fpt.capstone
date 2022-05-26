@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.dto.ChangePasswordDto;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
 
@@ -14,4 +15,6 @@ public interface AuthenticationService {
 	ResponseEntity<?> signUpVerify(SignUpDto signUpDto);
 	
 	ResponseEntity<?> verify(String code);
+	
+	ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, String token);
 }

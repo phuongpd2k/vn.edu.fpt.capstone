@@ -3,9 +3,11 @@ package vn.edu.fpt.capstone.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Data
 @Entity
@@ -24,5 +26,6 @@ public class RoomCategoryModel extends Auditable<String>{
     @Column(name = "IMAGE_URL")
     private String imageUrl;
     @OneToMany(mappedBy = "roomCategory")
-    private List<RoomModel> room;
+    @JsonBackReference
+    private Set<RoomModel> room;
 }

@@ -90,90 +90,24 @@ public class RoomController {
 	}
 
 	@PostMapping(value = "/room")
-	public ResponseEntity<ResponseObject> postRoom(@RequestBody RoomDto roomDto) {
-		ResponseObject response = new ResponseObject();
+	public ResponseEntity<?> postRoom(@RequestBody RoomDto roomDto) {
 		try {
-			if (roomDto.getId() != null
-					|| (roomDto.getRoomCategory().getId() == null
-							|| !roomCategoryService.isExist(roomDto.getRoomCategory().getId()))
-					|| (roomDto.getHouse().getId() == null || !houseService.isExist(roomDto.getHouse().getId()))
-					|| (roomDto.getRoomType().getId() == null
-							|| !roomTypeService.isExist(roomDto.getRoomType().getId()))
-					|| (roomDto.getRoomImages().isEmpty())) {
-				LOGGER.error("postRoom: {}",
-						"Wrong body format or One of the ID Room Category, ID House, ID Room Type is not exist ");
-				response.setCode("406");
-				response.setMessageCode(Message.NOT_ACCEPTABLE);
-				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-			}
-			for (RoomImageDto roomImage : roomDto.getRoomImages()) {
-				if (roomImage.getId() == null || !roomImageService.isExist(roomImage.getId())) {
-					LOGGER.error("postRoom: {}", "ID Room Image is not exist ");
-					response.setCode("406");
-					response.setMessageCode(Message.NOT_ACCEPTABLE);
-					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-				}
-			}
-			RoomDto roomDto2 = roomService.createRoom(roomDto);
-			if (roomDto2 == null) {
-				response.setCode("406");
-				response.setMessageCode(Message.NOT_ACCEPTABLE);
-				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-			}
-			response.setCode("200");
-			response.setMessageCode(Message.OK);
-			response.setResults(roomDto2);
-			LOGGER.info("postRoom: {}", roomDto2);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		} catch (Exception ex) {
-			LOGGER.error("postRoom: {}", ex);
-			response.setCode("500");
-			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return roomService.create(roomDto);
+		} catch (Exception e) {
+			LOGGER.error("Create room fail: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Create room fail: " + e.getMessage()).messageCode("CREATE_ROOM_FAIL").build());
 		}
 	}
-
+	
 	@PutMapping(value = "/room")
-	public ResponseEntity<ResponseObject> putRoom(@RequestBody RoomDto roomDto) {
-		ResponseObject response = new ResponseObject();
+	public ResponseEntity<?> putRoom(@RequestBody RoomDto roomDto) {
 		try {
-			if (roomDto.getId() == null || !roomService.isExist(roomDto.getId())) {
-				LOGGER.error("putRoom: {}", "ID Room is not exist");
-				response.setCode("404");
-				response.setMessageCode(Message.NOT_FOUND);
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-			}
-			if ((roomDto.getRoomCategory().getId() == null
-					|| !roomCategoryService.isExist(roomDto.getRoomCategory().getId()))
-					|| (roomDto.getHouse().getId() == null || !houseService.isExist(roomDto.getHouse().getId()))
-					|| (roomDto.getRoomType().getId() == null
-							|| !roomTypeService.isExist(roomDto.getRoomType().getId()))
-					|| (roomDto.getRoomImages().isEmpty())) {
-				LOGGER.error("putRoom: {}",
-						"One of the ID Room Category, ID House, ID Room Type is not exist ");
-				response.setCode("406");
-				response.setMessageCode(Message.NOT_ACCEPTABLE);
-				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-			}
-			for (RoomImageDto roomImage : roomDto.getRoomImages()) {
-				if (roomImage.getId() == null || !roomImageService.isExist(roomImage.getId())) {
-					LOGGER.error("putRoom: {}", "ID Room Image is not exist ");
-					response.setCode("406");
-					response.setMessageCode(Message.NOT_ACCEPTABLE);
-					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-				}
-			}
-			RoomDto roomDto2 = roomService.updateRoom(roomDto);
-			response.setCode("200");
-			response.setMessageCode(Message.OK);
-			response.setResults(roomDto2);
-			LOGGER.info("putRoom: {}", roomDto2);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		} catch (Exception ex) {
-			LOGGER.error("putRoom: {}", ex);
-			response.setCode("500");
-			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return roomService.update(roomDto);
+		} catch (Exception e) {
+			LOGGER.error("Update room fail: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Update room fail 0: " + e.getMessage()).messageCode("UPDATE_ROOM_FAIL").build());
 		}
 	}
 
