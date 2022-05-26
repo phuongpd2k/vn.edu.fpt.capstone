@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.capstone.constant.Constant;
+import vn.edu.fpt.capstone.dto.ChangePasswordDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
@@ -104,21 +105,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
 					.message("Authenticate request: account inactive!").messageCode("ACCOUNT_INACTIVE").build());
 		}
-		
+
 		if (user.isDelete()) {
 			logger.error("Account locked or deleted!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("Authenticate request: account locked or deleted!").messageCode("ACCOUNT_LOCKED_OR_DELETED").build());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401")
+							.message("Authenticate request: account locked or deleted!")
+							.messageCode("ACCOUNT_LOCKED_OR_DELETED").build());
 		}
-
 
 		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
 				.loadUserByUsername(user.getUsername());
 
 		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
 
-		return ResponseEntity.status(HttpStatus.OK).body(
-				ResponseObject.builder().code("200").message("Get token sign in by email: successfully!").results(jwtResponse).build());
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+				.message("Get token sign in by email: successfully!").results(jwtResponse).build());
 	}
 
 	private ResponseEntity<?> createByEmail(SignInDto signInDto) {
@@ -133,8 +135,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
 
-		return ResponseEntity.status(HttpStatus.OK).body(
-				ResponseObject.builder().code("200").message("Get token sign in by email: successfully!").results(jwtResponse).build());
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+				.message("Get token sign in by email: successfully!").results(jwtResponse).build());
 
 	}
 
@@ -154,8 +156,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if (StringUtils.isEmpty(signInDto.getUsername().trim())
 				|| StringUtils.isEmpty(signInDto.getPassword().trim())) {
 			logger.error("Parameter invalid!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("Authenticate request: username or password invalid!!").messageCode("USERNAME_PASSWORD_INVALID").build());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401")
+							.message("Authenticate request: username or password invalid!!")
+							.messageCode("USERNAME_PASSWORD_INVALID").build());
 
 		}
 
@@ -166,11 +170,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
 					.message("Authenticate request: account inactive!").messageCode("ACCOUNT_INACTIVE").build());
 		}
-		
+
 		if (user.isDelete()) {
 			logger.error("Account locked or deleted!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("Authenticate request: account locked or deleted!").messageCode("ACCOUNT_LOCKED_OR_DELETED").build());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401")
+							.message("Authenticate request: account locked or deleted!")
+							.messageCode("ACCOUNT_LOCKED_OR_DELETED").build());
 		}
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -182,21 +188,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
 
-		return ResponseEntity.status(HttpStatus.OK).body(
-				ResponseObject.builder().code("200").message("Get token signin: successfully!").results(jwtResponse).build());
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+				.message("Get token signin: successfully!").results(jwtResponse).build());
 	}
 
 	@Override
 	public ResponseEntity<?> signUpVerify(SignUpDto signUpDto) {
 		// Validate email
-//		if (!validation.checkRegex(regex_email, signUpDto.getEmail()) || signUpDto.getEmail().isEmpty()) {
-//			logger.error("Email invalid!");
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//					.body(ResponseObject.builder()
-//							.code("400")
-//							.message("sign up request: email invalid!")
-//							.messageCode("EMAIL_INVALID").build());
-//		}
+		if (!validation.checkRegex(regex_email, signUpDto.getEmail()) || signUpDto.getEmail().isEmpty()) {
+			logger.error("Email invalid!");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("sign up request: email invalid!").messageCode("EMAIL_INVALID").build());
+		}
 
 		// Validate user name
 		// user name is 8-20 characters long
@@ -273,6 +276,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
 				.message("Verify code: verify code fail!").messageCode("VERIFY_CODE_FAIL").build());
+	}
+
+	@Override
+	public ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, String jwtToken) {
+		String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+		UserModel user = userRepository.findByUsername(username).orElse(null);
+		return null;
 	}
 
 }
