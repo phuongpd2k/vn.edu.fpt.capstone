@@ -1,7 +1,7 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+//import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Data
 @Entity
 @Table(name = "ROOM")
-@EqualsAndHashCode(callSuper = false)
+//@EqualsAndHashCode(callSuper = false)
 
 public class RoomModel extends Auditable<String> {
 	@Id
@@ -73,7 +73,7 @@ public class RoomModel extends Auditable<String> {
 	@Column(name = "INTRO_IMAGE_URL")
 	private String introImageUrl;
 	
-	@EqualsAndHashCode.Exclude
+	//@EqualsAndHashCode.Exclude
 	@ManyToMany(fetch = FetchType.EAGER,
             cascade = CascadeType.MERGE,
             targetEntity=AmenityModel.class)
@@ -82,10 +82,9 @@ public class RoomModel extends Auditable<String> {
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "amenity_id")
     )
-	@JsonManagedReference
 	private Set<AmenityModel> amenities = new HashSet<AmenityModel>();
 	
-	@EqualsAndHashCode.Exclude
+	//@EqualsAndHashCode.Exclude
 	@ManyToMany(fetch = FetchType.EAGER,
             cascade = CascadeType.MERGE,
             targetEntity=ImageModel.class)
@@ -94,7 +93,6 @@ public class RoomModel extends Auditable<String> {
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
-	@JsonManagedReference
 	private Set<ImageModel> images = new HashSet<ImageModel>();
 	
 

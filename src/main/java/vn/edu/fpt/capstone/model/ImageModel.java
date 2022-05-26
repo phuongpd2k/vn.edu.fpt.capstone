@@ -29,6 +29,5 @@ public class ImageModel extends Auditable<String>{
             cascade = CascadeType.MERGE,
             mappedBy= "images",
             targetEntity = RoomModel.class)
-    @JsonBackReference
     private Set<RoomModel> rooms = new HashSet<RoomModel>();
 }
