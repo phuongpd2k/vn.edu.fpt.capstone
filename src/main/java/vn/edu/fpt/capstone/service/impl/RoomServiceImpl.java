@@ -15,12 +15,15 @@ import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.model.AmenityModel;
 import vn.edu.fpt.capstone.model.ImageModel;
 import vn.edu.fpt.capstone.model.RoomModel;
+import vn.edu.fpt.capstone.repository.AmenityRepository;
 import vn.edu.fpt.capstone.repository.HouseRepository;
+import vn.edu.fpt.capstone.repository.ImageRepository;
 import vn.edu.fpt.capstone.repository.RoomCategoryRepository;
 import vn.edu.fpt.capstone.repository.RoomRepository;
 import vn.edu.fpt.capstone.repository.RoomTypeRepository;
 import vn.edu.fpt.capstone.service.RoomService;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.text.SimpleDateFormat;
@@ -43,6 +46,10 @@ public class RoomServiceImpl implements RoomService {
 	private RoomCategoryRepository roomCategoryRepository;
 	@Autowired
 	private RoomTypeRepository roomTypeRepository;
+	@Autowired
+	private AmenityRepository amenityRepository;
+	@Autowired
+	private ImageRepository imageRepository;
 
 	@Override
 	public RoomDto findById(Long id) {
@@ -69,17 +76,13 @@ public class RoomServiceImpl implements RoomService {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean isExist(Long id) {
 		if (roomRepository.existsById(id)) {
 			return true;
 		}
 		return false;
-	}
-
-	private RoomModel convertDtoToEntity(RoomDto roomDto) {
-		return modelMapper.map(roomDto, RoomModel.class);
 	}
 
 	@Override
@@ -90,8 +93,7 @@ public class RoomServiceImpl implements RoomService {
 					.body(ResponseObject.builder().code("400").message("Create room: id room category not exist!")
 							.messageCode("ID_ROOM_CATEGORY_NOT_EXIST").build());
 		}
-		if ((roomDto.getRoomTypeId() != null)
-				&& (!roomTypeRepository.findById(roomDto.getRoomTypeId()).isPresent())) {
+		if ((roomDto.getRoomTypeId() != null) && (!roomTypeRepository.findById(roomDto.getRoomTypeId()).isPresent())) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 					.message("Create room: id room type not exist!").messageCode("ID_ROOM_TYPE_NOT_EXIST").build());
 		}
@@ -104,15 +106,28 @@ public class RoomServiceImpl implements RoomService {
 		roomModel.setRoomCategory(roomCategoryRepository.findById(roomDto.getRoomCategoryId()).get());
 		roomModel.setHouse(houseRepository.findById(roomDto.getHouseId()).get());
 
+		Set<AmenityModel> amenities = new HashSet<>();
+		for (AmenityDto amenityDto : roomDto.getAmenities()) {
+			amenities.add(modelMapper.map(amenityDto, AmenityModel.class));
+		}
+		roomModel.setAmenities(amenities);
+		
+		Set<ImageModel> images = new HashSet<>();
+		for (ImageDto imageDto : roomDto.getImages()) {
+			images.add(modelMapper.map(imageDto, ImageModel.class));
+		}
+		roomModel.setImages(images);
+
 		try {
 			roomModel = roomRepository.save(roomModel);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-					.message("Create room fail 1: " + e.getMessage()).messageCode("CREATE_ROOM_FAIL").build());
+					.message("Create room fail: " + e.getMessage()).messageCode("CREATE_ROOM_FAIL").build());
 		}
 
-		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-				.message("Create room: successfully!").messageCode("CREATE_ROOM_SUCCESSFULLY").results(roomModel).build());
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(ResponseObject.builder().code("200").message("Create room: successfully!")
+						.messageCode("CREATE_ROOM_SUCCESSFULLY").results(roomModel).build());
 	}
 
 	@Override
@@ -128,8 +143,7 @@ public class RoomServiceImpl implements RoomService {
 					.body(ResponseObject.builder().code("400").message("Update room: id room category not exist!")
 							.messageCode("ID_ROOM_CATEGORY_NOT_EXIST").build());
 		}
-		if ((roomDto.getRoomTypeId() != null)
-				&& (!roomTypeRepository.findById(roomDto.getRoomTypeId()).isPresent())) {
+		if ((roomDto.getRoomTypeId() != null) && (!roomTypeRepository.findById(roomDto.getRoomTypeId()).isPresent())) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 					.message("Update room: id room type not exist!").messageCode("ID_ROOM_TYPE_NOT_EXIST").build());
 		}
@@ -143,9 +157,22 @@ public class RoomServiceImpl implements RoomService {
 		roomModel.setRoomType(roomTypeRepository.findById(roomDto.getRoomTypeId()).get());
 		roomModel.setRoomCategory(roomCategoryRepository.findById(roomDto.getRoomCategoryId()).get());
 		roomModel.setHouse(houseRepository.findById(roomDto.getHouseId()).get());
-		//RoomModel roomModel = convertDtoToEntity(roomDto);
-		//roomModel.setId(roomDto.getId());
 		
+		Set<AmenityModel> amenities = new HashSet<>();
+		for (AmenityDto amenityDto : roomDto.getAmenities()) {
+			amenities.add(modelMapper.map(amenityDto, AmenityModel.class));
+		}
+		roomModel.setAmenities(amenities);
+		
+		Set<ImageModel> images = new HashSet<>();
+		for (ImageDto imageDto : roomDto.getImages()) {
+			images.add(modelMapper.map(imageDto, ImageModel.class));
+		}
+		roomModel.setImages(images);
+
+		// RoomModel roomModel = convertDtoToEntity(roomDto);
+		// roomModel.setId(roomDto.getId());
+
 //		Set<AmenityModel> amenities = new HashSet<AmenityModel>();
 //		for (AmenityDto amenityDto : roomDto.getAmenities()) {
 //			AmenityModel am = modelMapper.map(amenityDto, AmenityModel.class);
@@ -167,7 +194,8 @@ public class RoomServiceImpl implements RoomService {
 					.message("Update room fail: " + e.getMessage()).messageCode("UPDATE_ROOM_FAIL").build());
 		}
 
-		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-				.message("Update room: successfully!").messageCode("UPDATE_ROOM_SUCCESSFULLY").results(roomModel).build());
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(ResponseObject.builder().code("200").message("Update room: successfully!")
+						.messageCode("UPDATE_ROOM_SUCCESSFULLY").results(roomModel).build());
 	}
 }
