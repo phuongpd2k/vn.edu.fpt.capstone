@@ -14,7 +14,9 @@ import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.RoleDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
+import vn.edu.fpt.capstone.model.RoleModel;
 import vn.edu.fpt.capstone.model.UserModel;
+import vn.edu.fpt.capstone.repository.RoleRepository;
 import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.security.JwtTokenUtil;
 import vn.edu.fpt.capstone.service.UserService;
@@ -25,6 +27,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private RoleRepository roleRepository;
 	
 	@Autowired
 	private ModelMapper modelMapper;
@@ -97,7 +102,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<?> getUserInformationById(Long id, String jwtToken) {	
+	public ResponseEntity<?> getUserInformationById(Long id) {	
 		UserModel user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
@@ -129,5 +134,24 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserModel findByVerificationCode(String code) {
 		return userRepository.findByVerificationCode(code).orElse(null);
+	}
+
+	@Override
+	public ResponseEntity<?> userUpdateRole(UserDto userDto) {
+		try {
+			UserModel userModel = userRepository.getById(userDto.getId());
+			RoleModel roleModel = roleRepository.getById(userDto.getRole().getId());
+			userModel.setRole(roleModel);
+			
+			userRepository.save(userModel);
+			
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Update role: Successfully!").messageCode("UPDATE_ROLE_SUCCESSFULLY").build());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Update role: Fail!").messageCode("UPDATE_ROLE_FAIL").build());
+		}
+		
+		
 	}
 }
