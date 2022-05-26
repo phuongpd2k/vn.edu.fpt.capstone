@@ -137,7 +137,7 @@ public class HouseController {
 	}
 
 	@PostMapping(value = "/house/create")
-//	@Transactional
+	@Transactional
 	public ResponseEntity<ResponseObject> postHouseCreate(@RequestBody String jsonString) {
 		ResponseObject response = new ResponseObject();
 		try {
@@ -155,7 +155,7 @@ public class HouseController {
 			}
 			AddressDto requestAddress = houseDto.getAddress();
 			AddressDto responseAddress = new AddressDto();
-			if (requestAddress.getId() != null) {
+			if (requestAddress.getId() == null) {
 				responseAddress = addressService.createAddress(requestAddress);
 				if (responseAddress == null) {
 					response.setCode("500");
@@ -164,14 +164,13 @@ public class HouseController {
 					return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 			} else {
-				if (addressService.isExist(requestAddress.getId())) {
-					LOGGER.error("postHouseCreate: {}", "ID Address is not exist");
-					response.setCode("406");
-					response.setMessage("ID Address is not exist");
-					response.setMessageCode(Message.NOT_ACCEPTABLE);
-					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-				}
+				LOGGER.error("postHouseCreate: {}", "Wrong body format for Address");
+				response.setCode("406");
+				response.setMessage("Wrong body format for Address");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
+			houseDto.setAddress(responseAddress);
 			for (AmenityDto amenityDto : houseDto.getAmenities()) {
 				if (amenityDto == null || !amenityService.isExist(amenityDto.getId())) {
 					LOGGER.error("postHouseCreate: {}", "ID Address is not exist");
@@ -187,8 +186,6 @@ public class HouseController {
 				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-
-			houseDto2.setAddress(responseAddress);
 			response.setCode("200");
 			response.setMessageCode(Message.OK);
 			response.setResults(houseDto2);
