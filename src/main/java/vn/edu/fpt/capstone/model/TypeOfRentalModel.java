@@ -3,6 +3,8 @@ package vn.edu.fpt.capstone.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 @Data
@@ -21,5 +23,8 @@ public class TypeOfRentalModel extends Auditable<String> {
 	private String description;
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
+	
+	@OneToMany(mappedBy = "typeOfRental")
+	private List<HouseModel> houses;
 
 }

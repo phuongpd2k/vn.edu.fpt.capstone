@@ -6,17 +6,18 @@ import vn.edu.fpt.capstone.dto.AmenityDto;
 import java.util.List;
 
 public interface AmenityService {
-    AmenityDto findById(Long id);
-    List<AmenityDto> findAll();
+	AmenityDto findById(Long id);
 
-    AmenityDto updateAmenity(AmenityDto amenityDto);
+	List<AmenityDto> findAll();
 
+	AmenityDto updateAmenity(AmenityDto amenityDto);
 
-    boolean removeAmenity(Long id);
+	boolean removeAmenity(Long id);
 
+	AmenityDto createAmenity(AmenityDto amenityDto);
 
-    AmenityDto createAmenity(AmenityDto amenityDto);
+	
 
-    boolean isExist(Long id);
+	boolean isExist(Long id);
 
 }

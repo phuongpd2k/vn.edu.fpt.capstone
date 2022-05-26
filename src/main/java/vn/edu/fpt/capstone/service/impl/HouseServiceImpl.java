@@ -76,7 +76,7 @@ public class HouseServiceImpl implements HouseService {
 //			} else {
 //				boardingHouseModel.setModifiedBy(boardingHouseModel.getCreatedBy());
 //			}
-			HouseModel saveModel = houseRepository.save(houseModel);
+			HouseModel saveModel = houseRepository.saveAndFlush(houseModel);
 			return modelMapper.map(saveModel, HouseDto.class);
 		} catch (Exception e) {
 			LOGGER.error("createHouse: {}", e);

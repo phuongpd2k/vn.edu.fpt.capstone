@@ -1,5 +1,7 @@
 package vn.edu.fpt.capstone.model;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 import lombok.Data;
@@ -17,4 +19,7 @@ public class PhuongXaModel {
 	private String type;
 	@Column(name = "MAQH")
 	private Long maQh;
+
+	@OneToMany(mappedBy = "phuongXa")
+	private List<AddressModel> addresses;
 }
