@@ -3,7 +3,7 @@ package vn.edu.fpt.capstone.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -24,6 +24,5 @@ public class RoomTypeModel extends Auditable<String>{
     @Column(name = "IMAGE_URL")
     private String imageUrl;
     @OneToMany(mappedBy = "roomType")
-    private List<RoomModel> room;
-   
+    private Set<RoomModel> room;
 }

@@ -21,6 +21,7 @@ public class RoomImageModel extends Auditable<String> {
 	private Long roomId;
 	@Column(name = "IMAGEID")
 	private Long imageId;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "room_id")
 	private RoomModel room;

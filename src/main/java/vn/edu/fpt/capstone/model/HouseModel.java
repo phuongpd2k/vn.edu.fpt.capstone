@@ -3,7 +3,7 @@ package vn.edu.fpt.capstone.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -34,6 +34,5 @@ public class HouseModel extends Auditable<String> {
 	@JoinColumn(name = "user_id")
 	private UserModel user;
 	@OneToMany(mappedBy = "house")
-	private List<RoomModel> room;
-
+	private Set<RoomModel> room;
 }
