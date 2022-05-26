@@ -11,6 +11,7 @@ import vn.edu.fpt.capstone.repository.AmenityRepository;
 import vn.edu.fpt.capstone.service.AmenityService;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,27 +22,28 @@ import java.util.TimeZone;
 public class AmenityServiceImpl implements AmenityService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AmenityServiceImpl.class.getName());
 
-    @Autowired
-    private AmenityRepository amenityRepository;
-    @Autowired
-    ModelMapper modelMapper;
-    @Override
-    public AmenityDto findById(Long id) {
-        AmenityDto amenityDto = modelMapper.map(amenityRepository.findById(id).get(), AmenityDto.class);
-        return amenityDto;
-    }
+	@Autowired
+	private AmenityRepository amenityRepository;
+	@Autowired
+	ModelMapper modelMapper;
 
-    @Override
-    public List<AmenityDto> findAll() {
-        List<AmenityModel> amenityModels = amenityRepository.findAll();
-        if (amenityModels == null || amenityModels.isEmpty()) {
-            return null;
-        }
-        List<AmenityDto> amenityDtos = Arrays.asList(modelMapper.map(amenityModels, AmenityDto[].class));
-        return amenityDtos;
-    }
+	@Override
+	public AmenityDto findById(Long id) {
+		AmenityDto amenityDto = modelMapper.map(amenityRepository.findById(id).get(), AmenityDto.class);
+		return amenityDto;
+	}
 
-    @Override
+	@Override
+	public List<AmenityDto> findAll() {
+		List<AmenityModel> amenityModels = amenityRepository.findAll();
+		if (amenityModels == null || amenityModels.isEmpty()) {
+			return null;
+		}
+		List<AmenityDto> amenityDtos = Arrays.asList(modelMapper.map(amenityModels, AmenityDto[].class));
+		return amenityDtos;
+	}
+
+	@Override
 	public AmenityDto updateAmenity(AmenityDto amenityDto) {
 		AmenityModel amenityModel = modelMapper.map(amenityDto, AmenityModel.class);
 		AmenityModel saveModel = amenityRepository.save(amenityModel);
@@ -83,11 +85,13 @@ public class AmenityServiceImpl implements AmenityService {
 		}
 	}
 
-    @Override
-    public boolean isExist(Long id) {
-        if(amenityRepository.existsById(id)){
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean isExist(Long id) {
+		if (amenityRepository.existsById(id)) {
+			return true;
+		}
+		return false;
+	}
+
+
 }

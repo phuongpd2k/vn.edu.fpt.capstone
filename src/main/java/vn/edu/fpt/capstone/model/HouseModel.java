@@ -2,7 +2,9 @@ package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
@@ -19,21 +21,31 @@ public class HouseModel extends Auditable<String> {
 	private Long id;
 	@Column(name = "NAME")
 	private String name;
-	@OneToOne
-	@JoinColumn(name = "address_id")
-	private AddressModel address;
 	@Column(name = "ENABLE")
 	private boolean enable;
 	@Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT NULL")
 	private String description;
-	@Column(name = "TYPEOFRENTALID")
-	private Long typeOfRentalId;
-	@Column(name = "USERID")
-	private Long userId;
-	@ManyToOne
+//	@ManyToMany(mappedBy = "houses")
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "house_amenitiess", joinColumns = @JoinColumn(name = "house_id", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "amenity_id", insertable = false, updatable = false))
+	private List<AmenityModel> amenities = new ArrayList<AmenityModel>();
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "typeOfRental_id")
+	private TypeOfRentalModel typeOfRental;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private UserModel user;
+
 	@OneToMany(mappedBy = "house")
 	private List<RoomModel> room;
+	@OneToOne
+	@JoinColumn(name = "address_id")
+	private AddressModel address;
 
+//	@Column(name = "TYPEOFRENTALID")
+//	private Long typeOfRentalId;
+//	@Column(name = "USERID")
+//	private Long userId;
 }

@@ -13,9 +13,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import vn.edu.fpt.capstone.constant.Message;
+import vn.edu.fpt.capstone.dto.AddressDto;
+import vn.edu.fpt.capstone.dto.AmenityDto;
+import vn.edu.fpt.capstone.dto.HouseAmenitiesDto;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.AddressService;
+import vn.edu.fpt.capstone.service.AmenityService;
+import vn.edu.fpt.capstone.service.HouseAmenitiesService;
 import vn.edu.fpt.capstone.service.HouseService;
 import vn.edu.fpt.capstone.service.TypeOfRentalService;
 import vn.edu.fpt.capstone.service.UserService;
@@ -39,6 +44,8 @@ public class HouseController {
 	UserService userService;
 	@Autowired
 	ObjectMapper objectMapper;
+	@Autowired
+	AmenityService amenityService;
 
 	@GetMapping(value = "/house/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
@@ -130,56 +137,71 @@ public class HouseController {
 	}
 
 	@PostMapping(value = "/house/create")
+//	@Transactional
 	public ResponseEntity<ResponseObject> postHouseCreate(@RequestBody String jsonString) {
 		ResponseObject response = new ResponseObject();
 		try {
-
-			LOGGER.info("postHouseCreate: {}", jsonString);
 			HouseDto houseDto = objectMapper.readValue(jsonString, HouseDto.class);
 			LOGGER.info("postHouseCreate: {}", houseDto);
-			if (houseDto.getId() != null || (houseDto.getUser().getId() == null
-					|| !userService.checkIdExist((houseDto.getUser().getId()))
-					|| (houseDto.getAddress().getId() == null || !addressService.isExist(houseDto.getAddress().getId()))
-					|| (houseDto.getTypeOfRental().getId() == null
-							|| !typeOfRentalService.isExist(houseDto.getTypeOfRental().getId())))) {
-				LOGGER.error("postHouse: {}",
-						"Wrong body format or ID User, ID Address, ID Type Of Rental is not exist");
+			if (houseDto.getId() != null
+					|| (houseDto.getUser().getId() == null || !userService.checkIdExist((houseDto.getUser().getId()))
+							|| (houseDto.getTypeOfRental().getId() == null
+									|| !typeOfRentalService.isExist(houseDto.getTypeOfRental().getId())))) {
+				LOGGER.error("postHouseCreate: {}", "Wrong body format or ID User, ID Type Of Rental is not exist");
 				response.setCode("406");
+				response.setMessage("Wrong body format or ID User, ID Type Of Rental is not exist");
 				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
-			addressService.createAddress(houseDto.getAddress());
-			houseService.createHouse(houseDto);
-//			if (houseDto.getId() != null
-//					|| (houseDto.getUserId() == null || !userService.checkIdExist(houseDto.getUserId()))
-//					|| (houseDto.getAddressId() == null || !addressService.isExist(houseDto.getAddressId()))
-//					|| (houseDto.getTypeOfRentalId() == null
-//							|| !typeOfRentalService.isExist(houseDto.getTypeOfRentalId()))) {
-//				LOGGER.error("postHouse: {}",
-//						"Wrong body format or ID User, ID Address, ID Type Of Rental is not exist");
-//				response.setCode("406");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			}
-//
-//			HouseDto houseDto2 = houseService.createHouse(houseDto);
-//			if (houseDto2 == null) {
-//				response.setCode("500");
-//				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-//				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//			}
-//			response.setCode("200");
-//			response.setMessageCode(Message.OK);
-//			response.setResults(houseDto2);
-//			LOGGER.info("postHouse: {}", houseDto2);
+			AddressDto requestAddress = houseDto.getAddress();
+			AddressDto responseAddress = new AddressDto();
+			if (requestAddress.getId() != null) {
+				responseAddress = addressService.createAddress(requestAddress);
+				if (responseAddress == null) {
+					response.setCode("500");
+					response.setMessage("Create new Address failed");
+					response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+					return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			} else {
+				if (addressService.isExist(requestAddress.getId())) {
+					LOGGER.error("postHouseCreate: {}", "ID Address is not exist");
+					response.setCode("406");
+					response.setMessage("ID Address is not exist");
+					response.setMessageCode(Message.NOT_ACCEPTABLE);
+					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				}
+			}
+			for (AmenityDto amenityDto : houseDto.getAmenities()) {
+				if (amenityDto == null || !amenityService.isExist(amenityDto.getId())) {
+					LOGGER.error("postHouseCreate: {}", "ID Address is not exist");
+					response.setCode("406");
+					response.setMessage("ID Amenity is not exist");
+					response.setMessageCode(Message.NOT_ACCEPTABLE);
+					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				}
+			}
+			HouseDto houseDto2 = houseService.createHouse(houseDto);
+			if (houseDto2 == null) {
+				response.setCode("500");
+				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+			houseDto2.setAddress(responseAddress);
+			response.setCode("200");
+			response.setMessageCode(Message.OK);
+			response.setResults(houseDto2);
+			LOGGER.info("postHouseCreate: {}", houseDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (UnrecognizedPropertyException ex) {
 			LOGGER.error("postHouseCreate: {}", ex);
-			response.setCode("500");
-			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			response.setCode("406");
+			response.setMessage("Body request is wrong format, please use Json format!");
+			response.setMessageCode(Message.NOT_ACCEPTABLE);
+			return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 		} catch (Exception e) {
-			LOGGER.error("postHouse: {}", e);
+			LOGGER.error("postHouseCreate: {}", e);
 			response.setCode("500");
 			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
