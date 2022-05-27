@@ -1,6 +1,5 @@
 package vn.edu.fpt.capstone.controller;
 
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +14,12 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.AddressDto;
 import vn.edu.fpt.capstone.dto.AmenityDto;
-import vn.edu.fpt.capstone.dto.HouseAmenitiesDto;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.AddressService;
 import vn.edu.fpt.capstone.service.AmenityService;
-import vn.edu.fpt.capstone.service.HouseAmenitiesService;
 import vn.edu.fpt.capstone.service.HouseService;
+import vn.edu.fpt.capstone.service.PhuongXaService;
 import vn.edu.fpt.capstone.service.TypeOfRentalService;
 import vn.edu.fpt.capstone.service.UserService;
 
@@ -46,6 +44,8 @@ public class HouseController {
 	ObjectMapper objectMapper;
 	@Autowired
 	AmenityService amenityService;
+	@Autowired
+	PhuongXaService phuongXaService;
 
 	@GetMapping(value = "/house/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
@@ -72,6 +72,39 @@ public class HouseController {
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
 			LOGGER.error("getById: {}", ex);
+			responseObject.setCode("500");
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping(value = "/house/phuongxa/{id}")
+	public ResponseEntity<ResponseObject> getByPhuongXaId(@PathVariable String id) {
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			Long lId = Long.valueOf(id);
+			if (phuongXaService.isExist(lId)) {
+				List<HouseDto> houseDtos = houseService.findAllByPhuongXaId(lId);
+				responseObject.setResults(houseDtos);
+				responseObject.setCode("200");
+				responseObject.setMessageCode(Message.OK);
+				LOGGER.info("getByPhuongXaId: {}", houseDtos);
+				return new ResponseEntity<>(responseObject, HttpStatus.OK);
+			} else {
+				LOGGER.error("getByPhuongXaId: {}", "ID Thanh Pho is not exist");
+				responseObject.setCode("404");
+				responseObject.setMessageCode(Message.NOT_FOUND);
+				responseObject.setResults(new ArrayList<HouseDto>());
+				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+			}
+		} catch (NumberFormatException e) {
+			LOGGER.error("getByPhuongXaId: {}", e);
+			responseObject.setCode("404");
+			responseObject.setResults(new ArrayList<HouseDto>());
+			responseObject.setMessageCode(Message.NOT_FOUND);
+			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+		} catch (Exception ex) {
+			LOGGER.error("getByPhuongXaId: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -156,6 +189,14 @@ public class HouseController {
 			AddressDto requestAddress = houseDto.getAddress();
 			AddressDto responseAddress = new AddressDto();
 			if (requestAddress.getId() == null) {
+				if (requestAddress.getPhuongXa().getId() == null
+						|| !phuongXaService.isExist(requestAddress.getPhuongXa().getId())) {
+					LOGGER.error("postHouseCreate: {}", "ID Phuong Xa is not exist");
+					response.setCode("406");
+					response.setMessage("ID Phuong Xa is not exist");
+					response.setMessageCode(Message.NOT_ACCEPTABLE);
+					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				}
 				responseAddress = addressService.createAddress(requestAddress);
 				if (responseAddress == null) {
 					response.setCode("500");
