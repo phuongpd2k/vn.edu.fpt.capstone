@@ -21,28 +21,28 @@ import java.util.TimeZone;
 public class HouseServiceImpl implements HouseService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HouseServiceImpl.class.getName());
 
-    @Autowired
-    HouseRepository houseRepository;
-    @Autowired
-    ModelMapper modelMapper;
+	@Autowired
+	HouseRepository houseRepository;
+	@Autowired
+	ModelMapper modelMapper;
 
-    @Override
-    public HouseDto findById(Long id) {
-        HouseDto houseDto = modelMapper.map(houseRepository.findById(id).get(), HouseDto.class);
-        return houseDto;
-    }
+	@Override
+	public HouseDto findById(Long id) {
+		HouseDto houseDto = modelMapper.map(houseRepository.findById(id).get(), HouseDto.class);
+		return houseDto;
+	}
 
-    @Override
-    public List<HouseDto> findAll() {
-        List<HouseModel> houseModels = houseRepository.findAll();
-        if (houseModels == null || houseModels.isEmpty()) {
-            return null;
-        }
-        List<HouseDto> houseDtos = Arrays.asList(modelMapper.map(houseModels, HouseDto[].class));
-        return houseDtos;
-    }
+	@Override
+	public List<HouseDto> findAll() {
+		List<HouseModel> houseModels = houseRepository.findAll();
+		if (houseModels == null || houseModels.isEmpty()) {
+			return null;
+		}
+		List<HouseDto> houseDtos = Arrays.asList(modelMapper.map(houseModels, HouseDto[].class));
+		return houseDtos;
+	}
 
-    @Override
+	@Override
 	public HouseDto updateHouse(HouseDto houseDto) {
 		HouseModel houseModel = modelMapper.map(houseDto, HouseModel.class);
 		HouseModel saveModel = houseRepository.save(houseModel);
@@ -84,13 +84,22 @@ public class HouseServiceImpl implements HouseService {
 		}
 	}
 
-    @Override
-    public boolean isExist(Long id) {
-    	if(houseRepository.existsById(id)){
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean isExist(Long id) {
+		if (houseRepository.existsById(id)) {
+			return true;
+		}
+		return false;
+	}
 
+	@Override
+	public List<HouseDto> findAllByPhuongXaId(Long xaId) {
+		List<HouseModel> houseModels = houseRepository.findByXaId(xaId);
+		if (houseModels == null || houseModels.isEmpty()) {
+			return null;
+		}
+		List<HouseDto> houseDtos = Arrays.asList(modelMapper.map(houseModels, HouseDto[].class));
+		return houseDtos;
+	}
 
 }
