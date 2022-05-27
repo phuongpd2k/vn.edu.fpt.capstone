@@ -32,10 +32,27 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	// Get user by id
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping(value = "/user")
+	public ResponseEntity<?> getListUser(@RequestHeader(value = "Authorization") String jwtToken) {
+		LOGGER.info("Get all user info!");
+		try {
+			List<UserDto> list = userService.getAllUser();
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Get all user successfully!").messageCode("GET_ALL_USER_SUCCESSFULLY").results(list).build());
+		} catch (Exception e) {
+			LOGGER.error("Get all user information");
+			LOGGER.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(ResponseObject.builder().code("500").message("Get all user info fail:" + e.getMessage())
+							.messageCode("GET_ALL_USER_INFORMATION_FAIL").build());
+
+		}
+	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@GetMapping(value = "/user/{id}")
+	@GetMapping(value = "/user/detail/{id}")
 	public ResponseEntity<?> getUserByIdHasRole(@PathVariable long id,
 			@RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get info id: " + id);
@@ -52,8 +69,7 @@ public class UserController {
 		}
 	}
 
-//	@CrossOrigin(origins = "*")
-	@GetMapping(value = "/user")
+	@GetMapping(value = "/user/detail")
 	public ResponseEntity<?> getUser(@RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get info user");
 		try {
@@ -102,9 +118,10 @@ public class UserController {
 	}
 
 	@PutMapping(value = "/user/update-role")
-	public ResponseEntity<?> putUserUpdateRole(@RequestBody UserDto userDto, @RequestHeader(value = "Authorization") String jwtToken) {
+	public ResponseEntity<?> putUserUpdateRole(@RequestBody UserDto userDto,
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
-			return userService.userUpdateRole(userDto);				
+			return userService.userUpdateRole(userDto);
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
