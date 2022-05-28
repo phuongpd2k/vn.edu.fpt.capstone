@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
+import vn.edu.fpt.capstone.dto.RoomDetails;
 import vn.edu.fpt.capstone.dto.ThanhPhoDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.HouseModel;
@@ -43,6 +44,8 @@ public class HouseServiceImpl implements HouseService {
 			ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
 			quanHuyenDto.setThanhPho(thanhPhoDto);
 			houseDtos.get(i).getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+			houseDtos.get(i).getRoomDetails()
+					.setRoomCount(houseRepository.countRoomByHouseId(houseDtos.get(i).getId()));
 		}
 		return houseDtos;
 	}
@@ -54,6 +57,8 @@ public class HouseServiceImpl implements HouseService {
 		ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
 		quanHuyenDto.setThanhPho(thanhPhoDto);
 		houseDto.getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+		houseDto.setRoomDetails(new RoomDetails());
+		houseDto.getRoomDetails().setRoomCount(houseRepository.countRoomByHouseId(houseDto.getId()));
 		return houseDto;
 	}
 

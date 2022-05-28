@@ -1,9 +1,5 @@
 package vn.edu.fpt.capstone.dto;
 
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
