@@ -12,7 +12,7 @@ public class AddressDto extends Auditable<String> {
 	@JsonProperty(index = 0)
 	private Long id;
 	@JsonProperty(index = 4)
-	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate","maQh","name","type" })
+	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "type", "maQh" })
 	private PhuongXaDto phuongXa;
 	@JsonProperty(index = 1)
 	private String street;
