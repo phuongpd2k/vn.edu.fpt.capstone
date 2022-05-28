@@ -44,6 +44,7 @@ public class HouseServiceImpl implements HouseService {
 			ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
 			quanHuyenDto.setThanhPho(thanhPhoDto);
 			houseDtos.get(i).getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+			houseDtos.get(i).setRoomDetails(new RoomDetails());
 			houseDtos.get(i).getRoomDetails()
 					.setRoomCount(houseRepository.countRoomByHouseId(houseDtos.get(i).getId()));
 		}
