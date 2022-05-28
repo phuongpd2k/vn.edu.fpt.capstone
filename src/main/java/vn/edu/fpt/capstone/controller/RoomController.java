@@ -1,22 +1,26 @@
 package vn.edu.fpt.capstone.controller;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import vn.edu.fpt.capstone.dto.RoomDto;
-import vn.edu.fpt.capstone.dto.RoomImageDto;
+import vn.edu.fpt.capstone.model.RoomModel;
+import vn.edu.fpt.capstone.repository.HouseRepository;
+import vn.edu.fpt.capstone.repository.RoomCategoryRepository;
+import vn.edu.fpt.capstone.repository.RoomTypeRepository;
+import vn.edu.fpt.capstone.response.PageableResponse;
+import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.ResponseObject;
-import vn.edu.fpt.capstone.service.HouseService;
-import vn.edu.fpt.capstone.service.RoomCategoryService;
-import vn.edu.fpt.capstone.service.RoomImageService;
 import vn.edu.fpt.capstone.service.RoomService;
-import vn.edu.fpt.capstone.service.RoomTypeService;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -26,15 +30,22 @@ public class RoomController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RoomController.class.getName());
 
 	@Autowired
-	RoomService roomService;
+	private RoomService roomService;
+
 	@Autowired
-	RoomCategoryService roomCategoryService;
+	private HouseRepository houseRepository;
+
 	@Autowired
-	HouseService houseService;
+	private RoomCategoryRepository roomCategoryRepository;
+
 	@Autowired
-	RoomTypeService roomTypeService;
+	private RoomTypeRepository roomTypeRepository;
+
 	@Autowired
-	RoomImageService roomImageService;
+	private Constant constant;
+
+	@Autowired
+	private ModelMapper modelMapper;
 
 	@GetMapping(value = "/room/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
@@ -67,47 +78,95 @@ public class RoomController {
 		}
 	}
 
-	@GetMapping(value = "/room")
-	public ResponseEntity<ResponseObject> getAll() {
-		ResponseObject responseObject = new ResponseObject();
+	@GetMapping(value = "/room/page/{pageIndex}")
+	public ResponseEntity<?> getAllRoom(@PathVariable("pageIndex") int pageIndex) {
 		try {
-			List<RoomDto> roomDtos = roomService.findAll();
-			if (roomDtos == null || roomDtos.isEmpty()) {
-				responseObject.setResults(new ArrayList<>());
-			} else {
-				responseObject.setResults(roomDtos);
-			}
-			responseObject.setCode("200");
-			responseObject.setMessageCode(Message.OK);
-			LOGGER.info("getAll: {}", roomDtos);
-			return new ResponseEntity<>(responseObject, HttpStatus.OK);
+			Page<RoomModel> page = roomService.getPage(constant.PAGE_SIZE, pageIndex);
+			List<RoomDto> list = Arrays.asList(modelMapper.map(page.getContent(), RoomDto[].class));
+
+			PageableResponse pageableResponse = new PageableResponse();
+			pageableResponse.setCurrentPage(pageIndex);
+			pageableResponse.setTotalPages(page.getTotalPages());
+			pageableResponse.setTotalItems(page.getTotalElements());
+			pageableResponse.setResults(list);
+
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Get all room successfully!")
+							.messageCode("GET_ALL_ROOM_SUCCESSFULLY").results(pageableResponse).build());
 		} catch (Exception ex) {
-			LOGGER.error("getAll: {}", ex);
-			responseObject.setCode("500");
-			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+			LOGGER.error("Get all room: {}", ex);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Get all room: " + ex.getMessage()).messageCode("GET_ALL_ROOM_FAIL").build());
 		}
 	}
 
 	@PostMapping(value = "/room")
 	public ResponseEntity<?> postRoom(@RequestBody RoomDto roomDto) {
 		try {
-			return roomService.create(roomDto);
+			if ((roomDto.getRoomCategory().getId() != null)
+					&& (!roomCategoryRepository.findById(roomDto.getRoomCategory().getId()).isPresent())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(ResponseObject.builder().code("400").message("Create room: id room category not exist!")
+								.messageCode("ID_ROOM_CATEGORY_NOT_EXIST").build());
+			}
+			if ((roomDto.getRoomType().getId() != null)
+					&& (!roomTypeRepository.findById(roomDto.getRoomType().getId()).isPresent())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create room: id room type not exist!").messageCode("ID_ROOM_TYPE_NOT_EXIST").build());
+			}
+			if (houseRepository.findById(roomDto.getHouse().getId()) == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create room: id house not exist!").messageCode("ID_HOUSE_NOT_EXIST").build());
+			}
+			RoomModel roomModel = roomService.create(roomDto);
+
+			if (roomModel != null) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseObject.builder().code("200").message("Create room: successfully!")
+								.messageCode("CREATE_ROOM_SUCCESSFULLY").results(roomModel).build());
+			}
+			throw new Exception();
 		} catch (Exception e) {
 			LOGGER.error("Create room fail: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 					.message("Create room fail: " + e.getMessage()).messageCode("CREATE_ROOM_FAIL").build());
 		}
 	}
-	
+
 	@PutMapping(value = "/room")
 	public ResponseEntity<?> putRoom(@RequestBody RoomDto roomDto) {
 		try {
-			return roomService.update(roomDto);
+			if (roomDto.getId() == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Update room fail: room id not exist!").messageCode("ID_ROOM_NOT_EXIST").build());
+			}
+			if ((roomDto.getRoomCategory().getId() != null)
+					&& (!roomCategoryRepository.findById(roomDto.getRoomCategory().getId()).isPresent())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(ResponseObject.builder().code("400").message("Update room: id room category not exist!")
+								.messageCode("ID_ROOM_CATEGORY_NOT_EXIST").build());
+			}
+			if ((roomDto.getRoomType().getId() != null)
+					&& (!roomTypeRepository.findById(roomDto.getRoomType().getId()).isPresent())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Update room: id room type not exist!").messageCode("ID_ROOM_TYPE_NOT_EXIST").build());
+			}
+			if (houseRepository.findById(roomDto.getHouse().getId()) == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Update room: id house not exist!").messageCode("ID_HOUSE_NOT_EXIST").build());
+			}
+			RoomModel roomModel = roomService.create(roomDto);
+
+			if (roomModel != null) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseObject.builder().code("200").message("Update room: successfully!")
+								.messageCode("UPDATE_ROOM_SUCCESSFULLY").results(roomModel).build());
+			}
+			throw new Exception();
 		} catch (Exception e) {
-			LOGGER.error("Update room fail: " + e.getMessage());
+			LOGGER.error("Create room fail: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-					.message("Update room fail 0: " + e.getMessage()).messageCode("UPDATE_ROOM_FAIL").build());
+					.message("Update room fail: " + e.getMessage()).messageCode("UPDATE_ROOM_FAIL").build());
 		}
 	}
 

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.UserDto;
+import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.service.UserService;
+import vn.edu.fpt.capstone.service.impl.UserServiceImpl;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -32,14 +33,18 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private UserServiceImpl userServiceImpl;
+
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping(value = "/user")
 	public ResponseEntity<?> getListUser(@RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get all user info!");
 		try {
 			List<UserDto> list = userService.getAllUser();
-			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-					.message("Get all user successfully!").messageCode("GET_ALL_USER_SUCCESSFULLY").results(list).build());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Get all user successfully!")
+							.messageCode("GET_ALL_USER_SUCCESSFULLY").results(list).build());
 		} catch (Exception e) {
 			LOGGER.error("Get all user information");
 			LOGGER.error(e.getMessage());
@@ -57,7 +62,16 @@ public class UserController {
 			@RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get info id: " + id);
 		try {
-			return userService.getUserInformationById(id);
+			UserModel user = userService.getUserInformationById(id);
+			if (user == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
+						.message("Get user info by id: not found!").messageCode("GET_USER_INFORMATION_FAIL").build());
+			}
+
+			UserDto userDto = userServiceImpl.convertToDto(user);
+
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Get user info: Successfully!").results(userDto).build());
 
 		} catch (Exception e) {
 			LOGGER.error("Get user information");
@@ -73,8 +87,16 @@ public class UserController {
 	public ResponseEntity<?> getUser(@RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get info user");
 		try {
-			return userService.getUserInformationByToken(jwtToken.substring(7));
+			UserModel user = userService.getUserInformationByToken(jwtToken.substring(7));
+			if (user == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body(ResponseObject.builder().code("404").message("Get user info by id: not found!").build());
+			}
 
+			UserDto userDto = userServiceImpl.convertToDto(user);
+
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Get user info: Successfully!").results(userDto).build());
 		} catch (Exception e) {
 			LOGGER.error("Get user information");
 			LOGGER.error(e.getMessage());
@@ -87,13 +109,12 @@ public class UserController {
 	@PutMapping(value = "/user")
 	public ResponseEntity<?> putUser(@RequestBody UserDto userDto) {
 		try {
-			if (userService.updateUser(userDto) != null) {
+			UserModel user = userService.updateUser(userDto);
+			if (user != null) {
 				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 						.message("Update user: successfully!").messageCode("UPDATE_USER_SUCCESSFULLY").build());
-			} else {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
-						.code("1001").message("Update user: fail!").messageCode("UPDATE_USER_FAIL").build());
 			}
+			throw new Exception();
 
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
@@ -103,15 +124,14 @@ public class UserController {
 	}
 
 	@DeleteMapping(value = "/user")
-	public ResponseEntity<ResponseObject> deleteUser(@RequestParam(required = true) String id) {
-		ResponseObject response = new ResponseObject();
+	public ResponseEntity<ResponseObject> deleteUser(@RequestParam(required = true) Long id) {
 		try {
-			response.setMessage("put request");
-			userService.deleteUserById(Long.valueOf(id));
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			userService.deleteUserById(id);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("200")
+					.message("Delete user successfully!").messageCode("DELETE_USER_SUCCESSFULLY").build());
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
-
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Delete user fail:" + e.getMessage()).messageCode("DELETE_USER_FAIL").build());
 		}
@@ -121,11 +141,17 @@ public class UserController {
 	public ResponseEntity<?> putUserUpdateRole(@RequestBody UserDto userDto,
 			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
-			return userService.userUpdateRole(userDto);
+			UserModel user = userService.userUpdateRole(userDto, jwtToken);
+			if (user != null) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseObject.builder().code("200").message("Update role user: successfully!")
+								.messageCode("UPDATE_ROLE_USER_SUCCESSFULLY").build());
+			}
+			throw new Exception();
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
-					.message("Update user: fail!").messageCode("UPDATE_USER_FAIL").build());
+					.message("Update role user: " + e.getMessage()).messageCode("UPDATE_ROLE_USER_FAIL").build());
 		}
 	}
 }

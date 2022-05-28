@@ -25,7 +25,7 @@ public class MailServiceImpl implements MailService{
 	public void sendMailVerifyCode(String email, String username, String code) throws MessagingException, UnsupportedEncodingException {
 		String subject = "Please verify your registration";
 		String senderName = "Hola Boarding House";
-		String verifyURL = "localhost:8080/api/v1/verify?code=" + code;
+		String verifyURL = "https://holahouses.netlify.app/verify-account?code=" + code;
 		
 //		String mailContent = "<p>Dear " + username + ",</p>";
 //		mailContent += "<p>Please click the link below to verify to your registration:</p>";

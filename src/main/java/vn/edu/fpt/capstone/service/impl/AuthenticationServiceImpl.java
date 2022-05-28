@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +16,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.dto.ChangePasswordDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
+import vn.edu.fpt.capstone.dto.RoleDto;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
-import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.model.UserPrincipal;
 import vn.edu.fpt.capstone.repository.UserRepository;
@@ -42,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private String regex_username = "^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
 	private String regex_password = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
-	private String regex_email = "\\b[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b";
+	// private String regex_email = "\\b[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -60,9 +60,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private Validation validation;
 
 	@Autowired
-	private Constant constant;
-
-	@Autowired
 	private RandomString random;
 
 	@Autowired
@@ -74,85 +71,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Autowired
 	private MailService mailService;
 
+	@Autowired
+	private ModelMapper modelMapper;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@Override
 	public ResponseEntity<?> authenticate(SignInDto signInDto) throws AuthenticationException {
-		return signInDto.getSignInOption() == constant.Sign_In_Normal ? signInNormal(signInDto)
-				: signInByGoogle(signInDto);
-	}
-
-	private ResponseEntity<?> signInByGoogle(SignInDto signInDto) {
-		if (StringUtils.isEmpty(signInDto.getEmail().trim())) {
-			logger.error("Authenticate request: email invalid!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(ResponseObject.builder().code("401").message("Authenticate request: email invalid!").build());
-
-		}
-
-		UserModel user = userRepository.findByEmail(signInDto.getEmail()).orElse(null);
-
-		return user == null ? createByEmail(signInDto) : signInByEmail(user, signInDto);
-	}
-
-	private ResponseEntity<?> signInByEmail(UserModel user, SignInDto signInDto) {
-		if (!user.getEmail().equalsIgnoreCase(signInDto.getEmail())) {
-			logger.error("Authenticate request: email not exist in db!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("Authenticate request: email not exist in db!").messageCode("EMAIL_NOT_EXIST").build());
-		}
-
-		if (!user.isActive()) {
-			logger.error("Account inactive!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("Authenticate request: account inactive!").messageCode("ACCOUNT_INACTIVE").build());
-		}
-
-		if (user.isDelete()) {
-			logger.error("Account locked or deleted!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(ResponseObject.builder().code("401")
-							.message("Authenticate request: account locked or deleted!")
-							.messageCode("ACCOUNT_LOCKED_OR_DELETED").build());
-		}
-
-		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
-				.loadUserByUsername(user.getUsername());
-
-		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
-
-		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-				.message("Get token sign in by email: successfully!").results(jwtResponse).build());
-	}
-
-	private ResponseEntity<?> createByEmail(SignInDto signInDto) {
-		SignUpDto signUpDto = convertToSignUpDto(signInDto);
-		signUpDto.setActive(true);
-
-		// save user in to DB
-		UserModel user = userService.createUser(signUpDto);
-
-		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
-				.loadUserByUsername(user.getUsername());
-
-		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
-
-		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-				.message("Get token sign in by email: successfully!").results(jwtResponse).build());
-
-	}
-
-	private SignUpDto convertToSignUpDto(SignInDto signInDto) {
-		SignUpDto signUpDto = new SignUpDto();
-		signUpDto.setEmail(signInDto.getEmail());
-		signUpDto.setFirstName(signInDto.getFirstName());
-		signUpDto.setLastName(signInDto.getLastName());
-		signUpDto.setImageLink(signInDto.getImageLink());
-		signUpDto.setRole(roleService.getRoleByCode("ROLE_USER"));
-		signUpDto.setUsername("hola" + random.generateUsername(4));
-		signUpDto.setPassword(random.generatePassword(8));
-		return signUpDto;
-	}
-
-	private ResponseEntity<?> signInNormal(SignInDto signInDto) {
 		if (StringUtils.isEmpty(signInDto.getUsername().trim())
 				|| StringUtils.isEmpty(signInDto.getPassword().trim())) {
 			logger.error("Parameter invalid!");
@@ -193,13 +119,62 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public ResponseEntity<?> signUpVerify(SignUpDto signUpDto) {
-		// Validate email
-		if (!validation.checkRegex(regex_email, signUpDto.getEmail()) || signUpDto.getEmail().isEmpty()) {
-			logger.error("Email invalid!");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-					.message("sign up request: email invalid!").messageCode("EMAIL_INVALID").build());
+	public ResponseEntity<?> verify(String code) {
+		UserModel userModel = userService.findByVerificationCode(code);
+
+		if (userModel != null) {
+			userModel.setActive(true);
+			userRepository.save(userModel);
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Verify code: verify code successfully!").messageCode("VERIFY_CODE_SUCCESSFULLY").build());
 		}
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
+				.message("Verify code: verify code fail!").messageCode("VERIFY_CODE_FAIL").build());
+	}
+
+	@Override
+	public ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, String jwtToken) {
+		String username = jwtTokenUtil.getUsernameFromToken(jwtToken.substring(7));
+		UserModel user = userRepository.findByUsername(username).orElse(null);
+
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
+					.message("Change password: fail!").messageCode("CHANGE_PASSWORD_FAIL").build());
+		}
+
+		if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+			logger.error("Old password is incorrect!");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(ResponseObject.builder().code("401").message("Change password: Old password is incorrect!")
+							.messageCode("OLD_PASWORD_INCORRECT").build());
+		}
+
+		// Validate password
+		// Minimum eight characters, at least one letter and one number
+		if (!validation.checkRegex(regex_password, changePasswordDto.getNewPassword()) || changePasswordDto.getNewPassword().isEmpty()) {
+			logger.error("New password invalid!");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Change password: new password invalid!").messageCode("NEW_PASSWORD_INVALID").build());
+		}
+
+		String newPassword = passwordEncoder.encode(changePasswordDto.getNewPassword());
+		user.setPassword(newPassword);
+
+		userRepository.save(user);
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("200")
+				.message("Change password: successfully!").messageCode("CHANGE_PASSWORD_SUCCESSFULLY").build());
+	}
+
+	@Override
+	public ResponseEntity<?> signUpNormal(SignUpDto signUpDto) {
+		// Validate email
+//		if (!validation.checkRegex(regex_email, signUpDto.getEmail()) || signUpDto.getEmail().isEmpty()) {
+//			logger.error("Email invalid!");
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+//					.message("sign up request: email invalid!").messageCode("EMAIL_INVALID").build());
+//		}
 
 		// Validate user name
 		// user name is 8-20 characters long
@@ -260,29 +235,94 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 				.message("sign up request: create user successfully!").messageCode("SIGN_UP_SUCCESSFULLY").build());
-
 	}
 
 	@Override
-	public ResponseEntity<?> verify(String code) {
-		UserModel userModel = userService.findByVerificationCode(code);
-
-		if (userModel != null) {
-			userModel.setActive(true);
-			userRepository.save(userModel);
-			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-					.message("Verify code: verify code successfully!").messageCode("VERIFY_CODE_SUCCESSFULLY").build());
+	public ResponseEntity<?> signUpByEmail(SignUpDto signUpDto) {
+		// Check for email exists in a DB
+		if (userRepository.existsByEmail(signUpDto.getEmail())) {
+			logger.error("Email has exits!");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("sign up request: Email has exits!").messageCode("EMAIL_HAS_EXISTED").build());
 		}
 
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
-				.message("Verify code: verify code fail!").messageCode("VERIFY_CODE_FAIL").build());
+		signUpDto.setUsername("hola" + random.generateUsername(4));
+		signUpDto.setPassword(random.generatePassword(8));
+		signUpDto.setActive(true);
+
+		// save user in to DB
+		UserModel user = userService.createUser(signUpDto);
+
+		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
+				.loadUserByUsername(user.getUsername());
+
+		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
+
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+				.message("Get token sign in by email: successfully!").results(jwtResponse).build());
+	}
+
+	private SignUpDto convertToSignUpDto(SignInDto signInDto) {
+		SignUpDto signUpDto = new SignUpDto();
+		signUpDto.setEmail(signInDto.getEmail());
+		signUpDto.setFirstName(signInDto.getFirstName());
+		signUpDto.setLastName(signInDto.getLastName());
+		signUpDto.setImageLink(signInDto.getImageLink());
+		signUpDto.setRole(modelMapper.map(roleService.getRoleByCode("ROLE_USER"), RoleDto.class));
+		signUpDto.setUsername("hola" + random.generateUsername(4));
+		signUpDto.setPassword(random.generatePassword(8));
+		return signUpDto;
 	}
 
 	@Override
-	public ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, String jwtToken) {
-		String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-		UserModel user = userRepository.findByUsername(username).orElse(null);
-		return null;
+	public ResponseEntity<?> authenticateByEmail(SignInDto signInDto) {
+		if (StringUtils.isEmpty(signInDto.getEmail().trim())) {
+			logger.error("Authenticate request: email invalid!");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401").message("Authenticate request: email invalid!").build());
+
+		}
+
+		UserModel user = userRepository.findByEmail(signInDto.getEmail()).orElse(null);
+
+		if (user == null) {
+			SignUpDto signUpDto = convertToSignUpDto(signInDto);
+			signUpDto.setActive(true);
+
+			// save user in to DB
+			UserModel userNew = userService.createUser(signUpDto);
+
+			final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
+					.loadUserByUsername(userNew.getUsername());
+
+			JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
+
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Get token sign in by email: successfully!").results(jwtResponse).build());
+
+		}
+
+		if (!user.isActive()) {
+			logger.error("Account inactive!");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
+					.message("Authenticate request: account inactive!").messageCode("ACCOUNT_INACTIVE").build());
+		}
+
+		if (user.isDelete()) {
+			logger.error("Account locked or deleted!");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401")
+							.message("Authenticate request: account locked or deleted!")
+							.messageCode("ACCOUNT_LOCKED_OR_DELETED").build());
+		}
+
+		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
+				.loadUserByUsername(user.getUsername());
+
+		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
+
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+				.message("Get token sign in by email: successfully!").results(jwtResponse).build());
 	}
 
 }

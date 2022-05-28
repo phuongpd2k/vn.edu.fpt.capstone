@@ -1,11 +1,9 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
-//import lombok.EqualsAndHashCode;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -15,7 +13,12 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Table(name = "ROOM")
 //@EqualsAndHashCode(callSuper = false)
 
-public class RoomModel extends Auditable<String> {
+public class RoomModel extends Auditable<String> implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(generator = "ROOM_SeqGen", strategy = GenerationType.SEQUENCE)
@@ -36,9 +39,6 @@ public class RoomModel extends Auditable<String> {
 	@JoinColumn(name = "house_id")
 	@JsonManagedReference
 	private HouseModel house;
-
-//	@OneToMany(mappedBy = "room")
-//	private List<RoomImageModel> roomImages = new ArrayList<>();
 
 	@Column(name = "NAME")
 	private String name;
@@ -73,27 +73,24 @@ public class RoomModel extends Auditable<String> {
 	@Column(name = "INTRO_IMAGE_URL")
 	private String introImageUrl;
 	
-	//@EqualsAndHashCode.Exclude
-	@ManyToMany(fetch = FetchType.EAGER,
-            cascade = CascadeType.MERGE,
-            targetEntity=AmenityModel.class)
-    @JoinTable(
-            name = "room_amenity",
+	@ManyToMany(cascade = {CascadeType.MERGE})
+    @JoinTable(name = "room_amenity",
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "amenity_id")
     )
-	private Set<AmenityModel> amenities = new HashSet<AmenityModel>();
+	@JsonManagedReference
+    private Collection<AmenityModel> amenities;
 	
-	//@EqualsAndHashCode.Exclude
-	@ManyToMany(fetch = FetchType.EAGER,
-            cascade = CascadeType.MERGE,
-            targetEntity=ImageModel.class)
-    @JoinTable(
-            name = "room_images",
+	@ManyToMany(cascade = {CascadeType.MERGE})
+    @JoinTable(name = "room_images",
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
-	private Set<ImageModel> images = new HashSet<ImageModel>();
+	@JsonManagedReference
+    private Collection<ImageModel> images;
+	
+	@Column(name = "FLOOR")
+	private int floor;
 	
 
 //	@Column(name = "ROOMIMAGEID")

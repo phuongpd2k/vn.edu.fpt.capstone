@@ -3,20 +3,14 @@ package vn.edu.fpt.capstone.service.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import vn.edu.fpt.capstone.dto.ResponseObject;
-import vn.edu.fpt.capstone.dto.RoleDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.RoleModel;
 import vn.edu.fpt.capstone.model.UserModel;
-import vn.edu.fpt.capstone.repository.RoleRepository;
 import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.security.JwtTokenUtil;
 import vn.edu.fpt.capstone.service.UserService;
@@ -29,16 +23,19 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private RoleRepository roleRepository;
-	
-	@Autowired
 	private ModelMapper modelMapper;
 	
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private UserService userService;
 
 	private UserModel convertToEntity(SignUpDto signUpDto) {
-		signUpDto.setPassword(BCrypt.hashpw(signUpDto.getPassword(), BCrypt.gensalt(12)));
+		signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
 		
 		return modelMapper.map(signUpDto, UserModel.class);
 	}
@@ -47,11 +44,8 @@ public class UserServiceImpl implements UserService {
 		return modelMapper.map(userDto, UserModel.class);
 	}
 
-	private UserDto convertToDto(UserModel userModel) {
-		UserDto userDto = modelMapper.map(userModel, UserDto.class);	
-		userDto.setRole(new RoleDto(userModel.getRole().getId(), userModel.getRole().getRole()));
-		
-		return userDto;
+	public UserDto convertToDto(UserModel userModel) {
+		return modelMapper.map(userModel, UserDto.class);	
 	}
 
 	private List<UserDto> convertToListDto(List<UserModel> usersModel) {
@@ -75,15 +69,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean deleteUserById(Long id) {
-		userRepository.deleteById(id);
-		if (userRepository.existsById(id)) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public List<UserDto> getAllUser() {
 		List<UserModel> listModel = userRepository.findAll();
 		if (listModel == null || listModel.isEmpty())
@@ -102,33 +87,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<?> getUserInformationById(Long id) {	
-		UserModel user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
-					.message("Get user info by id: not found!").messageCode("GET_USER_INFORMATION_FAIL").build());
-        }
-        
-        UserDto userDto = convertToDto(user);
-        
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-				.message("Get user info: Successfully!").results(userDto).build());
-        
+	public UserModel getUserInformationById(Long id) {	
+		return userRepository.findById(id).orElse(null);
 	}
 
 	@Override
-	public ResponseEntity<?> getUserInformationByToken(String jwtToken) {
+	public UserModel getUserInformationByToken(String jwtToken) {
 		String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-		UserModel user = userRepository.findByUsername(username).orElse(null);
-        if (user == null) {      
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
-    				.message("Get user info by id: not found!").build());
-        }
-        
-        UserDto userDto = convertToDto(user);
-        
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-				.message("Get user info: Successfully!").results(userDto).build());
+		return userRepository.findByUsername(username).orElse(null);
 	}
 
 	@Override
@@ -137,21 +103,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<?> userUpdateRole(UserDto userDto) {
-		try {
-			UserModel userModel = userRepository.getById(userDto.getId());
-			RoleModel roleModel = roleRepository.getById(userDto.getRole().getId());
+	public UserModel userUpdateRole(UserDto userDto, String jwtToken) {
+			UserModel userModel = userService.getUserInformationByToken(jwtToken.substring(7));
+			RoleModel roleModel = modelMapper.map(userDto.getRole(), RoleModel.class);
 			userModel.setRole(roleModel);
 			
-			userRepository.save(userModel);
+			return userRepository.save(userModel);
+	}
+
+	@Override
+	public void deleteUserById(Long id) {
+			UserModel userModel = userRepository.getById(id);
+			userModel.setDelete(true);
 			
-			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-					.message("Update role: Successfully!").messageCode("UPDATE_ROLE_SUCCESSFULLY").build());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-					.message("Update role: Fail!").messageCode("UPDATE_ROLE_FAIL").build());
-		}
-		
-		
+			userRepository.save(userModel);
 	}
 }
