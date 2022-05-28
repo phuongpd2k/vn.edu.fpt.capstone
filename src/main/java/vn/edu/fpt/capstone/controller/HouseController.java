@@ -20,6 +20,8 @@ import vn.edu.fpt.capstone.service.AddressService;
 import vn.edu.fpt.capstone.service.AmenityService;
 import vn.edu.fpt.capstone.service.HouseService;
 import vn.edu.fpt.capstone.service.PhuongXaService;
+import vn.edu.fpt.capstone.service.QuanHuyenService;
+import vn.edu.fpt.capstone.service.ThanhPhoService;
 import vn.edu.fpt.capstone.service.TypeOfRentalService;
 import vn.edu.fpt.capstone.service.UserService;
 
