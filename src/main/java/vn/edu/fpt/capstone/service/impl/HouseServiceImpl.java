@@ -117,8 +117,8 @@ public class HouseServiceImpl implements HouseService {
 //			} else {
 //				boardingHouseModel.setModifiedBy(boardingHouseModel.getCreatedBy());
 //			}
-			HouseModel saveModel = houseRepository.saveAndFlush(houseModel);
-			return modelMapper.map(saveModel, HouseDto.class);
+			HouseModel saveModel = houseRepository.save(houseModel);
+			return convertEntity2Dto(saveModel);
 		} catch (Exception e) {
 			LOGGER.error("createHouse: {}", e);
 			return null;
@@ -139,7 +139,7 @@ public class HouseServiceImpl implements HouseService {
 		if (houseModels == null || houseModels.isEmpty()) {
 			return null;
 		}
-		List<HouseDto> houseDtos = Arrays.asList(modelMapper.map(houseModels, HouseDto[].class));
+		List<HouseDto> houseDtos = convertEntity2Dto(houseModels);
 		return houseDtos;
 	}
 
