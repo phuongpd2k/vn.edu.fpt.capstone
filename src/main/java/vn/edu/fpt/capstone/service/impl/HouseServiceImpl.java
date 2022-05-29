@@ -39,11 +39,13 @@ public class HouseServiceImpl implements HouseService {
 	public List<HouseDto> convertEntity2Dto(List<HouseModel> models) {
 		List<HouseDto> houseDtos = Arrays.asList(modelMapper.map(models, HouseDto[].class));
 		for (int i = 0; i < houseDtos.size(); i++) {
-			Long maQh = houseDtos.get(i).getAddress().getPhuongXa().getMaQh();
-			QuanHuyenDto quanHuyenDto = quanHuyenService.findById(maQh);
-			ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
-			quanHuyenDto.setThanhPho(thanhPhoDto);
-			houseDtos.get(i).getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+			if (houseDtos.get(i).getAddress() != null || houseDtos.get(i).getAddress().getId() != null) {
+				Long maQh = houseDtos.get(i).getAddress().getPhuongXa().getMaQh();
+				QuanHuyenDto quanHuyenDto = quanHuyenService.findById(maQh);
+				ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
+				quanHuyenDto.setThanhPho(thanhPhoDto);
+				houseDtos.get(i).getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+			}
 			houseDtos.get(i).setRoomDetails(new RoomDetails());
 			houseDtos.get(i).getRoomDetails()
 					.setRoomCount(houseRepository.countRoomByHouseId(houseDtos.get(i).getId()));
@@ -53,11 +55,13 @@ public class HouseServiceImpl implements HouseService {
 
 	public HouseDto convertEntity2Dto(HouseModel model) {
 		HouseDto houseDto = modelMapper.map(model, HouseDto.class);
-		Long maQh = houseDto.getAddress().getPhuongXa().getMaQh();
-		QuanHuyenDto quanHuyenDto = quanHuyenService.findById(maQh);
-		ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
-		quanHuyenDto.setThanhPho(thanhPhoDto);
-		houseDto.getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+		if (houseDto.getAddress() != null || houseDto.getAddress().getId() != null) {
+			Long maQh = houseDto.getAddress().getPhuongXa().getMaQh();
+			QuanHuyenDto quanHuyenDto = quanHuyenService.findById(maQh);
+			ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
+			quanHuyenDto.setThanhPho(thanhPhoDto);
+			houseDto.getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+		}
 		houseDto.setRoomDetails(new RoomDetails());
 		houseDto.getRoomDetails().setRoomCount(houseRepository.countRoomByHouseId(houseDto.getId()));
 		return houseDto;
