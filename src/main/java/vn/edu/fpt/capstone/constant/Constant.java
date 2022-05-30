@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 public class Constant {
 	public final int Sign_In_Normal = 0;
 	public final int Sign_In_By_Google = 1;
+	public final int PAGE_SIZE = 10;
 }

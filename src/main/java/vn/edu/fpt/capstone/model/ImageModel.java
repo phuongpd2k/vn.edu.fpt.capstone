@@ -2,11 +2,9 @@ package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString.Exclude;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 import javax.persistence.*;
 
@@ -25,9 +23,9 @@ public class ImageModel extends Auditable<String>{
     @Column(name = "IMAGE_URL")
     private String imageUrl;
     
-    @ManyToMany(fetch = FetchType.LAZY, 
-            cascade = CascadeType.MERGE,
-            mappedBy= "images",
-            targetEntity = RoomModel.class)
-    private Set<RoomModel> rooms = new HashSet<RoomModel>();
+    @ManyToMany(mappedBy = "images")
+    @EqualsAndHashCode.Exclude
+    @Exclude
+    @JsonBackReference
+    private Collection<RoomModel> rooms;
 }

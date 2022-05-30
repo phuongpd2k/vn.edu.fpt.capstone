@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.dto.ChangePasswordDto;
@@ -25,11 +22,23 @@ public class AuthenticationController {
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
 	@Autowired
 	private AuthenticationService authenticationService;
-
+	
 	@PostMapping(value = "/signup")
-	public ResponseEntity<?> signUp(@RequestBody SignUpDto signUpDto) {
+	public ResponseEntity<?> signUpNormal(@RequestBody SignUpDto signUpDto) {
 		try {
-			return authenticationService.signUpVerify(signUpDto);
+			return authenticationService.signUpNormal(signUpDto);
+		} catch (Exception e) {
+			logger.error(e.toString());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Sign up failed: " + e.getMessage()).messageCode("SIGN_UP_FAILED").build());
+		}
+	}
+	
+	@PostMapping(value = "/signup-by-email")
+	public ResponseEntity<?> signUpByEmail(@RequestBody SignUpDto signUpDto) {
+		try {
+			return authenticationService.signUpByEmail(signUpDto);
 		} catch (Exception e) {
 			logger.error(e.toString());
 
@@ -42,6 +51,28 @@ public class AuthenticationController {
 	public ResponseEntity<?> authenticate(@RequestBody SignInDto signInDto) {
 		try {
 			return authenticationService.authenticate(signInDto);
+		} catch (AuthenticationException e) {
+			logger.error("Authenticate failed for username: " + signInDto.getUsername());
+			logger.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401").message("sign in request: username or pasword wrong!")
+							.messageCode("USERNAME_PASSWORD_WRONG").build());
+		} catch (Exception e) {
+			logger.error("Undefined error");
+			logger.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401").message("sign in undefined error: " + e.getMessage())
+							.messageCode("SIGN_IN_FAIL").build());
+
+		}
+	}
+	
+	@PostMapping("/signin-by-email")
+	public ResponseEntity<?> authenticateByEmail(@RequestBody SignInDto signInDto) {
+		try {
+			return authenticationService.authenticateByEmail(signInDto);
 		} catch (AuthenticationException e) {
 			logger.error("Authenticate failed for username: " + signInDto.getUsername());
 			logger.error(e.getMessage());

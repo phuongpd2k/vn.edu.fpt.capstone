@@ -1,8 +1,6 @@
 package vn.edu.fpt.capstone.service;
 
 import java.util.List;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.capstone.dto.SignUpDto;
@@ -13,12 +11,12 @@ import vn.edu.fpt.capstone.model.UserModel;
 public interface UserService {
 	UserModel createUser(SignUpDto signUpDto);
 	UserModel updateUser(UserDto userDto);
-	boolean deleteUserById(Long id);
 	boolean checkIdExist(Long id);
 	List<UserDto> getAllUser();
 	boolean existsByUsername(String username);
-	ResponseEntity<?> getUserInformationById(Long id);
-	ResponseEntity<?> getUserInformationByToken(String jwtToken);
+	void deleteUserById(Long id);
+	UserModel getUserInformationById(Long id);
+	UserModel getUserInformationByToken(String jwtToken);
 	UserModel findByVerificationCode(String code);
-	ResponseEntity<?> userUpdateRole(UserDto userDto);
+	UserModel userUpdateRole(UserDto userDto, String jwtToken);
 }

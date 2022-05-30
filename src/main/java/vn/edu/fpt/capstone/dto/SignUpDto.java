@@ -5,7 +5,6 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
-import vn.edu.fpt.capstone.model.RoleModel;
 
 @Data
 public class SignUpDto {
@@ -37,10 +36,13 @@ public class SignUpDto {
 	private Date dob;
 	
 	@JsonProperty("role")
-    private RoleModel role;
+    private RoleDto role;
 	
-	@JsonProperty("isActive")
+    private boolean isVerify;
+    
     private boolean isActive;
+    
+    //private boolean isDelete;
 	
 	private String verificationCode;
 }

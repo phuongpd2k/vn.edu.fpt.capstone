@@ -5,12 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString.Exclude;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import javax.persistence.*;
 
@@ -34,6 +30,14 @@ public class AmenityModel extends Auditable<String> {
 	private String icon;
 //	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
 //	@JoinTable(name = "house_amenities", joinColumns = @JoinColumn(name = "amenity_id"), inverseJoinColumns = @JoinColumn(name = "house_id"))
+	
 	@ManyToMany(mappedBy = "amenities", fetch = FetchType.LAZY)
+	@JsonBackReference
 	private List<HouseModel> houses = new ArrayList<HouseModel>();
+	
+	@ManyToMany(mappedBy = "amenities")
+    @EqualsAndHashCode.Exclude
+    @Exclude
+    @JsonBackReference
+    private Collection<RoomModel> rooms;
 }

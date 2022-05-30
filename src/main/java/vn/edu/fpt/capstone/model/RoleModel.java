@@ -7,6 +7,9 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "ROLE",
 	uniqueConstraints = @UniqueConstraint(columnNames = "role"))
@@ -20,33 +23,6 @@ public class RoleModel {
     private String role;
     
     @OneToMany(mappedBy = "role")
+    @JsonManagedReference
     private Set<UserModel> users = new HashSet<UserModel>();
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	@JsonManagedReference
-	public Set<UserModel> getUsers() {
-		return users;
-	}
-
-	public void setUsers(Set<UserModel> users) {
-		this.users = users;
-	}
-
-
-    
 }
