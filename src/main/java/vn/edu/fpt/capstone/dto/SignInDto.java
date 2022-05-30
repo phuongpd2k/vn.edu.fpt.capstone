@@ -7,14 +7,8 @@ import vn.edu.fpt.capstone.model.RoleModel;
 
 @Data
 public class SignInDto {
-	@JsonProperty("signInOption")
-	private int signInOption;
-	
 	@JsonProperty("username")
 	private String username;
-	
-	@JsonProperty("ggid")
-	private String ggid;
 	
 	@JsonProperty("email")
 	private String email;
@@ -30,7 +24,4 @@ public class SignInDto {
 	
 	@JsonProperty("imageLink")
 	private String imageLink;
-	
-	@JsonProperty("role")
-	private RoleModel role;
 }
