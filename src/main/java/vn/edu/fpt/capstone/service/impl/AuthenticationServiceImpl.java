@@ -97,7 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 					.message("Authenticate request: account inactive!").messageCode("INACTIVE_ACCOUNT").build());
 		}
 
-		if (!user.isVerify()) {
+		if (user.isVerify()) {
 			logger.error("unverified account!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 					.body(ResponseObject.builder().code("401")
@@ -311,7 +311,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 					.message("Authenticate request: account inactive!").messageCode("ACCOUNT_INACTIVE").build());
 		}
 
-		if (!user.isVerify()) {
+		if (user.isVerify()) {
 			logger.error("unverified account!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 					.body(ResponseObject.builder().code("401")

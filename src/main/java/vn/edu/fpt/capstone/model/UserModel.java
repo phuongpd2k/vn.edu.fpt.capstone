@@ -68,7 +68,6 @@ public class UserModel extends Auditable<String>{
 	
 	@ManyToOne
     @JoinColumn(name = "role_id")
-	@JsonBackReference
     private RoleModel role;
 	
 	@OneToMany(mappedBy = "user")
