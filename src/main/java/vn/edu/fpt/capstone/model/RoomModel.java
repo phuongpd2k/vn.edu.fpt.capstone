@@ -1,6 +1,7 @@
 package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -11,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Data
 @Entity
 @Table(name = "ROOM")
-//@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false)
 
 public class RoomModel extends Auditable<String> implements Serializable {
 	/**

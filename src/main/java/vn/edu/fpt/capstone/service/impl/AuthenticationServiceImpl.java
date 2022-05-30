@@ -42,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private String regex_username = "^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
 	private String regex_password = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
-	// private String regex_email = "\\b[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b";
+	private String regex_email = "^(([^<>()[\\]\\\\.,;:\\s@\"]+(\\.[^<>()[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -94,15 +94,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if (!user.isActive()) {
 			logger.error("Account inactive!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("Authenticate request: account inactive!").messageCode("ACCOUNT_INACTIVE").build());
+					.message("Authenticate request: account inactive!").messageCode("INACTIVE_ACCOUNT").build());
 		}
 
-		if (user.isDelete()) {
-			logger.error("Account locked or deleted!");
+		if (!user.isVerify()) {
+			logger.error("unverified account!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 					.body(ResponseObject.builder().code("401")
-							.message("Authenticate request: account locked or deleted!")
-							.messageCode("ACCOUNT_LOCKED_OR_DELETED").build());
+							.message("Authenticate request: unverified account!")
+							.messageCode("UNVERIFIED_ACCOUNT").build());
 		}
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -170,11 +170,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public ResponseEntity<?> signUpNormal(SignUpDto signUpDto) {
 		// Validate email
-//		if (!validation.checkRegex(regex_email, signUpDto.getEmail()) || signUpDto.getEmail().isEmpty()) {
-//			logger.error("Email invalid!");
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-//					.message("sign up request: email invalid!").messageCode("EMAIL_INVALID").build());
-//		}
+		if (!validation.checkRegex(regex_email, signUpDto.getEmail()) || signUpDto.getEmail().isEmpty()) {
+			logger.error("Email invalid!");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("sign up request: email invalid!").messageCode("EMAIL_INVALID").build());
+		}
 
 		// Validate user name
 		// user name is 8-20 characters long
@@ -213,7 +213,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		// Verify
 		String verifyCode = random.generateCode(20);
 		signUpDto.setVerificationCode(verifyCode);
-		signUpDto.setActive(false);
+		signUpDto.setActive(true);
+		signUpDto.setVerify(false);
 
 		// Send mail verify
 		try {
@@ -249,6 +250,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		signUpDto.setUsername("hola" + random.generateUsername(4));
 		signUpDto.setPassword(random.generatePassword(8));
 		signUpDto.setActive(true);
+		signUpDto.setVerify(true);
 
 		// save user in to DB
 		UserModel user = userService.createUser(signUpDto);
@@ -287,6 +289,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		if (user == null) {
 			SignUpDto signUpDto = convertToSignUpDto(signInDto);
+			signUpDto.setVerify(true);
 			signUpDto.setActive(true);
 
 			// save user in to DB
@@ -308,12 +311,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 					.message("Authenticate request: account inactive!").messageCode("ACCOUNT_INACTIVE").build());
 		}
 
-		if (user.isDelete()) {
-			logger.error("Account locked or deleted!");
+		if (!user.isVerify()) {
+			logger.error("unverified account!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 					.body(ResponseObject.builder().code("401")
-							.message("Authenticate request: account locked or deleted!")
-							.messageCode("ACCOUNT_LOCKED_OR_DELETED").build());
+							.message("Authenticate request: unverified account!")
+							.messageCode("UNVERIFIED_ACCOUNT").build());
 		}
 
 		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService

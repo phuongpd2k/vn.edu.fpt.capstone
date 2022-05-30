@@ -47,7 +47,7 @@ public class UserDto extends Auditable<String> {
 	private boolean isActive;
 
 	@JsonProperty(index = 11)
-	private boolean isDelete;
+	private boolean isVerify;
 
 	@JsonProperty(index = 12)
 	private RoleDto role;

@@ -60,7 +60,6 @@ public class RoomDto extends Auditable<String> {
 	
 	@JsonProperty("amenities")
 //	private Set<AmenityDto> amenities;
-	
 	private Collection<AmenityDto> amenities;
 	
 	@JsonProperty("images")

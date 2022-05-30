@@ -78,10 +78,13 @@ public class RoomController {
 		}
 	}
 
-	@GetMapping(value = "/room/page/{pageIndex}")
-	public ResponseEntity<?> getAllRoom(@PathVariable("pageIndex") int pageIndex) {
+	
+	@GetMapping(value = "/room/page")
+	public ResponseEntity<?> getAllRoom(@RequestParam(required = true) int pageIndex,
+			@RequestParam(required = true) int pageSize) {
 		try {
-			Page<RoomModel> page = roomService.getPage(constant.PAGE_SIZE, pageIndex);
+			Page<RoomModel> page = roomService.getPage(pageSize, pageIndex);
+			
 			List<RoomDto> list = Arrays.asList(modelMapper.map(page.getContent(), RoomDto[].class));
 
 			PageableResponse pageableResponse = new PageableResponse();

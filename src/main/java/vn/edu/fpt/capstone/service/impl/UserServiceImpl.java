@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void deleteUserById(Long id) {
 			UserModel userModel = userRepository.getById(id);
-			userModel.setDelete(true);
+			userModel.setActive(false);
 			
 			userRepository.save(userModel);
 	}
