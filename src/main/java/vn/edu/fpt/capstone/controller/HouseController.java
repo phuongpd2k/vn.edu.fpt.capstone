@@ -183,7 +183,7 @@ public class HouseController {
 			LOGGER.info("postHouseCreate: {}", houseDto);
 
 			if (houseDto.getName() == null || houseDto.getName().trim().isEmpty()) {
-				LOGGER.error("putHouse: {}", "Name can't null or empty");
+				LOGGER.error("postHouseCreate: {}", "Name can't null or empty");
 				response.setCode("406");
 				response.setMessage("Name can't null or empty");
 				response.setMessageCode(Message.NOT_ACCEPTABLE);

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.HouseDto;
+import vn.edu.fpt.capstone.dto.PhuongXaDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDetails;
 import vn.edu.fpt.capstone.dto.ThanhPhoDto;
@@ -13,6 +14,7 @@ import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.HouseModel;
 import vn.edu.fpt.capstone.repository.HouseRepository;
 import vn.edu.fpt.capstone.service.HouseService;
+import vn.edu.fpt.capstone.service.PhuongXaService;
 import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.ThanhPhoService;
 
@@ -22,6 +24,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
 
 @Service
 public class HouseServiceImpl implements HouseService {
@@ -34,17 +38,38 @@ public class HouseServiceImpl implements HouseService {
 	@Autowired
 	ThanhPhoService thanhPhoService;
 	@Autowired
+	PhuongXaService phuongXaService;
+	@Autowired
 	ModelMapper modelMapper;
+
+	@PostConstruct
+	public void post() {
+		LOGGER.info("PhuongXa: {}", phuongXaService.findById(1L));
+	}
 
 	public List<HouseDto> convertEntity2Dto(List<HouseModel> models) {
 		List<HouseDto> houseDtos = Arrays.asList(modelMapper.map(models, HouseDto[].class));
 		for (int i = 0; i < houseDtos.size(); i++) {
 			if (houseDtos.get(i).getAddress() != null || houseDtos.get(i).getAddress().getId() != null) {
-				Long maQh = houseDtos.get(i).getAddress().getPhuongXa().getMaQh();
-				QuanHuyenDto quanHuyenDto = quanHuyenService.findById(maQh);
-				ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
-				quanHuyenDto.setThanhPho(thanhPhoDto);
-				houseDtos.get(i).getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+				if (houseDtos.get(i).getAddress().getPhuongXa() != null) {
+					Long maQh = houseDtos.get(i).getAddress().getPhuongXa().getMaQh();
+					if (maQh != null) {
+						QuanHuyenDto quanHuyenDto = quanHuyenService.findById(maQh);
+						ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
+						quanHuyenDto.setThanhPho(thanhPhoDto);
+						houseDtos.get(i).getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+					} else {
+						if (houseDtos.get(i).getAddress().getPhuongXa().getId() != null) {
+							PhuongXaDto phuongXaDto = phuongXaService
+									.findById(houseDtos.get(i).getAddress().getPhuongXa().getId());
+							QuanHuyenDto quanHuyenDto = quanHuyenService.findById(phuongXaDto.getMaQh());
+							ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
+							quanHuyenDto.setThanhPho(thanhPhoDto);
+							houseDtos.get(i).getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+						}
+					}
+				}
+
 			}
 			houseDtos.get(i).setRoomDetails(new RoomDetails());
 			houseDtos.get(i).getRoomDetails()
@@ -56,11 +81,24 @@ public class HouseServiceImpl implements HouseService {
 	public HouseDto convertEntity2Dto(HouseModel model) {
 		HouseDto houseDto = modelMapper.map(model, HouseDto.class);
 		if (houseDto.getAddress() != null || houseDto.getAddress().getId() != null) {
-			Long maQh = houseDto.getAddress().getPhuongXa().getMaQh();
-			QuanHuyenDto quanHuyenDto = quanHuyenService.findById(maQh);
-			ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
-			quanHuyenDto.setThanhPho(thanhPhoDto);
-			houseDto.getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+			if (houseDto.getAddress().getPhuongXa() != null) {
+				Long maQh = houseDto.getAddress().getPhuongXa().getMaQh();
+				if (maQh != null) {
+					QuanHuyenDto quanHuyenDto = quanHuyenService.findById(maQh);
+					ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
+					quanHuyenDto.setThanhPho(thanhPhoDto);
+					houseDto.getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+				} else {
+					if (houseDto.getAddress().getPhuongXa().getId() != null) {
+						PhuongXaDto phuongXaDto = phuongXaService.findById(houseDto.getAddress().getPhuongXa().getId());
+						QuanHuyenDto quanHuyenDto = quanHuyenService.findById(phuongXaDto.getMaQh());
+						ThanhPhoDto thanhPhoDto = thanhPhoService.findById(quanHuyenDto.getMaTp());
+						quanHuyenDto.setThanhPho(thanhPhoDto);
+						houseDto.getAddress().getPhuongXa().setQuanHuyen(quanHuyenDto);
+					}
+				}
+			}
+
 		}
 		houseDto.setRoomDetails(new RoomDetails());
 		houseDto.getRoomDetails().setRoomCount(houseRepository.countRoomByHouseId(houseDto.getId()));
@@ -117,7 +155,7 @@ public class HouseServiceImpl implements HouseService {
 //			} else {
 //				boardingHouseModel.setModifiedBy(boardingHouseModel.getCreatedBy());
 //			}
-			HouseModel saveModel = houseRepository.save(houseModel);
+			HouseModel saveModel = houseRepository.saveAndFlush(houseModel);
 			return convertEntity2Dto(saveModel);
 		} catch (Exception e) {
 			LOGGER.error("createHouse: {}", e);
