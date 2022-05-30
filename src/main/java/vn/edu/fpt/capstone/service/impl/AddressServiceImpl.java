@@ -79,7 +79,7 @@ public class AddressServiceImpl implements AddressService {
 //			} else {
 //				addressModel.setModifiedBy(addressModel.getCreatedBy());
 //			}
-			AddressModel saveModel = addressRepository.save(addressModel);
+			AddressModel saveModel = addressRepository.saveAndFlush(addressModel);
 			return modelMapper.map(saveModel, AddressDto.class);
 		} catch (Exception e) {
 			LOGGER.error("createAddress: {}", e);

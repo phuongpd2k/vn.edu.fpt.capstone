@@ -22,20 +22,29 @@ public class HouseDto extends Auditable<String> {
 	@JsonProperty(index = 2)
 	private boolean enable;
 	@JsonProperty(index = 3)
-	private String description;
+	private int area;
 	@JsonProperty(index = 4)
+	private String houseDirection;
+	@JsonProperty(index = 5)
+	private String description;
+	@JsonProperty(index = 6)
+	private String imageUrl;
+	@JsonProperty(index = 7)
 	@JsonIgnoreProperties({ "email", "username", "imageLink", "role", "delete", "active", "dob", "gender",
 			"phoneNumber", "lastName", "firstName", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
 	private UserDto user;
-	@JsonProperty(index = 7)
-	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "name", "description",
+	@JsonProperty(index = 8)
+	private RoomDetails roomDetails;
+
+	@JsonProperty(index = 11)
+	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "description",
 			"imageUrl" })
 	private TypeOfRentalDto typeOfRental;
-	@JsonProperty(index = 5)
+	@JsonProperty(index = 9)
 	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
 	private AddressDto address;
-	@JsonProperty(index = 6)
-	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "type", "name", "icon" })
+	@JsonProperty(index = 10)
+	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "type", "icon" })
 	private List<AmenityDto> amenities = new ArrayList<AmenityDto>();
 //	private Long userId;
 //	private Long addressId;

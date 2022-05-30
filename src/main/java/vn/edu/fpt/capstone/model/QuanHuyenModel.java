@@ -1,5 +1,6 @@
 package vn.edu.fpt.capstone.model;
 
+
 import javax.persistence.*;
 
 import lombok.Data;
@@ -17,5 +18,6 @@ public class QuanHuyenModel {
 	private String type;
 	@Column(name = "MATP")
 	private Long maTp;
+
 
 }

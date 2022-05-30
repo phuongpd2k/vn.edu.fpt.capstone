@@ -1,11 +1,11 @@
 package vn.edu.fpt.capstone.controller;
 
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +15,14 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.AddressDto;
 import vn.edu.fpt.capstone.dto.AmenityDto;
-import vn.edu.fpt.capstone.dto.HouseAmenitiesDto;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.AddressService;
 import vn.edu.fpt.capstone.service.AmenityService;
-import vn.edu.fpt.capstone.service.HouseAmenitiesService;
 import vn.edu.fpt.capstone.service.HouseService;
+import vn.edu.fpt.capstone.service.PhuongXaService;
+import vn.edu.fpt.capstone.service.QuanHuyenService;
+import vn.edu.fpt.capstone.service.ThanhPhoService;
 import vn.edu.fpt.capstone.service.TypeOfRentalService;
 import vn.edu.fpt.capstone.service.UserService;
 
@@ -46,6 +47,8 @@ public class HouseController {
 	ObjectMapper objectMapper;
 	@Autowired
 	AmenityService amenityService;
+	@Autowired
+	PhuongXaService phuongXaService;
 
 	@GetMapping(value = "/house/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
@@ -78,6 +81,39 @@ public class HouseController {
 		}
 	}
 
+	@GetMapping(value = "/house/phuongxa/{id}")
+	public ResponseEntity<ResponseObject> getByPhuongXaId(@PathVariable String id) {
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			Long lId = Long.valueOf(id);
+			if (phuongXaService.isExist(lId)) {
+				List<HouseDto> houseDtos = houseService.findAllByPhuongXaId(lId);
+				responseObject.setResults(houseDtos);
+				responseObject.setCode("200");
+				responseObject.setMessageCode(Message.OK);
+				LOGGER.info("getByPhuongXaId: {}", houseDtos);
+				return new ResponseEntity<>(responseObject, HttpStatus.OK);
+			} else {
+				LOGGER.error("getByPhuongXaId: {}", "ID Thanh Pho is not exist");
+				responseObject.setCode("404");
+				responseObject.setMessageCode(Message.NOT_FOUND);
+				responseObject.setResults(new ArrayList<HouseDto>());
+				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+			}
+		} catch (NumberFormatException e) {
+			LOGGER.error("getByPhuongXaId: {}", e);
+			responseObject.setCode("404");
+			responseObject.setResults(new ArrayList<HouseDto>());
+			responseObject.setMessageCode(Message.NOT_FOUND);
+			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+		} catch (Exception ex) {
+			LOGGER.error("getByPhuongXaId: {}", ex);
+			responseObject.setCode("500");
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	@GetMapping(value = "/house")
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
@@ -100,6 +136,7 @@ public class HouseController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ROLE_LANDLORD')")
 	@PostMapping(value = "/house")
 	public ResponseEntity<ResponseObject> postHouse(@RequestBody HouseDto houseDto) {
 		ResponseObject response = new ResponseObject();
@@ -136,6 +173,7 @@ public class HouseController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ROLE_LANDLORD')")
 	@PostMapping(value = "/house/create")
 	@Transactional
 	public ResponseEntity<ResponseObject> postHouseCreate(@RequestBody String jsonString) {
@@ -143,10 +181,26 @@ public class HouseController {
 		try {
 			HouseDto houseDto = objectMapper.readValue(jsonString, HouseDto.class);
 			LOGGER.info("postHouseCreate: {}", houseDto);
-			if (houseDto.getId() != null
-					|| (houseDto.getUser().getId() == null || !userService.checkIdExist((houseDto.getUser().getId()))
-							|| (houseDto.getTypeOfRental().getId() == null
-									|| !typeOfRentalService.isExist(houseDto.getTypeOfRental().getId())))) {
+
+			if (houseDto.getName() == null || houseDto.getName().trim().isEmpty()) {
+				LOGGER.error("postHouseCreate: {}", "Name can't null or empty");
+				response.setCode("406");
+				response.setMessage("Name can't null or empty");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+			if (houseDto.getDescription() == null || houseDto.getDescription().trim().isEmpty()) {
+				LOGGER.error("putHouse: {}", "Description can't null or empty");
+				response.setCode("406");
+				response.setMessage("Description can't null or empty");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+
+			if (houseDto.getId() != null || (houseDto.getUser() == null || houseDto.getUser().getId() == null
+					|| !userService.checkIdExist((houseDto.getUser().getId()))
+					|| (houseDto.getTypeOfRental() == null || houseDto.getTypeOfRental().getId() == null
+							|| !typeOfRentalService.isExist(houseDto.getTypeOfRental().getId())))) {
 				LOGGER.error("postHouseCreate: {}", "Wrong body format or ID User, ID Type Of Rental is not exist");
 				response.setCode("406");
 				response.setMessage("Wrong body format or ID User, ID Type Of Rental is not exist");
@@ -155,7 +209,15 @@ public class HouseController {
 			}
 			AddressDto requestAddress = houseDto.getAddress();
 			AddressDto responseAddress = new AddressDto();
-			if (requestAddress.getId() == null) {
+			if (requestAddress != null && requestAddress.getId() == null) {
+				if (requestAddress.getPhuongXa() == null || requestAddress.getPhuongXa().getId() == null
+						|| !phuongXaService.isExist(requestAddress.getPhuongXa().getId())) {
+					LOGGER.error("postHouseCreate: {}", "ID Phuong Xa is not exist");
+					response.setCode("406");
+					response.setMessage("ID Phuong Xa is not exist");
+					response.setMessageCode(Message.NOT_ACCEPTABLE);
+					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				}
 				responseAddress = addressService.createAddress(requestAddress);
 				if (responseAddress == null) {
 					response.setCode("500");
@@ -171,6 +233,7 @@ public class HouseController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			houseDto.setAddress(responseAddress);
+			List<AmenityDto> resultAmenity = new ArrayList<AmenityDto>();
 			for (AmenityDto amenityDto : houseDto.getAmenities()) {
 				if (amenityDto == null || !amenityService.isExist(amenityDto.getId())) {
 					LOGGER.error("postHouseCreate: {}", "ID Address is not exist");
@@ -178,6 +241,17 @@ public class HouseController {
 					response.setMessage("ID Amenity is not exist");
 					response.setMessageCode(Message.NOT_ACCEPTABLE);
 					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				} else {
+					for (AmenityDto amenityDto2 : resultAmenity) {
+						if (amenityDto.getId() == amenityDto2.getId()) {
+							LOGGER.error("postHouseCreate: {}", "ID Address is not exist");
+							response.setCode("406");
+							response.setMessage("Duplicate ID Amenities");
+							response.setMessageCode(Message.NOT_ACCEPTABLE);
+							return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+						}
+					}
+					resultAmenity.add(amenityDto);
 				}
 			}
 			HouseDto houseDto2 = houseService.createHouse(houseDto);
@@ -205,7 +279,9 @@ public class HouseController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ROLE_LANDLORD')")
 	@PutMapping(value = "/house")
+	@Transactional
 	public ResponseEntity<ResponseObject> putHouse(@RequestBody HouseDto houseDto) {
 		ResponseObject response = new ResponseObject();
 		try {
@@ -215,14 +291,87 @@ public class HouseController {
 				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
-			if ((houseDto.getUser().getId() == null || !userService.checkIdExist((houseDto.getUser().getId()))
-					|| (houseDto.getAddress().getId() == null || !addressService.isExist(houseDto.getAddress().getId()))
-					|| (houseDto.getTypeOfRental().getId() == null
-							|| !typeOfRentalService.isExist(houseDto.getTypeOfRental().getId())))) {
-				LOGGER.error("putHouse: {}", "ID User, ID Address, ID Type Of Rental is not exist");
+
+			if (houseDto.getName() == null || houseDto.getName().trim().isEmpty()) {
+				LOGGER.error("putHouse: {}", "Name can't null or empty");
 				response.setCode("406");
+				response.setMessage("Name can't null or empty");
 				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+			if (houseDto.getDescription() == null || houseDto.getDescription().trim().isEmpty()) {
+				LOGGER.error("putHouse: {}", "Description can't null or empty");
+				response.setCode("406");
+				response.setMessage("Description can't null or empty");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+
+			if ((houseDto.getUser() == null || houseDto.getUser().getId() == null
+					|| !userService.checkIdExist((houseDto.getUser().getId()))
+					|| (houseDto.getTypeOfRental() == null || houseDto.getTypeOfRental().getId() == null
+							|| !typeOfRentalService.isExist(houseDto.getTypeOfRental().getId())))) {
+				LOGGER.error("putHouse: {}", "ID User, ID Type Of Rental is not exist");
+				response.setCode("406");
+				response.setMessage("ID User, ID Type Of Rental is not exist");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+			HouseDto tempHouse = houseService.findById(houseDto.getId());
+			if (tempHouse.getUser().getId() != houseDto.getUser().getId()) {
+				LOGGER.error("putHouse: {}", "Can't change user");
+				response.setCode("406");
+				response.setMessage("Can't change user for this house");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+			AddressDto requestAddress = houseDto.getAddress();
+			AddressDto responseAddress = new AddressDto();
+			if (requestAddress != null && (requestAddress.getId() != null)) {
+				if (requestAddress.getPhuongXa() == null || requestAddress.getPhuongXa().getId() == null
+						|| !phuongXaService.isExist(requestAddress.getPhuongXa().getId())) {
+					LOGGER.error("putHouse: {}", "ID Phuong Xa is not exist");
+					response.setCode("406");
+					response.setMessage("ID Phuong Xa is not exist");
+					response.setMessageCode(Message.NOT_ACCEPTABLE);
+					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				}
+				if (!addressService.isExist(requestAddress.getId())) {
+					LOGGER.error("putHouse: {}", "ID Address is not exist");
+					response.setCode("406");
+					response.setMessage("ID Address is not exist");
+					response.setMessageCode(Message.NOT_ACCEPTABLE);
+					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				}
+				responseAddress = addressService.updateAddress(requestAddress);
+			} else {
+				LOGGER.error("putHouse: {}", "ID Address is not exist");
+				response.setCode("406");
+				response.setMessage("ID Address is not exist");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+			houseDto.setAddress(responseAddress);
+			List<AmenityDto> resultAmenity = new ArrayList<AmenityDto>();
+			for (AmenityDto amenityDto : houseDto.getAmenities()) {
+				if (amenityDto == null || !amenityService.isExist(amenityDto.getId())) {
+					LOGGER.error("putHouse: {}", "ID Address is not exist");
+					response.setCode("406");
+					response.setMessage("ID Amenity is not exist");
+					response.setMessageCode(Message.NOT_ACCEPTABLE);
+					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+				} else {
+					for (AmenityDto amenityDto2 : resultAmenity) {
+						if (amenityDto.getId() == amenityDto2.getId()) {
+							LOGGER.error("putHouse: {}", "ID Address is not exist");
+							response.setCode("406");
+							response.setMessage("Duplicate ID Amenities");
+							response.setMessageCode(Message.NOT_ACCEPTABLE);
+							return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+						}
+					}
+					resultAmenity.add(amenityDto);
+				}
 			}
 			HouseDto houseDto2 = houseService.updateHouse(houseDto);
 			response.setCode("200");

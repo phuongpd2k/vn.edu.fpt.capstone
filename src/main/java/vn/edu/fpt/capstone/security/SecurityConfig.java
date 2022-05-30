@@ -56,7 +56,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// We don't need CSRF for this example
 		httpSecurity.cors().and().csrf().disable()
 				// dont authenticate this particular request
-				.authorizeRequests().antMatchers("/api/v1/auth/*","/api/typeOfRental","/api/*","/api/room/*").permitAll().
+				.authorizeRequests().antMatchers("/api/v1/auth/*", "/api/typeOfRental", "/api/room", "/api/room/*",
+						"/api/roomCategory", "/api/roomCategory/*", "/api/house/*", "/api/house")
+				.permitAll().
 				// all other requests need to be authenticated
 				anyRequest().authenticated().and().
 				// make sure we use stateless session; session won't be used to
@@ -71,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 			@Override
-			public void addCorsMappings(CorsRegistry registry) { 
+			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**").allowedMethods("*");
 			}
 		};
