@@ -9,6 +9,8 @@ public interface HouseService {
 
 	List<HouseDto> findAllByPhuongXaId(Long xaId);
 
+	List<HouseDto> findAllByUserId(Long userId);
+
 	List<HouseDto> findAll();
 
 	HouseDto updateHouse(HouseDto houseDto);

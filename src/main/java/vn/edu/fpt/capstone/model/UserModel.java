@@ -16,63 +16,64 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@Table(name = "USER", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "username")
-})
+@Table(name = "USER", uniqueConstraints = { @UniqueConstraint(columnNames = "username") })
 @EqualsAndHashCode(callSuper = false)
-public class UserModel extends Auditable<String>{
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class UserModel extends Auditable<String> {
 	@Id
 	@GeneratedValue(generator = "USER_SeqGen", strategy = GenerationType.SEQUENCE)
-	@SequenceGenerator(name = "USER_SeqGen", sequenceName = "USER_Seq",allocationSize=1)
+	@SequenceGenerator(name = "USER_SeqGen", sequenceName = "USER_Seq", allocationSize = 1)
 	@Column(name = "ID")
 	private Long id;
-	
+
 	@Column(name = "USERNAME")
 	private String username;
-	
+
 	@Column(name = "EMAIL")
 	private String email;
-	
+
 	@Column(name = "PASSWORD")
 	private String password;
-	
+
 	@Column(name = "FIRST_NAME")
 	private String firstName;
-	
+
 	@Column(name = "LAST_NAME")
 	private String lastName;
-	
+
 	@Column(name = "PHONE_NUMBER")
 	private String phoneNumber;
-	
+
 	@Column(name = "IMAGE_LINK")
 	private String imageLink;
-	
+
 	@Column(name = "GENDER")
 	private boolean gender;
-	
+
 	@Column(name = "DOB")
 	private Date dob;
-	
+
 	@Column(name = "isActive")
-    private boolean isActive;
-    
-    @Column(name = "isVerify")
-    private boolean isVerify;
-	
+	private boolean isActive;
+
+	@Column(name = "isVerify")
+	private boolean isVerify;
+
 	@ManyToOne
-    @JoinColumn(name = "role_id")
-    private RoleModel role;
-	
+	@JoinColumn(name = "role_id")
+	private RoleModel role;
+
 	@OneToMany(mappedBy = "user")
 	private List<HouseModel> house;
-	
+
 	@Column(name = "verification_code", updatable = false)
 	private String verificationCode;
 }
