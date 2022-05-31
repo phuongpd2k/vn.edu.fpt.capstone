@@ -45,28 +45,28 @@ public class RoomModel extends Auditable<String> implements Serializable {
 	private String name;
 	
 	@Column(name = "AREA")
-	private String area;
+	private double area;
 	
 	@Column(name = "MAXIMUM_NUMBER_OF_PEOPLE")
 	private int maximumNumberOfPeople;
 	
 	@Column(name = "RENTAL_PRICE")
-	private String rentalPrice;
+	private int rentalPrice;
 	
 	@Column(name = "DEPOSIT")
 	private boolean deposit;
 	
 	@Column(name = "STATUS")
-	private Integer status;
+	private boolean status_rental;
 	
 	@Column(name = "ENABLE")
 	private boolean enable;
 	
 	@Column(name = "ELECTRICITY_PRICE_BY_NUMBER")
-	private String electricityPriceByNumber;
+	private int electricityPriceByNumber;
 	
 	@Column(name = "WATER_PRICE_PER_MONTH")
-	private String waterPricePerMonth;
+	private int waterPricePerMonth;
 	
 	@Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT NULL")
 	private String description;
@@ -92,14 +92,4 @@ public class RoomModel extends Auditable<String> implements Serializable {
 	
 	@Column(name = "FLOOR")
 	private int floor;
-	
-
-//	@Column(name = "ROOMIMAGEID")
-//	private Long roomImageId;
-//	@Column(name = "HOUSEID")
-//	private Long houseId;
-//	@Column(name = "ROOMCATEGORYID")
-//	private Long roomCategoryId;
-//	@Column(name = "ROOMTYPEID")
-//	private Long roomTypeId;
 }
