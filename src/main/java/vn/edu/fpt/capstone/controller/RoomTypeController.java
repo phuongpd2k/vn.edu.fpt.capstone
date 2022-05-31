@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.capstone.dto.RoomTypeDto;
 import vn.edu.fpt.capstone.constant.Message;
@@ -75,7 +76,7 @@ public class RoomTypeController {
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD')")
 	@PostMapping(value = "/roomType")
 	public ResponseEntity<ResponseObject> postRoomType(@RequestBody RoomTypeDto roomTypeDto) {
 		ResponseObject response = new ResponseObject();
@@ -104,7 +105,7 @@ public class RoomTypeController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD')")
 	@PutMapping(value = "/roomType")
 	public ResponseEntity<ResponseObject> putRoomType(@RequestBody RoomTypeDto roomTypeDto) {
 		ResponseObject response = new ResponseObject();
@@ -128,7 +129,7 @@ public class RoomTypeController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD')")
 	@DeleteMapping(value = "/roomType/{id}")
 	public ResponseEntity<ResponseObject> deleteRoomType(@PathVariable String id) {
 		ResponseObject response = new ResponseObject();

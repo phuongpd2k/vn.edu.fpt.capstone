@@ -17,6 +17,7 @@ import vn.edu.fpt.capstone.dto.AddressDto;
 import vn.edu.fpt.capstone.dto.AmenityDto;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
+import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.service.AddressService;
 import vn.edu.fpt.capstone.service.AmenityService;
 import vn.edu.fpt.capstone.service.HouseService;
@@ -130,6 +131,73 @@ public class HouseController {
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
 			LOGGER.error("getAll: {}", ex);
+			responseObject.setCode("500");
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER') ")
+	@GetMapping(value = "/house/user")
+	public ResponseEntity<ResponseObject> getHouseByUser(@RequestHeader(value = "Authorization") String jwtToken) {
+
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			UserModel userModel = userService.getUserInformationByToken(jwtToken.substring(7));
+			if (userModel == null) {
+				LOGGER.error("getHouseByUser: {}", userModel);
+				responseObject.setCode("404");
+				responseObject.setMessage("Invalid User");
+				responseObject.setMessageCode(Message.NOT_FOUND);
+				return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			List<HouseDto> houseDtos = houseService.findAllByUserId(userModel.getId());
+			if (houseDtos == null || houseDtos.isEmpty()) {
+				responseObject.setResults(new ArrayList<>());
+			} else {
+				responseObject.setResults(houseDtos);
+			}
+			responseObject.setCode("200");
+			responseObject.setMessageCode(Message.OK);
+			LOGGER.info("getHouseByUser: {}", houseDtos);
+			return new ResponseEntity<>(responseObject, HttpStatus.OK);
+		} catch (Exception ex) {
+			LOGGER.error("getHouseByUser: {}", ex);
+			responseObject.setCode("500");
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping(value = "/house/user/{id}")
+	public ResponseEntity<ResponseObject> getHouseByUserId(@PathVariable String id) {
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			Long lId = Long.valueOf(id);
+			if (userService.checkIdExist(lId)) {
+				List<HouseDto> houseDtos = houseService.findAllByUserId(lId);
+				if (houseDtos == null || houseDtos.isEmpty()) {
+					responseObject.setResults(new ArrayList<>());
+				} else {
+					responseObject.setResults(houseDtos);
+				}
+				responseObject.setCode("200");
+				responseObject.setMessageCode(Message.OK);
+				LOGGER.info("getHouseByUserId: {}", houseDtos);
+				return new ResponseEntity<>(responseObject, HttpStatus.OK);
+			} else {
+				LOGGER.error("getHouseByUserId: {}", "ID User is not exist");
+				responseObject.setCode("404");
+				responseObject.setMessageCode(Message.NOT_FOUND);
+				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+			}
+		} catch (NumberFormatException e) {
+			LOGGER.error("getHouseByUserId: {}", e);
+			responseObject.setCode("404");
+			responseObject.setMessageCode(Message.NOT_FOUND);
+			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+		} catch (Exception ex) {
+			LOGGER.error("getById: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
