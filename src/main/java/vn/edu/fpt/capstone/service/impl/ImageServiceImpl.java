@@ -86,4 +86,13 @@ public class ImageServiceImpl implements ImageService {
         }
         return false;
     }
+
+	@Override
+	public ImageDto getImageByUrl(String url) {
+		ImageModel model = ImageRepository.getImageByUrl(url);
+		if(model == null) {
+			return null;
+		}
+		return modelMapper.map(model, ImageDto.class);
+	}
 }

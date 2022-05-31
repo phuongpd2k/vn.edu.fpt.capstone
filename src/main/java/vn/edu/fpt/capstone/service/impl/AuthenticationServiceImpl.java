@@ -42,8 +42,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private String regex_username = "^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
 	private String regex_password = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
-	private String regex_email = "^(([^<>()[\\]\\\\.,;:\\s@\"]+(\\.[^<>()[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
-
+	private String regex_email = "^(([^<>()[\\]\\.,;:\\s@\"]+(\\.[^<>()[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+	
 	@Autowired
 	private UserRepository userRepository;
 
@@ -214,7 +214,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String verifyCode = random.generateCode(20);
 		signUpDto.setVerificationCode(verifyCode);
 		signUpDto.setActive(true);
-		signUpDto.setVerify(false);
+		signUpDto.setVerify(true);
 
 		// Send mail verify
 		try {
@@ -250,7 +250,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		signUpDto.setUsername("hola" + random.generateUsername(4));
 		signUpDto.setPassword(random.generatePassword(8));
 		signUpDto.setActive(true);
-		signUpDto.setVerify(true);
+		signUpDto.setVerify(false);
 
 		// save user in to DB
 		UserModel user = userService.createUser(signUpDto);
