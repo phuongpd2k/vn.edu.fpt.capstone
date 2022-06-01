@@ -15,6 +15,7 @@ import vn.edu.fpt.capstone.repository.HouseRepository;
 import vn.edu.fpt.capstone.repository.RoomCategoryRepository;
 import vn.edu.fpt.capstone.repository.RoomTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
+import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.RoomService;
@@ -39,6 +40,9 @@ public class RoomController {
 
 	@Autowired
 	private RoomTypeRepository roomTypeRepository;
+
+	@Autowired
+	private Constant constant;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -80,7 +84,7 @@ public class RoomController {
 			@RequestParam(required = true) int pageSize) {
 		try {
 			Page<RoomModel> page = roomService.getPage(pageSize, pageIndex);
-			//Page<RoomDto> page = roomService.getPage(pageSize, pageIndex);
+			
 			List<RoomDto> list = Arrays.asList(modelMapper.map(page.getContent(), RoomDto[].class));
 
 			PageableResponse pageableResponse = new PageableResponse();
@@ -159,7 +163,7 @@ public class RoomController {
 			if (roomModel != null) {
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(ResponseObject.builder().code("200").message("Update room: successfully!")
-								.messageCode("UPDATE_ROOM_SUCCESSFULLY").build());
+								.messageCode("UPDATE_ROOM_SUCCESSFULLY").results(roomModel).build());
 			}
 			throw new Exception();
 		} catch (Exception e) {

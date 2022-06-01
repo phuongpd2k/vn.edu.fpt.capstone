@@ -7,13 +7,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
-<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-=======
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
->>>>>>> 30d00c6 ([DungTVHE140366]:update create room)
 
 @Data
 @Entity
@@ -32,8 +27,8 @@ public class TypeOfRentalModel extends Auditable<String> {
 	private String description;
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
+	
 	@OneToMany(mappedBy = "typeOfRental")
-	@JsonManagedReference
 	private List<HouseModel> houses;
 
 }

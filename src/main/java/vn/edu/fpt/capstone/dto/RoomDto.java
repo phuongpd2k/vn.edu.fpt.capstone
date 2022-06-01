@@ -1,11 +1,13 @@
 package vn.edu.fpt.capstone.dto;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import vn.edu.fpt.capstone.model.AmenityModel;
 import vn.edu.fpt.capstone.model.Auditable;
 
 @Data
@@ -27,28 +29,28 @@ public class RoomDto extends Auditable<String> {
 	private String name;
 	
 	@JsonProperty("area")
-	private double area;
+	private String area;
 	
 	@JsonProperty("maximumNumberOfPeople")
 	private int maximumNumberOfPeople;
 	
 	@JsonProperty("rentalPrice")
-	private int rentalPrice;
+	private String rentalPrice;
 	
 	@JsonProperty("deposit")
 	private boolean deposit;
 	
 	@JsonProperty("status")
-	private boolean status_rental;
+	private Integer status;
 	
 	@JsonProperty("enable")
 	private boolean enable;
 	
 	@JsonProperty("electricityPriceByNumber")
-	private int electricityPriceByNumber;
+	private String electricityPriceByNumber;
 	
 	@JsonProperty("waterPricePerMonth")
-	private int waterPricePerMonth;
+	private String waterPricePerMonth;
 	
 	@JsonProperty("description")
 	private String description;
@@ -57,11 +59,18 @@ public class RoomDto extends Auditable<String> {
 	private String introImageUrl;
 	
 	@JsonProperty("amenities")
+//	private Set<AmenityDto> amenities;
 	private Collection<AmenityDto> amenities;
 	
 	@JsonProperty("images")
+//	private Set<ImageDto> images;
 	private Collection<ImageDto> images;
 	
 	@JsonProperty("floor")
 	private int floor;
+	
+//	private Long roomImageId;
+//	private Long roomTypeId;
+//	private Long houseId;
+//	private Long roomCategoryId;
 }

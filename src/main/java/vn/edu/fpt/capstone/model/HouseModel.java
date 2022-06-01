@@ -12,11 +12,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Data
 @Entity
@@ -48,7 +45,6 @@ public class HouseModel extends Auditable<String> {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "typeOfRental_id")
-	@JsonBackReference
 	private TypeOfRentalModel typeOfRental;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -56,7 +52,6 @@ public class HouseModel extends Auditable<String> {
 	private UserModel user;
 
 	@OneToMany(mappedBy = "house")
-	@JsonBackReference
 	private List<RoomModel> room;
 	@OneToOne
 	@JoinColumn(name = "address_id")

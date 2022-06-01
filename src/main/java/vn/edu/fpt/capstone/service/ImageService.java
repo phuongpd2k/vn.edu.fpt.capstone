@@ -11,6 +11,5 @@ public interface ImageService {
     boolean removeImage(Long id);
     ImageDto createImage(ImageDto roomDto);
     boolean isExist(Long id);
-    ImageDto getImageByUrl(String url);
 
 }

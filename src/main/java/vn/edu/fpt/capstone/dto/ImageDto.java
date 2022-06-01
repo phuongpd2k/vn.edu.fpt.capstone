@@ -13,6 +13,6 @@ import vn.edu.fpt.capstone.model.Auditable;
 public class ImageDto extends Auditable<String>{
 	@JsonProperty(index = 0)
     private Long id;
-	@JsonProperty("imageUrl")
+	@JsonProperty(index = 1)
     private String imageUrl;
 }
