@@ -12,8 +12,6 @@ public interface RoomService {
     boolean removeRoom(Long id);
     boolean isExist(Long id);
     RoomModel create(RoomDto roomDto);
-    Page<RoomModel> getPage(int pageSize, int pageIndex);
-    //Page<RoomDto> getPage(int pageSize, int pageIndex);
-   
-
+    Page<RoomModel> getPage(int pageSize, int pageIndex, Long houseId);
+	void deleteRoom(Long id);
 }

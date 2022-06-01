@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
-import vn.edu.fpt.capstone.model.ImageModel;
 import vn.edu.fpt.capstone.model.RoomModel;
-import vn.edu.fpt.capstone.repository.ImageRepository;
 import vn.edu.fpt.capstone.repository.RoomRepository;
 import vn.edu.fpt.capstone.service.RoomService;
 
@@ -83,16 +81,17 @@ public class RoomServiceImpl implements RoomService {
 		return roomRepository.save(roomModel);
 	}
 
-//	@Override
-//	public Page<RoomDto> getPage(int pageSize, int pageIndex) {
-//		Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-//		return roomRepository.getListPage(pageable);
-//	}
+	@Override
+	public Page<RoomModel> getPage(int pageSize, int pageIndex, Long houseId) {
+		Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+		return roomRepository.getListPage(houseId, pageable);
+	}
 
 	@Override
-	public Page<RoomModel> getPage(int pageSize, int pageIndex) {
-		Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-		return roomRepository.findAll(pageable);
+	public void deleteRoom(Long id) {
+		RoomModel roomModel = roomRepository.getById(id);
+		roomModel.setEnable(false);
+		roomRepository.save(roomModel);		
 	}
 
 }

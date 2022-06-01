@@ -8,11 +8,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Data
 @Entity
@@ -36,7 +32,6 @@ public class HouseModel extends Auditable<String> {
 	private String description;
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
-//	@ManyToMany(mappedBy = "houses")
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "house_amenitiess", joinColumns = @JoinColumn(name = "house_id", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "amenity_id", insertable = false, updatable = false))
 	private List<AmenityModel> amenities = new ArrayList<AmenityModel>();
@@ -56,9 +51,4 @@ public class HouseModel extends Auditable<String> {
 	@OneToOne
 	@JoinColumn(name = "address_id")
 	private AddressModel address;
-
-//	@Column(name = "TYPEOFRENTALID")
-//	private Long typeOfRentalId;
-//	@Column(name = "USERID")
-//	private Long userId;
 }

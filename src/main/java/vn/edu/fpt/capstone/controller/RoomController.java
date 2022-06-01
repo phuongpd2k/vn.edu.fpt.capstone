@@ -16,6 +16,7 @@ import vn.edu.fpt.capstone.repository.RoomCategoryRepository;
 import vn.edu.fpt.capstone.repository.RoomTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.constant.Message;
+import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.RoomService;
 
@@ -51,15 +52,14 @@ public class RoomController {
 			if (roomService.isExist(lId)) {
 				RoomDto roomDto = roomService.findById(lId);
 				LOGGER.info("getById: {}", "roomDto");
-				responseObject.setResults(roomDto);
-				responseObject.setCode("200");
-				responseObject.setMessageCode(Message.OK);
-				return new ResponseEntity<>(responseObject, HttpStatus.OK);
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseObject.builder().code("200").message("Get room successfully!")
+								.messageCode("GET_ROOM_SUCCESSFULLY").results(roomDto).build());
 			} else {
 				LOGGER.error("getById: {}", "ID Room is not exist");
-				responseObject.setCode("404");
-				responseObject.setMessageCode(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body(ResponseObject.builder().code("404").message("Get room Fail!")
+								.messageCode("GET_ROOM_FAIL").build());
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.error("getById: {}", e);
@@ -76,15 +76,15 @@ public class RoomController {
 
 	
 	@GetMapping(value = "/room/page")
-	public ResponseEntity<?> getAllRoom(@RequestParam(required = true) int pageIndex,
-			@RequestParam(required = true) int pageSize) {
+	public ResponseEntity<?> getAllRoomByHouseId(@RequestParam(required = true) int pageIndex,
+			@RequestParam(required = true) int pageSize, @RequestBody HouseDto houseDto) {
 		try {
-			Page<RoomModel> page = roomService.getPage(pageSize, pageIndex);
-			//Page<RoomDto> page = roomService.getPage(pageSize, pageIndex);
+			Page<RoomModel> page = roomService.getPage(pageSize, pageIndex, houseDto.getId());
 			List<RoomDto> list = Arrays.asList(modelMapper.map(page.getContent(), RoomDto[].class));
 
 			PageableResponse pageableResponse = new PageableResponse();
 			pageableResponse.setCurrentPage(pageIndex);
+			pageableResponse.setPageSize(pageSize);
 			pageableResponse.setTotalPages(page.getTotalPages());
 			pageableResponse.setTotalItems(page.getTotalElements());
 			pageableResponse.setResults(list);
@@ -171,29 +171,27 @@ public class RoomController {
 
 	@DeleteMapping(value = "/room/{id}")
 	public ResponseEntity<ResponseObject> deleteRoom(@PathVariable String id) {
-		ResponseObject response = new ResponseObject();
 		try {
 			if (id == null || id.isEmpty() || !roomService.isExist(Long.valueOf(id))) {
 				LOGGER.error("deleteRoom: {}", "ID Room is not exist");
-				response.setCode("404");
-				response.setMessageCode(Message.NOT_FOUND);
-				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-			}
-			response.setCode("200");
-			response.setMessageCode(Message.OK);
-			roomService.removeRoom(Long.valueOf(id));
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
+						.message("Delete room fail: id not found").messageCode("DELETE_ROOM_FAIL").build());
+			}	
+			
+			roomService.deleteRoom(Long.valueOf(id));
 			LOGGER.info("deleteRoom: {}", "DELETED");
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Delete room: successfully!").messageCode("DELETE_ROOM_SUCCESSFULLY").build());
 		} catch (NumberFormatException ex) {
 			LOGGER.error("deleteRoom: {}", ex);
-			response.setCode("404");
-			response.setMessageCode(Message.NOT_FOUND);
-			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			LOGGER.error("deleteRoom: {}", "ID Room is not exist");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
+					.message("Delete room fail: " + ex.getMessage()).messageCode("DELETE_ROOM_FAIL").build());
 		} catch (Exception e) {
 			LOGGER.error("deleteRoom: {}", e);
-			response.setCode("500");
-			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			LOGGER.error("deleteRoom: {}", "ID Room is not exist");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Delete room fail: " + e.getMessage()).messageCode("DELETE_ROOM_FAIL").build());
 		}
 	}
 
