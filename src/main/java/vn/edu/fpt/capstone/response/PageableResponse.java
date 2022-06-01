@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PageableResponse {
 	private int currentPage;
+	private int pageSize;
 	private int totalPages;
 	private Long totalItems;
 	private Object results;

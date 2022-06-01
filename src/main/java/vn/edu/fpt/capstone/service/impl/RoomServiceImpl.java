@@ -7,11 +7,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.model.RoomModel;
 import vn.edu.fpt.capstone.repository.RoomRepository;
 import vn.edu.fpt.capstone.service.RoomService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,10 @@ public class RoomServiceImpl implements RoomService {
 
 	@Autowired
 	private RoomRepository roomRepository;
+	
+	@Autowired
+	private ImageServiceImpl imageServiceImpl;
+	
 	@Autowired
 	private ModelMapper modelMapper;
 
@@ -59,14 +65,33 @@ public class RoomServiceImpl implements RoomService {
 
 	@Override
 	public RoomModel create(RoomDto roomDto) {
+		List<ImageDto> list = new ArrayList<ImageDto>();
+		for (ImageDto imageDto : roomDto.getImages()) {
+			//ImageDto imageDtoNew = imageServiceImpl.getImageByUrl(imageDto.getImageUrl());
+			if(imageDto.getId() != null) {
+				list.add(imageDto);
+			}else {
+				ImageDto imageDtoNew = imageServiceImpl.createImage(imageDto);
+				list.add(imageDtoNew);		
+			}	
+		}
+		roomDto.setImages(list);
 		RoomModel roomModel = modelMapper.map(roomDto, RoomModel.class);
+		roomModel.setEnable(true);
 		return roomRepository.save(roomModel);
 	}
 
 	@Override
-	public Page<RoomModel> getPage(int pageSize, int pageIndex) {
+	public Page<RoomModel> getPage(int pageSize, int pageIndex, Long houseId) {
 		Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-		return roomRepository.findAll(pageable);
+		return roomRepository.getListPage(houseId, pageable);
+	}
+
+	@Override
+	public void deleteRoom(Long id) {
+		RoomModel roomModel = roomRepository.getById(id);
+		roomModel.setEnable(false);
+		roomRepository.save(roomModel);		
 	}
 
 }

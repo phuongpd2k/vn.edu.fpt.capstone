@@ -8,9 +8,6 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -38,13 +35,13 @@ public class HouseModel extends Auditable<String> {
 	private String description;
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
-//	@ManyToMany(mappedBy = "houses")
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "house_amenitiess", joinColumns = @JoinColumn(name = "house_id", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "amenity_id", insertable = false, updatable = false))
 	private List<AmenityModel> amenities = new ArrayList<AmenityModel>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "typeOfRental_id")
+	@JsonBackReference
 	private TypeOfRentalModel typeOfRental;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -52,13 +49,9 @@ public class HouseModel extends Auditable<String> {
 	private UserModel user;
 
 	@OneToMany(mappedBy = "house")
+	@JsonBackReference
 	private List<RoomModel> room;
 	@OneToOne
 	@JoinColumn(name = "address_id")
 	private AddressModel address;
-
-//	@Column(name = "TYPEOFRENTALID")
-//	private Long typeOfRentalId;
-//	@Column(name = "USERID")
-//	private Long userId;
 }
