@@ -7,13 +7,18 @@ import java.util.List;
 
 import javax.persistence.*;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 
 @Data
 @Entity
 @Table(name = "TYPE_OF_RENTAL")
 @EqualsAndHashCode(callSuper = false)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class TypeOfRentalModel extends Auditable<String> {
 	@Id
 	@Column(name = "ID")

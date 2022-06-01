@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.constant.Message;
@@ -76,7 +77,7 @@ public class AmenityController {
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/amenity")
 	public ResponseEntity<ResponseObject> postAmenity(@RequestBody AmenityDto amenityDto) {
 		ResponseObject response = new ResponseObject();
@@ -105,7 +106,7 @@ public class AmenityController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/amenity")
 	public ResponseEntity<ResponseObject> putAmenity(@RequestBody AmenityDto amenityDto) {
 		ResponseObject response = new ResponseObject();
@@ -129,7 +130,7 @@ public class AmenityController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/amenity/{id}")
 	public ResponseEntity<ResponseObject> deleteAmenity(@PathVariable String id) {
 		ResponseObject response = new ResponseObject();
