@@ -75,7 +75,7 @@ public class RoomController {
 	}
 
 	
-	@GetMapping(value = "/room/page")
+	@PostMapping(value = "/room/page")
 	public ResponseEntity<?> getAllRoomByHouseId(@RequestParam(required = true) int pageIndex,
 			@RequestParam(required = true) int pageSize, @RequestBody HouseDto houseDto) {
 		try {
