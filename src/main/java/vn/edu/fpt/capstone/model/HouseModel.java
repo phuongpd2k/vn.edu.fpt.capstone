@@ -35,6 +35,8 @@ public class HouseModel extends Auditable<String> {
 	private String description;
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
+	@Column(name = "PHONE_NUMBER")
+	private Long phoneNumber;
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "house_amenitiess", joinColumns = @JoinColumn(name = "house_id", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "amenity_id", insertable = false, updatable = false))
 	private List<AmenityModel> amenities = new ArrayList<AmenityModel>();
