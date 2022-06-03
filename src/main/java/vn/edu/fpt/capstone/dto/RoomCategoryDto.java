@@ -17,4 +17,6 @@ public class RoomCategoryDto extends Auditable<String> {
 	private String description;
 	@JsonProperty(index = 3)
 	private String imageUrl;
+	@JsonProperty(index = 4)
+	private String icon;
 }
