@@ -31,6 +31,8 @@ public class TypeOfRentalModel extends Auditable<String> {
 	private String description;
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
+	@Column(name = "ICON")
+	private String icon;
 	@OneToMany(mappedBy = "typeOfRental")
 	@JsonManagedReference
 	private List<HouseModel> houses;
