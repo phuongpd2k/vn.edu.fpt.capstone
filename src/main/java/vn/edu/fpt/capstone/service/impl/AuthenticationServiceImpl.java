@@ -97,7 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 					.message("Authenticate request: account inactive!").messageCode("INACTIVE_ACCOUNT").build());
 		}
 
-		if (user.isVerify()) {
+		if (!user.isVerify()) {
 			logger.error("unverified account!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 					.body(ResponseObject.builder().code("401")
@@ -214,7 +214,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String verifyCode = random.generateCode(20);
 		signUpDto.setVerificationCode(verifyCode);
 		signUpDto.setActive(true);
-		signUpDto.setVerify(true);
+		signUpDto.setVerify(false);
 
 		// Send mail verify
 		try {
@@ -250,7 +250,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		signUpDto.setUsername("hola" + random.generateUsername(4));
 		signUpDto.setPassword(random.generatePassword(8));
 		signUpDto.setActive(true);
-		signUpDto.setVerify(false);
+		signUpDto.setVerify(true);
 
 		// save user in to DB
 		UserModel user = userService.createUser(signUpDto);
@@ -311,7 +311,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 					.message("Authenticate request: account inactive!").messageCode("ACCOUNT_INACTIVE").build());
 		}
 
-		if (user.isVerify()) {
+		if (!user.isVerify()) {
 			logger.error("unverified account!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 					.body(ResponseObject.builder().code("401")
