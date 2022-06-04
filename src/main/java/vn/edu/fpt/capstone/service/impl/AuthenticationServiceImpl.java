@@ -166,7 +166,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		userRepository.save(user);
 
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("200")
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 				.message("Change password: successfully!").messageCode("CHANGE_PASSWORD_SUCCESSFULLY").build());
 	}
 
@@ -214,8 +214,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 
 		// Verify
-		String verifyCode = random.generateCode(20);
-		signUpDto.setVerificationCode(signUpDto.getUsername() + verifyCode);
+		String verifyCode = signUpDto.getUsername() + random.generateCode(20);
+		signUpDto.setVerificationCode(verifyCode);
 		signUpDto.setActive(true);
 		signUpDto.setVerify(false);
 
