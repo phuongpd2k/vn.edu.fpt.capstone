@@ -87,7 +87,7 @@ public class UserController {
 	public ResponseEntity<?> getUser(@RequestHeader(value = "Authorization") String jwtToken) {
 		LOGGER.info("Get info user");
 		try {
-			UserModel user = userService.getUserInformationByToken(jwtToken.substring(7));
+			UserModel user = userService.getUserInformationByToken(jwtToken);
 			if (user == null) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND)
 						.body(ResponseObject.builder().code("404").message("Get user info by id: not found!").build());

@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserModel getUserInformationByToken(String jwtToken) {
-		String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+		String username = jwtTokenUtil.getUsernameFromToken(jwtToken.substring(7));
 		return userRepository.findByUsername(username).orElse(null);
 	}
 
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserModel userUpdateRole(UserDto userDto, String jwtToken) {
-			UserModel userModel = userService.getUserInformationByToken(jwtToken.substring(7));
+			UserModel userModel = userService.getUserInformationByToken(jwtToken);
 			RoleModel roleModel = modelMapper.map(userDto.getRole(), RoleModel.class);
 			userModel.setRole(roleModel);
 			

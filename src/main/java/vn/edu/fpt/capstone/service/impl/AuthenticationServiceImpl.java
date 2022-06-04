@@ -123,8 +123,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public ResponseEntity<?> verify(String code) {
 		UserModel userModel = userService.findByVerificationCode(code);
 
-		if (userModel != null) {
+		if (userModel.getVerificationCode().equalsIgnoreCase(code)) {
 			userModel.setActive(true);
+			userModel.setVerify(true);
 			userRepository.save(userModel);
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.message("Verify code: verify code successfully!").messageCode("VERIFY_CODE_SUCCESSFULLY").build());
@@ -135,10 +136,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, String jwtToken) {
-		String username = jwtTokenUtil.getUsernameFromToken(jwtToken.substring(7));
-		UserModel user = userRepository.findByUsername(username).orElse(null);
-
+	public ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, UserModel user) {
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
 					.message("Change password: fail!").messageCode("CHANGE_PASSWORD_FAIL").build());
@@ -213,7 +211,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		// Verify
 		String verifyCode = random.generateCode(20);
-		signUpDto.setVerificationCode(verifyCode);
+		signUpDto.setVerificationCode(signUpDto.getUsername() + verifyCode);
 		signUpDto.setActive(true);
 		signUpDto.setVerify(false);
 

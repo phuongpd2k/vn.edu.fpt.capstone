@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.ChangePasswordDto;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
+import vn.edu.fpt.capstone.model.UserModel;
 
 @Service
 public interface AuthenticationService {
@@ -14,7 +15,7 @@ public interface AuthenticationService {
 	
 	ResponseEntity<?> verify(String code);
 	
-	ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, String token);
+	ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, UserModel user);
 
 	ResponseEntity<?> signUpNormal(SignUpDto signUpDto);
 
