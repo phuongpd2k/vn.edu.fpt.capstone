@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,9 @@ import vn.edu.fpt.capstone.dto.ChangePasswordDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
+import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.service.AuthenticationService;
+import vn.edu.fpt.capstone.service.UserService;
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -22,6 +25,9 @@ public class AuthenticationController {
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class.getName());
 	@Autowired
 	private AuthenticationService authenticationService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@PostMapping(value = "/signup")
 	public ResponseEntity<?> signUpNormal(@RequestBody SignUpDto signUpDto) {
@@ -104,11 +110,13 @@ public class AuthenticationController {
 		}
 	}
 	
+	//@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
 	@PostMapping("/change-password")
-	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto changePasswordDto
-				, @RequestHeader(value = "Authorization") String jwtToken) {
+	public ResponseEntity<?> changePassword(@RequestHeader(value = "Authorization") String jwtToken,
+			@RequestBody ChangePasswordDto changePasswordDto) {
 		try {
-			return authenticationService.changePassword(changePasswordDto, jwtToken);
+			UserModel user = userService.getUserInformationByToken(jwtToken);
+			return authenticationService.changePassword(changePasswordDto, user);
 		} catch (Exception e) {
 			logger.error("Undefined error change password");
 			logger.error(e.getMessage());

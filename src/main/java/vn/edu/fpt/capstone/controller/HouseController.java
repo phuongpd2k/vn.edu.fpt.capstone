@@ -143,7 +143,7 @@ public class HouseController {
 
 		ResponseObject responseObject = new ResponseObject();
 		try {
-			UserModel userModel = userService.getUserInformationByToken(jwtToken.substring(7));
+			UserModel userModel = userService.getUserInformationByToken(jwtToken);
 			if (userModel == null) {
 				LOGGER.error("getHouseByUser: {}", userModel);
 				responseObject.setCode("404");
