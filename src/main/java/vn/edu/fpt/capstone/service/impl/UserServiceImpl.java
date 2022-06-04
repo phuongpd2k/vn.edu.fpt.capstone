@@ -7,6 +7,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.RoleModel;
@@ -117,5 +119,18 @@ public class UserServiceImpl implements UserService {
 			userModel.setActive(false);
 			
 			userRepository.save(userModel);
+	}
+
+	@Override
+	public List<UserDto> getAllUserSearch(SearchDto searchDto) {
+		List<UserModel> listModel = userRepository.findAllUserSearch(searchDto.getKeyword());
+		if (listModel == null || listModel.isEmpty())
+			return null;
+		return convertToListDto(listModel);
+	}
+
+	@Override
+	public int countUserActive() {
+		return userRepository.countUserActive();
 	}
 }

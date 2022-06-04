@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -20,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import vn.edu.fpt.capstone.dto.ResponseObject;
+import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.UserModel;
+import vn.edu.fpt.capstone.response.UserListRespone;
 import vn.edu.fpt.capstone.service.UserService;
 import vn.edu.fpt.capstone.service.impl.UserServiceImpl;
 
@@ -52,6 +55,41 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(ResponseObject.builder().code("500").message("Get all user info fail:" + e.getMessage())
 							.messageCode("GET_ALL_USER_INFORMATION_FAIL").build());
+
+		}
+	}
+	
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PostMapping(value = "/user/search")
+	public ResponseEntity<?> getListUserSearch(@RequestHeader(value = "Authorization") String jwtToken, @RequestBody SearchDto searchDto) {
+		LOGGER.info("Get all user info!");
+		try {
+			List<UserDto> list = null;
+			if(searchDto.getKeyword().isEmpty()) {
+				list = userService.getAllUser();
+			}else {
+				list = userService.getAllUserSearch(searchDto);
+			}
+			
+			UserListRespone listRespone = new UserListRespone();
+			listRespone.setTotalAccount(list.size());
+			int accountActive = 0;
+			for (UserDto u : list) {
+				if(u.isActive()) accountActive++;
+			}
+			listRespone.setAccountActive(accountActive);
+			listRespone.setAccountInactive(list.size() - accountActive);
+			listRespone.setData(list);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Get user search successfully!")
+							.messageCode("GET_USER_SEARCH_SUCCESSFULLY").results(listRespone).build());
+		} catch (Exception e) {
+			LOGGER.error("Get user search information");
+			LOGGER.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(ResponseObject.builder().code("500").message("Get user search info fail:" + e.getMessage())
+							.messageCode("GET_USER_SEARCH_INFORMATION_FAIL").build());
 
 		}
 	}

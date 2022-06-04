@@ -24,6 +24,7 @@ import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.RoleDto;
 import vn.edu.fpt.capstone.dto.SignInDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
+import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.model.UserPrincipal;
 import vn.edu.fpt.capstone.repository.UserRepository;
@@ -68,6 +69,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserServiceImpl userServiceImpl;
 
 	@Autowired
 	private MailService mailService;
@@ -311,11 +315,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 
 		if (!user.isVerify()) {
-			logger.error("unverified account!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(ResponseObject.builder().code("401")
-							.message("Authenticate request: unverified account!")
-							.messageCode("UNVERIFIED_ACCOUNT").build());
+			user.setVerify(true);
+			user = userRepository.save(user);
 		}
 
 		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
