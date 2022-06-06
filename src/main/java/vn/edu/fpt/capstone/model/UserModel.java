@@ -17,6 +17,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.Data;
@@ -69,11 +70,15 @@ public class UserModel extends Auditable<String> {
 
 	@ManyToOne
 	@JoinColumn(name = "role_id")
+	@JsonBackReference
 	private RoleModel role;
 
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private List<HouseModel> house;
 
 	@Column(name = "verification_code", updatable = false)
 	private String verificationCode;
+	@Column(name = "reset_code")
+	private String resetCode;
 }

@@ -12,10 +12,12 @@ import vn.edu.fpt.capstone.model.UserModel;
 @Service
 public interface AuthenticationService {
 	ResponseEntity<?> authenticate(SignInDto signInDto) throws AuthenticationException;
-	
+
 	ResponseEntity<?> verify(String code);
-	
+
 	ResponseEntity<?> changePassword(ChangePasswordDto changePasswordDto, UserModel user);
+
+	ResponseEntity<?> resetPassword(UserModel user);
 
 	ResponseEntity<?> signUpNormal(SignUpDto signUpDto);
 
