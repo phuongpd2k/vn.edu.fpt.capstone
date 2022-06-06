@@ -75,7 +75,7 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendMailResetPassword(String email) throws UnsupportedEncodingException {
-		String subject = "Confirm Forgot Password";
+		String subject = "Forgot Password";
 		String senderName = "Hola Boarding House";
 		String newPass = random.generatePassword(8);
 		String newPassword = passwordEncoder.encode(newPass);
