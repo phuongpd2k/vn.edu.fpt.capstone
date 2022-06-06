@@ -23,5 +23,6 @@ public class RoleModel {
     private String role;
     
     @OneToMany(mappedBy = "role")
+    @JsonManagedReference
     private Set<UserModel> users = new HashSet<UserModel>();
 }

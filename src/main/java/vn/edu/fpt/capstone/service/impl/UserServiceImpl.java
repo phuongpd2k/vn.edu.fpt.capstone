@@ -19,35 +19,36 @@ import vn.edu.fpt.capstone.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-	//private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-	
+	// private static final Logger logger =
+	// LoggerFactory.getLogger(UserServiceImpl.class);
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private UserService userService;
 
 	private UserModel convertToEntity(SignUpDto signUpDto) {
 		signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
-		
+
 		return modelMapper.map(signUpDto, UserModel.class);
 	}
-	
-	private UserModel convertToEntity(UserDto userDto) {	
+
+	private UserModel convertToEntity(UserDto userDto) {
 		return modelMapper.map(userDto, UserModel.class);
 	}
 
 	public UserDto convertToDto(UserModel userModel) {
-		return modelMapper.map(userModel, UserDto.class);	
+		return modelMapper.map(userModel, UserDto.class);
 	}
 
 	private List<UserDto> convertToListDto(List<UserModel> usersModel) {
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserModel updateUser(UserDto userDto) {
 		UserModel user = userRepository.getById(userDto.getId());
-		if(user!=null) {
+		if (user != null) {
 			userDto.setPassword(user.getPassword());
 			return userRepository.save(convertToEntity(userDto));
 		}
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserModel getUserInformationById(Long id) {	
+	public UserModel getUserInformationById(Long id) {
 		return userRepository.findById(id).orElse(null);
 	}
 
@@ -106,19 +107,19 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserModel userUpdateRole(UserDto userDto, String jwtToken) {
-			UserModel userModel = userService.getUserInformationByToken(jwtToken);
-			RoleModel roleModel = modelMapper.map(userDto.getRole(), RoleModel.class);
-			userModel.setRole(roleModel);
-			
-			return userRepository.save(userModel);
+		UserModel userModel = userService.getUserInformationByToken(jwtToken);
+		RoleModel roleModel = modelMapper.map(userDto.getRole(), RoleModel.class);
+		userModel.setRole(roleModel);
+
+		return userRepository.save(userModel);
 	}
 
 	@Override
 	public void deleteUserById(Long id) {
-			UserModel userModel = userRepository.getById(id);
-			userModel.setActive(false);
-			
-			userRepository.save(userModel);
+		UserModel userModel = userRepository.getById(id);
+		userModel.setActive(false);
+
+		userRepository.save(userModel);
 	}
 
 	@Override
@@ -132,5 +133,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int countUserActive() {
 		return userRepository.countUserActive();
+	}
+
+	@Override
+	public UserModel findByEmail(String email) {
+		return userRepository.findByEmail(email).orElse(null);
 	}
 }

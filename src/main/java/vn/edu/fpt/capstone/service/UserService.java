@@ -11,15 +11,28 @@ import vn.edu.fpt.capstone.model.UserModel;
 @Service
 public interface UserService {
 	UserModel createUser(SignUpDto signUpDto);
+
 	UserModel updateUser(UserDto userDto);
+
 	boolean checkIdExist(Long id);
+
 	List<UserDto> getAllUser();
+
 	boolean existsByUsername(String username);
+
 	void deleteUserById(Long id);
+
 	UserModel getUserInformationById(Long id);
+
 	UserModel getUserInformationByToken(String jwtToken);
+
 	UserModel findByVerificationCode(String code);
+
+	UserModel findByEmail(String email);
+
 	UserModel userUpdateRole(UserDto userDto, String jwtToken);
+
 	List<UserDto> getAllUserSearch(SearchDto searchDto);
+
 	int countUserActive();
 }

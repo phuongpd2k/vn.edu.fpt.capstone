@@ -9,4 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MailService {
 	void sendMailVerifyCode(String email, String username, String code) throws MessagingException, UnsupportedEncodingException;
+	
+	void sendMailResetPassword(String email) throws UnsupportedEncodingException;
+
 }

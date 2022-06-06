@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,4 +52,6 @@ public class UserDto extends Auditable<String> {
 
 	@JsonProperty(index = 12)
 	private RoleDto role;
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private String resetCode;
 }

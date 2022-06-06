@@ -44,8 +44,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private String regex_username = "^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
 	private String regex_password = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
 	private String regex_email = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-	        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-	
+			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
 	@Autowired
 	private UserRepository userRepository;
 
@@ -69,7 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private UserServiceImpl userServiceImpl;
 
@@ -104,10 +104,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		if (!user.isVerify()) {
 			logger.error("unverified account!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(ResponseObject.builder().code("401")
-							.message("Authenticate request: unverified account!")
-							.messageCode("UNVERIFIED_ACCOUNT").build());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
+					.message("Authenticate request: unverified account!").messageCode("UNVERIFIED_ACCOUNT").build());
 		}
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -155,7 +153,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		// Validate password
 		// Minimum eight characters, at least one letter and one number
-		if (!validation.checkRegex(regex_password, changePasswordDto.getNewPassword()) || changePasswordDto.getNewPassword().isEmpty()) {
+		if (!validation.checkRegex(regex_password, changePasswordDto.getNewPassword())
+				|| changePasswordDto.getNewPassword().isEmpty()) {
 			logger.error("New password invalid!");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 					.message("Change password: new password invalid!").messageCode("NEW_PASSWORD_INVALID").build());
@@ -326,6 +325,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 				.message("Get token sign in by email: successfully!").results(jwtResponse).build());
+	}
+
+	@Override
+	public ResponseEntity<?> resetPassword(UserModel user) {
+		String newPassword = passwordEncoder.encode(random.generatePassword(8));
+		user.setPassword(newPassword);
+		user.setResetCode(random.generateCode(6));
+		userService.updateUser(modelMapper.map(user, UserDto.class));
+		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+				.message("Reset password: successfully!").messageCode("RESET_PASSWORD_SUCCESSFULLY").build());
 	}
 
 }
