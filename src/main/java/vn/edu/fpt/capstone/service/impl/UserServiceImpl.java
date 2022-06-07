@@ -166,7 +166,9 @@ public class UserServiceImpl implements UserService {
 		Query query = entityManager.createQuery(sql, UserModel.class);
 		
 		
-		query.setParameter("text", '%' + userSearch.getKeyword().trim() + '%');
+		if(!userSearch.getKeyword().isEmpty()) {
+			query.setParameter("text", '%' + userSearch.getKeyword().trim() + '%');
+		}
 		
 		List<UserModel> list = query.getResultList();
 		return convertToListDto(list);

@@ -2,6 +2,7 @@ package vn.edu.fpt.capstone.service;
 
 import java.util.List;
 
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.TypeOfRentalDto;
 
 public interface TypeOfRentalService {
@@ -11,4 +12,5 @@ public interface TypeOfRentalService {
     boolean removeTypeOfRental(Long id);
     TypeOfRentalDto createTypeOfRental(TypeOfRentalDto typeOfRentalDto);
     boolean isExist(Long id);
+	void removeListTypeOfRental(ListIdDto listIdDto);
 }

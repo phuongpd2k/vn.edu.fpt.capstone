@@ -4,22 +4,16 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.TypeOfRentalDto;
 import vn.edu.fpt.capstone.model.TypeOfRentalModel;
 import vn.edu.fpt.capstone.repository.TypeOfRentalRepository;
 import vn.edu.fpt.capstone.service.TypeOfRentalService;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @Service
 public class TypeOfRentalServiceImpl implements TypeOfRentalService {
@@ -72,20 +66,6 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	public TypeOfRentalDto createTypeOfRental(TypeOfRentalDto typeOfRentalDto) {
 		try {
 			TypeOfRentalModel typeOfRentalModel = modelMapper.map(typeOfRentalDto, TypeOfRentalModel.class);
-//			if (typeOfRentalModel.getCreatedAt() == null || typeOfRentalModel.getCreatedAt().toString().isEmpty()) {
-//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-//				typeOfRentalModel.setCreatedAt(formatter.parse(formatter.format(date)));
-//				typeOfRentalModel.setModifiedAt(formatter.parse(formatter.format(date)));
-//			} else {
-//				typeOfRentalModel.setModifiedAt(typeOfRentalModel.getCreatedAt());
-//			}
-//			if (typeOfRentalModel.getCreatedBy() == null || typeOfRentalModel.getCreatedBy().isEmpty()) {
-//				typeOfRentalModel.setCreatedBy("SYSTEM");
-//				typeOfRentalModel.setModifiedBy("SYSTEM");
-//			} else {
-//				typeOfRentalModel.setModifiedBy(typeOfRentalModel.getCreatedBy());
-//			}
 			TypeOfRentalModel saveModel = typeOfRentalRepository.save(typeOfRentalModel);
 			return modelMapper.map(saveModel, TypeOfRentalDto.class);
 		} catch (Exception e) {
@@ -100,5 +80,18 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void removeListTypeOfRental(ListIdDto listIdDto) {
+		try {
+			for (Long id : listIdDto.getList()) {
+				
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
 	}
 }
