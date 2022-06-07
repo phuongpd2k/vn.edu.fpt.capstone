@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
+import vn.edu.fpt.capstone.dto.UserSearchDto;
 import vn.edu.fpt.capstone.model.UserModel;
 
 @Service
@@ -32,7 +33,7 @@ public interface UserService {
 
 	UserModel userUpdateRole(UserDto userDto, String jwtToken);
 
-	List<UserDto> getAllUserSearch(SearchDto searchDto);
+	List<UserDto> getAllUserSearch(UserSearchDto userSearchDto);
 
 	int countUserActive();
 }

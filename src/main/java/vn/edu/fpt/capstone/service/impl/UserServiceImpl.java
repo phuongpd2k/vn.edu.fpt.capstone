@@ -3,19 +3,24 @@ package vn.edu.fpt.capstone.service.impl;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
+import vn.edu.fpt.capstone.dto.UserSearchDto;
 import vn.edu.fpt.capstone.model.RoleModel;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.security.JwtTokenUtil;
 import vn.edu.fpt.capstone.service.UserService;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,6 +41,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserService userService;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	private UserModel convertToEntity(SignUpDto signUpDto) {
 		signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
@@ -123,14 +131,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDto> getAllUserSearch(SearchDto searchDto) {
-		List<UserModel> listModel = userRepository.findAllUserSearch(searchDto.getKeyword());
-		if (listModel == null || listModel.isEmpty())
-			return null;
-		return convertToListDto(listModel);
-	}
-
-	@Override
 	public int countUserActive() {
 		return userRepository.countUserActive();
 	}
@@ -138,5 +138,37 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserModel findByEmail(String email) {
 		return userRepository.findByEmail(email).orElse(null);
+	}
+
+	@Override
+	public List<UserDto> getAllUserSearch(UserSearchDto userSearch) {
+//		List<UserModel> listModel = userRepository.findAllUserSearch(userSearch.getKeyword(), userSearch.isActive());
+//		if (listModel == null || listModel.isEmpty())
+//			return null;
+//		return convertToListDto(listModel);
+		String sql = "select entity from UserModel as entity where (1=1) ";
+		String whereClause = "";
+		
+		if(!userSearch.getKeyword().isEmpty()) {
+			whereClause += " AND ( entity.fullName LIKE :text)";
+		}
+		
+		if(userSearch.getIsActive() == 1) {
+			whereClause += " AND (entity.isActive = true)";
+		}
+		
+		if(userSearch.getIsActive() == 0) {
+			whereClause += " AND (entity.isActive = false)";
+		}
+			
+		sql += whereClause;
+		
+		Query query = entityManager.createQuery(sql, UserModel.class);
+		
+		
+		query.setParameter("text", '%' + userSearch.getKeyword().trim() + '%');
+		
+		List<UserModel> list = query.getResultList();
+		return convertToListDto(list);
 	}
 }

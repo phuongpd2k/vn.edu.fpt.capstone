@@ -269,8 +269,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private SignUpDto convertToSignUpDto(SignInDto signInDto) {
 		SignUpDto signUpDto = new SignUpDto();
 		signUpDto.setEmail(signInDto.getEmail());
-		signUpDto.setFirstName(signInDto.getFirstName());
-		signUpDto.setLastName(signInDto.getLastName());
+		signUpDto.setFullName(signInDto.getFullName());
 		signUpDto.setImageLink(signInDto.getImageLink());
 		signUpDto.setRole(modelMapper.map(roleService.getRoleByCode("ROLE_USER"), RoleDto.class));
 		signUpDto.setUsername("hola" + random.generateUsername(4));
