@@ -20,8 +20,8 @@ public interface UserRepository extends JpaRepository<UserModel, Long>{
 	Optional<UserModel> findByEmail(String email);
 	Optional<UserModel> findByVerificationCode(String verificationCode);
 	
-	@Query("SELECT u FROM UserModel u WHERE u.firstName LIKE %:key% or u.lastName LIKE %:key%")
-	List<UserModel> findAllUserSearch(String key);
+//	@Query("SELECT u FROM UserModel u WHERE u.firstName LIKE %:key% or u.lastName LIKE %:key%")
+//	List<UserModel> findAllUserSearch(String key);
 	
 	@Query("SELECT COUNT(u) FROM UserModel u WHERE u.isActive = 1")
 	int countUserActive();

@@ -16,11 +16,8 @@ public class SignInDto {
 	@JsonProperty("password")
 	private String password;
 	
-	@JsonProperty("firstName")
-	private String firstName;
-	
-	@JsonProperty("lastName")
-	private String lastName;
+	@JsonProperty("fullName")
+	private String fullName;
 	
 	@JsonProperty("imageLink")
 	private String imageLink;

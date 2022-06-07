@@ -17,11 +17,8 @@ public class SignUpDto {
 	@JsonProperty("password")
 	private String password;
 	
-	@JsonProperty("firstName")
-	private String firstName;
-	
-	@JsonProperty("lastName")
-	private String lastName;
+	@JsonProperty("fullName")
+	private String fullName;
 	
 	@JsonProperty("phoneNumber")
 	private String phoneNumber;

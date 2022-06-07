@@ -6,9 +6,6 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 import javax.persistence.*;
-
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -36,5 +33,7 @@ public class TypeOfRentalModel extends Auditable<String> {
 	@OneToMany(mappedBy = "typeOfRental")
 	@JsonManagedReference
 	private List<HouseModel> houses;
-
+	
+	@Column(name = "ENABLE", nullable = false)
+	private boolean enable = true;
 }

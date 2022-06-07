@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.UserDto;
+import vn.edu.fpt.capstone.dto.UserSearchDto;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.UserListRespone;
 import vn.edu.fpt.capstone.service.UserService;
@@ -61,15 +62,16 @@ public class UserController {
 	
 	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/user/search")
-	public ResponseEntity<?> getListUserSearch(@RequestHeader(value = "Authorization") String jwtToken, @RequestBody SearchDto searchDto) {
+	public ResponseEntity<?> getListUserSearch(@RequestHeader(value = "Authorization") String jwtToken, 
+			@RequestBody UserSearchDto searchDto) {
 		LOGGER.info("Get all user info!");
 		try {
-			List<UserDto> list = null;
-			if(searchDto.getKeyword().isEmpty()) {
-				list = userService.getAllUser();
-			}else {
-				list = userService.getAllUserSearch(searchDto);
-			}
+			List<UserDto> list = userService.getAllUserSearch(searchDto);
+//			if(searchDto.getKeyword().isEmpty()) {
+//				list = userService.getAllUser();
+//			}else {
+//				list = userService.getAllUserSearch(searchDto);
+//			}
 			
 			UserListRespone listRespone = new UserListRespone();
 			listRespone.setTotalAccount(list.size());

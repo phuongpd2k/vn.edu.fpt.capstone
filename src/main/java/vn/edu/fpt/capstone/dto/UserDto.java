@@ -27,30 +27,27 @@ public class UserDto extends Auditable<String> {
 	private String password;
 
 	@JsonProperty(index = 4)
-	private String firstName;
+	private String fullName;
 
 	@JsonProperty(index = 5)
-	private String lastName;
-
-	@JsonProperty(index = 6)
 	private String phoneNumber;
 
-	@JsonProperty(index = 7)
+	@JsonProperty(index = 6)
 	private String imageLink;
 
-	@JsonProperty(index = 8)
+	@JsonProperty(index = 7)
 	private boolean gender;
 
-	@JsonProperty(index = 9)
+	@JsonProperty(index = 8)
 	private Date dob;
 
-	@JsonProperty(index = 10)
+	@JsonProperty(index = 9)
 	private boolean isActive;
 
-	@JsonProperty(index = 11)
+	@JsonProperty(index = 10)
 	private boolean isVerify;
 
-	@JsonProperty(index = 12)
+	@JsonProperty(index = 11)
 	private RoleDto role;
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String resetCode;

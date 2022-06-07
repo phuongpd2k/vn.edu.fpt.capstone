@@ -30,4 +30,7 @@ public class RoomCategoryModel extends Auditable<String>{
     @OneToMany(mappedBy = "roomCategory")
     @JsonBackReference
     private Set<RoomModel> room;
+    
+    @Column(name = "ENABLE", nullable = false)
+	private boolean enable = true;
 }

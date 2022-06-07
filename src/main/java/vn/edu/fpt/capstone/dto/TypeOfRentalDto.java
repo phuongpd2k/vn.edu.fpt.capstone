@@ -1,5 +1,7 @@
 package vn.edu.fpt.capstone.dto;
 
+import java.util.Collection;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -19,5 +21,8 @@ public class TypeOfRentalDto extends Auditable<String> {
 	private String imageUrl;
 	@JsonProperty(index = 4)
 	private String icon;
+	
+	@JsonProperty("ids")
+	private Collection<Long> ids;
 
 }

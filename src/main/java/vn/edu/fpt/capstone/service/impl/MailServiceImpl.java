@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +29,8 @@ public class MailServiceImpl implements MailService {
 	private JavaMailSender javaMailSender;
 	@Value("${host.domain}")
 	private String domain;
+	@Value("${spring.mail.username}")
+    private String sendFrom;
 	@Autowired
 	private ModelMapper modelMapper;
 	@Autowired
@@ -60,7 +61,7 @@ public class MailServiceImpl implements MailService {
 		MimeMessage message = javaMailSender.createMimeMessage();
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-			helper.setFrom("truongdung07062000@gmail.com", senderName);
+			helper.setFrom(sendFrom, senderName);
 			helper.setTo(email);
 			helper.setSubject(subject);
 			helper.setText(mailContent, true);
@@ -95,7 +96,7 @@ public class MailServiceImpl implements MailService {
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
 			message.setContent(mailContent, "text/html");
-			helper.setFrom("truongdung07062000@gmail.com", senderName);
+			helper.setFrom(sendFrom, senderName);
 			helper.setTo(email);
 			helper.setSubject(subject);
 			helper.setText(mailContent, true);
