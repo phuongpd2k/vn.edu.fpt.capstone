@@ -1,10 +1,10 @@
 package vn.edu.fpt.capstone.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.AmenityDto;
 import vn.edu.fpt.capstone.dto.ListIdDto;
+import vn.edu.fpt.capstone.dto.PostTypeDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
+import vn.edu.fpt.capstone.service.PostTypeService;
 
 @RestController
 @RequestMapping("/api/post-type")
@@ -27,14 +29,18 @@ import vn.edu.fpt.capstone.dto.ResponseObject;
 public class PostTypeController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostTypeController.class.getName());
 	
+	@Autowired
+	private PostTypeService postTypeService;
+	
 	@GetMapping()
 	public ResponseEntity<?> getAll() {
 		ResponseObject responseObject = new ResponseObject();
 		try {
-			//List<AmenityDto> amenityDtos = amenityService.findAll();
-			//LOGGER.info("getAll: {}",amenityDtos);
+			List<PostTypeDto> list = postTypeService.findAll();
+			LOGGER.info("getAll: {}",list);
 			responseObject.setCode("200");
 			responseObject.setMessageCode(Message.OK);
+			responseObject.setResults(list);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
 		} catch (Exception ex) {
 			LOGGER.error("getAll: {}",ex);
