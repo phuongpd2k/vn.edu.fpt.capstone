@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import vn.edu.fpt.capstone.constant.Message;
-import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.response.PostResponse;
@@ -171,7 +170,6 @@ public class PostController {
 	// DungTV29
 	public ResponseEntity<ResponseObject> postCreatePost(@RequestBody PostDto postDto) {
 		try {
-			// PostDto postDto = objectMapper.readValue(jsonString, PostDto.class);
 			LOGGER.info("postHouseCreate: {}", postDto);
 			if (postDto.getHouse().getId() == null || !houseService.isExist(postDto.getHouse().getId())) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
@@ -186,6 +184,11 @@ public class PostController {
 			if (postDto.getPostType().getId() == null || !postTypeService.isExist(postDto.getPostType().getId())) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Create post: id post type null").messageCode("CREATE_POST_FAILED").build());
+			}
+			
+			if (postDto.getStartDate() == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Create post: start date null").messageCode("CREATE_POST_FAILED").build());
 			}
 
 			if (postDto.getNumberOfDays() <= 0) {

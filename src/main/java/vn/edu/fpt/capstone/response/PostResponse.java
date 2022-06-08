@@ -12,4 +12,5 @@ public class PostResponse {
 	private Date endDate;
 	private int cost;
 	private int numberOfDays;
+	private String status;
 }
