@@ -33,7 +33,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Override
     public List<RoomTypeDto> findAll() {
-        List<RoomTypeModel> roomTypeModels = roomTypeRepository.findAll();
+        List<RoomTypeModel> roomTypeModels = roomTypeRepository.findAllByEnableTrue();
         if (roomTypeModels == null || roomTypeModels.isEmpty()) {
             return null;
         }

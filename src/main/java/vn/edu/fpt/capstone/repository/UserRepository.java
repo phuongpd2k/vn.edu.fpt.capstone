@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import vn.edu.fpt.capstone.model.UserModel;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +24,7 @@ public interface UserRepository extends JpaRepository<UserModel, Long>{
 	
 	@Query("SELECT COUNT(u) FROM UserModel u WHERE u.isActive = 1")
 	int countUserActive();
+	
+	@Query("SELECT COUNT(u) FROM UserModel u")
+	int getTotalUser();
 }

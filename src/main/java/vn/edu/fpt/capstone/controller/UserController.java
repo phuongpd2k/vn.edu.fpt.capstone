@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import vn.edu.fpt.capstone.dto.ResponseObject;
-import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.dto.UserSearchDto;
 import vn.edu.fpt.capstone.model.UserModel;
@@ -67,21 +66,17 @@ public class UserController {
 		LOGGER.info("Get all user info!");
 		try {
 			List<UserDto> list = userService.getAllUserSearch(searchDto);
-//			if(searchDto.getKeyword().isEmpty()) {
-//				list = userService.getAllUser();
-//			}else {
-//				list = userService.getAllUserSearch(searchDto);
-//			}
 			
 			UserListRespone listRespone = new UserListRespone();
-			listRespone.setTotalAccount(list.size());
-			int accountActive = 0;
-			for (UserDto u : list) {
-				if(u.isActive()) accountActive++;
-			}
-			listRespone.setAccountActive(accountActive);
-			listRespone.setAccountInactive(list.size() - accountActive);
+			
+			int totalUser = userService.getTotalUser();
+			listRespone.setTotalAccount(totalUser);
+			
+			int totalUserActive = userService.getTotalUserActive();	
+			listRespone.setAccountActive(totalUserActive);
+			listRespone.setAccountInactive(totalUser - totalUserActive);
 			listRespone.setData(list);
+			
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseObject.builder().code("200").message("Get user search successfully!")
 							.messageCode("GET_USER_SEARCH_SUCCESSFULLY").results(listRespone).build());

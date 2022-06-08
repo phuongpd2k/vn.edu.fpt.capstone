@@ -35,7 +35,7 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	@Override
 //	@Cacheable("listTypeOfRental")
 	public List<TypeOfRentalDto> findAll() {
-		List<TypeOfRentalModel> typeOfRentalModels = typeOfRentalRepository.findAll();
+		List<TypeOfRentalModel> typeOfRentalModels = typeOfRentalRepository.findAllByEnableTrue();
 		if (typeOfRentalModels == null || typeOfRentalModels.isEmpty()) {
 			return null;
 		}
