@@ -27,16 +27,17 @@ public class AmenityModel extends Auditable<String> {
 	@Column(name = "NAME")
 	private String name;
 	@Column(name = "ICON")
+	private String icon;
 	@ManyToMany(mappedBy = "amenities", fetch = FetchType.LAZY)
 	@JsonBackReference
 	private List<HouseModel> houses = new ArrayList<HouseModel>();
-	
+
 	@ManyToMany(mappedBy = "amenities")
 //    @EqualsAndHashCode.Exclude
 //    @Exclude
-    @JsonBackReference
-    private Collection<RoomModel> rooms;
-	
+	@JsonBackReference
+	private Collection<RoomModel> rooms;
+
 	@Column(name = "ENABLE", nullable = false)
 	private boolean enable = true;
 }
