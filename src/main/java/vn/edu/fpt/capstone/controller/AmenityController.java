@@ -160,7 +160,7 @@ public class AmenityController {
 		}
 	}
 	
-	@DeleteMapping(value = "/amenity")
+	@PutMapping(value = "/amenity")
 	public ResponseEntity<?> deleteListAmenity(@RequestBody ListIdDto listIdDto) {
 		try {
 			amenityService.removeListAmenity(listIdDto);

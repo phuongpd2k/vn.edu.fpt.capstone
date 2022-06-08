@@ -157,7 +157,7 @@ public class TypeOfRentalController {
 		}
 	}
 	
-	@DeleteMapping(value = "/typeOfRental")
+	@PutMapping(value = "/typeOfRental")
 	public ResponseEntity<?> deleteListTypeOfRental(@RequestBody ListIdDto listIdDto) {
 		try {
 			typeOfRentalService.removeListTypeOfRental(listIdDto);
