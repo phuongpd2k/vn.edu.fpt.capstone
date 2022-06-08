@@ -187,6 +187,11 @@ public class PostController {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Create post: id post type null").messageCode("CREATE_POST_FAILED").build());
 			}
+			
+			if (postDto.getStartDate() == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Create post: start date null").messageCode("CREATE_POST_FAILED").build());
+			}
 
 			if (postDto.getNumberOfDays() <= 0) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
