@@ -16,11 +16,15 @@ import vn.edu.fpt.capstone.dto.ThanhPhoDto;
 import vn.edu.fpt.capstone.model.HouseModel;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.repository.PostRepository;
+import vn.edu.fpt.capstone.repository.PostTypeRepository;
 import vn.edu.fpt.capstone.repository.RoomRepository;
+import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.RoomService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,10 +33,17 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private PostRepository postRepository;
+	
 	@Autowired
 	ModelMapper modelMapper;
+	
 	@Autowired
 	private RoomService roomService;
+	
+	@Autowired
+	private PostTypeRepository postTypeRepository;
+	
+	public int TIMESTAMP_DAY = 86400000;
 
 	public List<PostDto> convertEntity2Dto(List<PostModel> models) {
 		List<PostDto> postDtos = Arrays.asList(modelMapper.map(models, PostDto[].class));
@@ -59,13 +70,29 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> findAll() {
+	public List<PostResponse> findAll() {
 		List<PostModel> postModels = postRepository.findAll();
 		if (postModels == null || postModels.isEmpty()) {
 			return null;
 		}
-		List<PostDto> postDtos = convertEntity2Dto(postModels);
-		return postDtos;
+		List<PostResponse> postRes = convertEntity2Response(postModels);
+		return postRes;
+	}
+
+	private List<PostResponse> convertEntity2Response(List<PostModel> postModels) {
+		List<PostResponse> postRes = new ArrayList<PostResponse>();
+		for (PostModel model : postModels) {
+			PostResponse postResponse = new PostResponse();
+			postResponse.setId(model.getId());
+			postResponse.setPostType(model.getPostType().getType());
+			postResponse.setStartDate(model.getStartDate());
+			postResponse.setEndDate(model.getEndDate());
+			postResponse.setCost(model.getCost());
+			postResponse.setNumberOfDays(model.getNumberOfDays());
+			
+			postRes.add(postResponse);
+		}
+		return postRes;
 	}
 
 	@Override
@@ -87,21 +114,16 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PostDto createPost(PostDto postDto) {
 		try {
+			//set cost
+			int costPerDay = postTypeRepository.getById(postDto.getPostType().getId()).getPrice();
+			postDto.setCost(postDto.getNumberOfDays() * costPerDay);
+			
+			//set end date
+			Long expiredTime = postDto.getStartDate().getTime() + (postDto.getNumberOfDays() * TIMESTAMP_DAY);
+			postDto.setEndDate(new Date(expiredTime));
+			
 			PostModel postModel = modelMapper.map(postDto, PostModel.class);
-//			if (postModel.getCreatedAt() == null || postModel.getCreatedAt().toString().isEmpty()) {
-//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-//				postModel.setCreatedAt(formatter.parse(formatter.format(date)));
-//				postModel.setModifiedAt(formatter.parse(formatter.format(date)));
-//			} else {
-//				postModel.setModifiedAt(postModel.getCreatedAt());
-//			}
-//			if (postModel.getCreatedBy() == null || postModel.getCreatedBy().isEmpty()) {
-//				postModel.setCreatedBy("SYSTEM");
-//				postModel.setModifiedBy("SYSTEM");
-//			} else {
-//				postModel.setModifiedBy(postModel.getCreatedBy());
-//			}
+			
 			PostModel saveModel = postRepository.save(postModel);
 			return convertEntity2Dto(saveModel);
 		} catch (Exception e) {

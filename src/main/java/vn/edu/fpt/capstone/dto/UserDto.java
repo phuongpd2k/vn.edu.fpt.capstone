@@ -51,4 +51,6 @@ public class UserDto extends Auditable<String> {
 	private RoleDto role;
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String resetCode;
+	
+	private float balance;
 }

@@ -53,7 +53,12 @@ public class HouseModel extends Auditable<String> {
 	@OneToMany(mappedBy = "house")
 	@JsonBackReference
 	private List<RoomModel> room;
+	
 	@OneToOne
 	@JoinColumn(name = "address_id")
 	private AddressModel address;
+	
+	@OneToMany(mappedBy = "house")
+	@JsonBackReference
+	private List<PostModel> posts;
 }
