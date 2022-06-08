@@ -33,7 +33,7 @@ public class RoomCategoryServiceImpl implements RoomCategoryService {
 
     @Override
     public List<RoomCategoryDto> findAll() {
-        List<RoomCategoryModel> roomCategoryModels = roomCategoryRepository.findAll();
+        List<RoomCategoryModel> roomCategoryModels = roomCategoryRepository.findAllByEnableTrue();
         if (roomCategoryModels == null || roomCategoryModels.isEmpty()) {
             return null;
         }

@@ -35,7 +35,7 @@ public class AmenityServiceImpl implements AmenityService {
 
 	@Override
 	public List<AmenityDto> findAll() {
-		List<AmenityModel> amenityModels = amenityRepository.findAll();
+		List<AmenityModel> amenityModels = amenityRepository.findAllByEnableTrue();
 		if (amenityModels == null || amenityModels.isEmpty()) {
 			return null;
 		}

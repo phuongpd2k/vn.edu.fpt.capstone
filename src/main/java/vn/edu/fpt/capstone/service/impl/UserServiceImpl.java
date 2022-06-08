@@ -18,7 +18,6 @@ import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.security.JwtTokenUtil;
 import vn.edu.fpt.capstone.service.UserService;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -131,7 +130,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int countUserActive() {
+	public int getTotalUserActive() {
 		return userRepository.countUserActive();
 	}
 
@@ -170,7 +169,13 @@ public class UserServiceImpl implements UserService {
 			query.setParameter("text", '%' + userSearch.getKeyword().trim() + '%');
 		}
 		
+		@SuppressWarnings("unchecked")
 		List<UserModel> list = query.getResultList();
 		return convertToListDto(list);
+	}
+
+	@Override
+	public int getTotalUser() {
+		return userRepository.getTotalUser();
 	}
 }

@@ -38,5 +38,5 @@ public class AmenityModel extends Auditable<String> {
     private Collection<RoomModel> rooms;
 	
 	@Column(name = "ENABLE", nullable = false)
-	private boolean enabled = true;
+	private boolean enable = true;
 }
