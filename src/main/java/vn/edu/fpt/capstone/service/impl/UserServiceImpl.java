@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.dto.UserSearchDto;
@@ -43,6 +44,9 @@ public class UserServiceImpl implements UserService {
 	
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Autowired
+	private Constant constant;
 
 	private UserModel convertToEntity(SignUpDto signUpDto) {
 		signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
@@ -65,7 +69,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserModel createUser(SignUpDto signUpDto) {
-		return userRepository.save(convertToEntity(signUpDto));
+		UserModel userModel = convertToEntity(signUpDto);
+		if(userModel.getRole().getRole().equals(constant.ROLE_USER)) {
+			userModel.setBalance(constant.DEFAULT_BALANCE);
+		}
+		return userRepository.save(userModel);
 	}
 
 	@Override

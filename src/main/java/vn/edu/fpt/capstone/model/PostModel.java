@@ -56,6 +56,9 @@ public class PostModel extends Auditable<String> {
 	@Column(name = "IS_ACTIVE", nullable = false)
 	private boolean isActive = true;
 	
+	@Column(name = "status")
+	private String status;
+	
 	
 //	@Column(name = "TITLE")
 //	private String title;

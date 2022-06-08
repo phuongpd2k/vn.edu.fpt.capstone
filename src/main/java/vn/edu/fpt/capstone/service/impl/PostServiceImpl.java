@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.PhuongXaDto;
 import vn.edu.fpt.capstone.dto.PostDto;
@@ -42,6 +43,9 @@ public class PostServiceImpl implements PostService {
 	
 	@Autowired
 	private PostTypeRepository postTypeRepository;
+	
+	@Autowired
+	private Constant constant;
 	
 	public int TIMESTAMP_DAY = 86400000;
 
@@ -89,7 +93,7 @@ public class PostServiceImpl implements PostService {
 			postResponse.setEndDate(model.getEndDate());
 			postResponse.setCost(model.getCost());
 			postResponse.setNumberOfDays(model.getNumberOfDays());
-			
+			postResponse.setStatus(model.getStatus());
 			postRes.add(postResponse);
 		}
 		return postRes;
@@ -123,6 +127,8 @@ public class PostServiceImpl implements PostService {
 			postDto.setEndDate(new Date(expiredTime));
 			
 			PostModel postModel = modelMapper.map(postDto, PostModel.class);
+			
+			postModel.setStatus(constant.UNCENSORED);
 			
 			PostModel saveModel = postRepository.save(postModel);
 			return convertEntity2Dto(saveModel);

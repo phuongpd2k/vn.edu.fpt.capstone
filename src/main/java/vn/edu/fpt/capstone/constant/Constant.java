@@ -7,4 +7,10 @@ public class Constant {
 	public final int Sign_In_Normal = 0;
 	public final int Sign_In_By_Google = 1;
 	public final int PAGE_SIZE = 10;
+	public final int DEFAULT_BALANCE = 40000;
+	public final String ROLE_USER = "ROLE_USER";
+	
+	public final String UNCENSORED = "UNCENSORED";
+	public final String CENSORED = "CENSORED";
+	
 }
