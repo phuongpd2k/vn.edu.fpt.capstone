@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.capstone.dto.RoomTypeDto;
 import vn.edu.fpt.capstone.constant.Message;
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.RoomTypeService;
 
@@ -154,6 +155,22 @@ public class RoomTypeController {
 			response.setCode("500");
 			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@DeleteMapping(value = "/roomType")
+	public ResponseEntity<?> deleteListRoomType(@RequestBody ListIdDto listIdDto) {
+		try {
+			roomTypeService.removeListRoomType(listIdDto);
+			LOGGER.error("deleteRoomType: {}","DELETED");
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Delete list room type successfully!")
+							.messageCode("DELETE_LIST_ROOM_TYPE_SUCCESSFULL").build());
+		} catch (Exception e) {
+			LOGGER.error("deleteRoomType: {}", e.toString());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(ResponseObject.builder().code("400").message("Delete list room type fail!")
+							.messageCode("DELETE_LIST_ROOM_TYPE_FAIL").build());
 		}
 	}
 

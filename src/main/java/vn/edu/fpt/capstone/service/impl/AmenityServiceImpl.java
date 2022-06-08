@@ -6,17 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.AmenityDto;
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.model.AmenityModel;
+import vn.edu.fpt.capstone.model.TypeOfRentalModel;
 import vn.edu.fpt.capstone.repository.AmenityRepository;
 import vn.edu.fpt.capstone.service.AmenityService;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @Service
 public class AmenityServiceImpl implements AmenityService {
@@ -91,6 +88,21 @@ public class AmenityServiceImpl implements AmenityService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void removeListAmenity(ListIdDto listIdDto) {
+		try {
+			for (Long id : listIdDto.getList()) {
+				AmenityModel amenityModel = amenityRepository.getById(id);
+				if(amenityModel != null) {
+					amenityModel.setEnable(false);
+					amenityModel = amenityRepository.save(amenityModel);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("deleteAmenity: {}", e.getMessage());
+		}	
 	}
 
 

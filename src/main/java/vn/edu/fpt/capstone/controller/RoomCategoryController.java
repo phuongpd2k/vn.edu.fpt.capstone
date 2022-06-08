@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.capstone.dto.RoomCategoryDto;
 import vn.edu.fpt.capstone.constant.Message;
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.RoomCategoryService;
 
@@ -157,6 +158,21 @@ public class RoomCategoryController {
 			response.setCode("500");
 			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@DeleteMapping(value = "/roomCategory")
+	public ResponseEntity<?> deleteListRoomCategory(@RequestBody ListIdDto listIdDto) {
+		try {
+			roomCategoryService.removeListRoomCategory(listIdDto);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Delete list room category successfully!")
+							.messageCode("DELETE_LIST_ROOM_CATEGORY_SUCCESSFULL").build());
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(ResponseObject.builder().code("400").message("Delete list room category fail!")
+							.messageCode("DELETE_LIST_ROOM_CATEGORY_FAIL").build());
 		}
 	}
 

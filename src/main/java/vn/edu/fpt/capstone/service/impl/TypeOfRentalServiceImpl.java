@@ -86,12 +86,14 @@ public class TypeOfRentalServiceImpl implements TypeOfRentalService {
 	public void removeListTypeOfRental(ListIdDto listIdDto) {
 		try {
 			for (Long id : listIdDto.getList()) {
-				
+				TypeOfRentalModel typeOfRentalModel = typeOfRentalRepository.getById(id);
+				if(typeOfRentalModel != null) {
+					typeOfRentalModel.setEnable(false);
+					typeOfRentalModel = typeOfRentalRepository.save(typeOfRentalModel);
+				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		
+			LOGGER.error("deleteTypeOfRental: {}", e.getMessage());
+		}	
 	}
 }
