@@ -5,17 +5,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.RoomTypeDto;
 import vn.edu.fpt.capstone.model.RoomTypeModel;
 import vn.edu.fpt.capstone.repository.RoomTypeRepository;
 import vn.edu.fpt.capstone.service.RoomTypeService;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @Service
 public class RoomTypeServiceImpl implements RoomTypeService {
@@ -90,4 +88,19 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         }
         return false;
     }
+
+	@Override
+	public void removeListRoomType(ListIdDto listIdDto) {
+		try {
+			for (Long id : listIdDto.getList()) {
+				RoomTypeModel roomTypeModel = roomTypeRepository.getById(id);
+				if(roomTypeModel != null) {
+					roomTypeModel.setEnable(false);
+					roomTypeModel = roomTypeRepository.save(roomTypeModel);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("deleteRoomType: {}", e.getMessage());
+		}	
+	}
 }

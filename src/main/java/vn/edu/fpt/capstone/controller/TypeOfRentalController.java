@@ -159,35 +159,17 @@ public class TypeOfRentalController {
 	
 	@DeleteMapping(value = "/typeOfRental")
 	public ResponseEntity<?> deleteListTypeOfRental(@RequestBody ListIdDto listIdDto) {
-//		try {
-//			if (id == null || id.isEmpty() || !typeOfRentalService.isExist(Long.valueOf(id))) {
-//				response.setCode("404");
-//				response.setMessageCode(Message.NOT_FOUND);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//			}
-//			response.setCode("200");
-//			response.setMessageCode(Message.OK);
-//			typeOfRentalService.removeTypeOfRental(Long.valueOf(id));
-//			return new ResponseEntity<>(response, HttpStatus.OK);
-//		} catch (NumberFormatException ex) {
-//			LOGGER.error(ex.toString());
-//			response.setCode("404");
-//			response.setMessageCode(Message.NOT_FOUND);
-//			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//		} catch (Exception e) {
-//			LOGGER.error(e.toString());
-//			response.setCode("500");
-//			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-//			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-		
 		try {
 			typeOfRentalService.removeListTypeOfRental(listIdDto);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Delete list type of rental successfully!")
+							.messageCode("DELETE_LIST_TYPE_OF_RENTAL_SUCCESSFULL").build());
 		} catch (Exception e) {
-			// TODO: handle exception
+			LOGGER.error(e.toString());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(ResponseObject.builder().code("400").message("Delete list type of rental fail!")
+							.messageCode("DELETE_LIST_TYPE_OF_RENTAL_FAIL").build());
 		}
-		
-		return null;
 	}
 
 }

@@ -2,6 +2,7 @@ package vn.edu.fpt.capstone.service;
 
 import java.util.List;
 
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.RoomTypeDto;
 
 public interface RoomTypeService {
@@ -11,5 +12,6 @@ public interface RoomTypeService {
     boolean removeRoomType(Long id);
     RoomTypeDto createRoomType(RoomTypeDto roomDto);
     boolean isExist(Long id);
+	void removeListRoomType(ListIdDto listIdDto);
 
 }

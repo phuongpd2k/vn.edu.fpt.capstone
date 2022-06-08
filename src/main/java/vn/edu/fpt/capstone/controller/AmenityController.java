@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.AmenityDto;
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.AmenityService;
 
@@ -156,6 +157,21 @@ public class AmenityController {
 			response.setCode("500");
 			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@DeleteMapping(value = "/amenity")
+	public ResponseEntity<?> deleteListAmenity(@RequestBody ListIdDto listIdDto) {
+		try {
+			amenityService.removeListAmenity(listIdDto);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Delete list amenity successfully!")
+							.messageCode("DELETE_LIST_AMENITY_SUCCESSFULL").build());
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(ResponseObject.builder().code("400").message("Delete list amenity fail!")
+							.messageCode("DELETE_LIST_AMENITY_FAIL").build());
 		}
 	}
 

@@ -5,8 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.RoomCategoryDto;
 import vn.edu.fpt.capstone.model.RoomCategoryModel;
+import vn.edu.fpt.capstone.model.TypeOfRentalModel;
 import vn.edu.fpt.capstone.repository.RoomCategoryRepository;
 import vn.edu.fpt.capstone.service.RoomCategoryService;
 
@@ -90,4 +93,19 @@ public class RoomCategoryServiceImpl implements RoomCategoryService {
         }
         return false;
     }
+
+	@Override
+	public void removeListRoomCategory(ListIdDto listIdDto) {
+		try {
+			for (Long id : listIdDto.getList()) {
+				RoomCategoryModel roomCategoryModel = roomCategoryRepository.getById(id);
+				if(roomCategoryModel != null) {
+					roomCategoryModel.setEnable(false);
+					roomCategoryModel = roomCategoryRepository.save(roomCategoryModel);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("deleteRoomCategoryModel: {}", e.getMessage());
+		}	
+	}
 }
