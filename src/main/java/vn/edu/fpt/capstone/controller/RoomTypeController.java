@@ -158,7 +158,7 @@ public class RoomTypeController {
 		}
 	}
 	
-	@PutMapping(value = "/roomType")
+	@DeleteMapping(value = "/roomType")
 	public ResponseEntity<?> deleteListRoomType(@RequestBody ListIdDto listIdDto) {
 		try {
 			roomTypeService.removeListRoomType(listIdDto);
