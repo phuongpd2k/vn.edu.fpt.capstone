@@ -76,6 +76,28 @@ public class PostController {
 		}
 	}
 
+	@GetMapping(value = "/post-by-token")
+	public ResponseEntity<ResponseObject> getAllByToken(@RequestHeader(value = "Authorization") String jwtToken) {
+		ResponseObject responseObject = new ResponseObject();
+		try {
+			List<PostResponse> postDtos = postService.findAllByToken(jwtToken);
+			if (postDtos == null || postDtos.isEmpty()) {
+				responseObject.setResults(new ArrayList<>());
+			} else {
+				responseObject.setResults(postDtos);
+			}
+			LOGGER.info("getAll: {}", postDtos);
+			responseObject.setCode("200");
+			responseObject.setMessageCode(Message.OK);
+			return new ResponseEntity<>(responseObject, HttpStatus.OK);
+		} catch (Exception ex) {
+			LOGGER.error("getAll: {}", ex);
+			responseObject.setCode("500");
+			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	@GetMapping(value = "/post")
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
@@ -97,73 +119,6 @@ public class PostController {
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
-//	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
-//	@PostMapping(value = "/post")
-//	public ResponseEntity<ResponseObject> postPost(@RequestBody String jsonString) {
-//		ResponseObject response = new ResponseObject();
-//		try {
-//			PostDto postDto = objectMapper.readValue(jsonString, PostDto.class);
-//			LOGGER.info("postHouseCreate: {}", postDto);
-//			if (postDto.getId() != null) {
-//				LOGGER.error("postPost: {}", "Wrong body format");
-//				response.setCode("406");
-//				response.setMessage("Wrong body format");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			}
-//
-//			if (postDto.getNumberOfDays() == null || postDto.getNumberOfDays() <= 0) {
-//				LOGGER.error("postPost: {}", "Number Of Days Public Post must greater than 0");
-//				response.setCode("406");
-//				response.setMessage("Number Of Days Public Post must greater than 0");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			}
-//
-//			if (postDto.getTitle() == null || postDto.getTitle().trim().isEmpty()) {
-//				LOGGER.error("postPost: {}", "Title must not empty");
-//				response.setCode("406");
-//				response.setMessage("Title must not empty");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			}
-//			if (postDto.getDescription() == null || postDto.getDescription().trim().isEmpty()) {
-//				LOGGER.error("postPost: {}", "Description must not empty");
-//				response.setCode("406");
-//				response.setMessage("Description must not empty");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			}
-//			if (postDto.getRoom() == null || postDto.getRoom().getId() == null
-//					|| !roomService.isExist(postDto.getRoom().getId())) {
-//				LOGGER.error("postPost: {}", "ID Room is not exist");
-//				response.setCode("406");
-//				response.setMessage("ID Room is not exist");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			}
-//			Long expiredTime = System.currentTimeMillis() + (postDto.getNumberOfDays() * TIMESTAMP_DAY);
-//			postDto.setExpiredTime(expiredTime);
-//			PostDto postDto2 = postService.createPost(postDto);
-//			if (postDto2 == null) {
-//				response.setCode("500");
-//				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-//				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//			}
-//			response.setCode("200");
-//			response.setMessageCode(Message.OK);
-//			response.setResults(postDto2);
-//			LOGGER.info("postPost: {}", postDto2);
-//			return new ResponseEntity<>(response, HttpStatus.OK);
-//		} catch (Exception e) {
-//			LOGGER.error("postPost: {}", e);
-//			response.setCode("500");
-//			response.setMessage(e.toString());
-//			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-//			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
 	@PostMapping(value = "/post")

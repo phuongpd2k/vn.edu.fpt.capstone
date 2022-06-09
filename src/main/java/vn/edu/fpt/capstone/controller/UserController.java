@@ -41,7 +41,7 @@ public class UserController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping(value = "/user")
-	public ResponseEntity<?> getListUser(@RequestHeader(value = "Authorization") String jwtToken) {
+	public ResponseEntity<?> getListUser() {
 		LOGGER.info("Get all user info!");
 		try {
 			List<UserDto> list = userService.getAllUser();
@@ -61,8 +61,7 @@ public class UserController {
 	
 	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/user/search")
-	public ResponseEntity<?> getListUserSearch(@RequestHeader(value = "Authorization") String jwtToken, 
-			@RequestBody UserSearchDto searchDto) {
+	public ResponseEntity<?> getListUserSearch(@RequestBody UserSearchDto searchDto) {
 		LOGGER.info("Get all user info!");
 		try {
 			List<UserDto> list = userService.getAllUserSearch(searchDto);
@@ -93,8 +92,7 @@ public class UserController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping(value = "/user/detail/{id}")
-	public ResponseEntity<?> getUserByIdHasRole(@PathVariable long id,
-			@RequestHeader(value = "Authorization") String jwtToken) {
+	public ResponseEntity<?> getUserByIdHasRole(@PathVariable long id) {
 		LOGGER.info("Get info id: " + id);
 		try {
 			UserModel user = userService.getUserInformationById(id);
@@ -158,6 +156,7 @@ public class UserController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/user")
 	public ResponseEntity<ResponseObject> deleteUser(@RequestParam(required = true) Long id) {
 		try {
