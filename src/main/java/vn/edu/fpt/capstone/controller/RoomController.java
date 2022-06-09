@@ -122,7 +122,7 @@ public class RoomController {
 			if (roomModel != null) {
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(ResponseObject.builder().code("200").message("Create room: successfully!")
-								.messageCode("CREATE_ROOM_SUCCESSFULLY").results(roomModel).build());
+								.messageCode("CREATE_ROOM_SUCCESSFULLY").build());
 			}
 			throw new Exception();
 		} catch (Exception e) {
