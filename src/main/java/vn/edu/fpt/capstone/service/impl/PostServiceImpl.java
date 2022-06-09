@@ -16,12 +16,14 @@ import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.dto.ThanhPhoDto;
 import vn.edu.fpt.capstone.model.HouseModel;
 import vn.edu.fpt.capstone.model.PostModel;
+import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.repository.PostRepository;
 import vn.edu.fpt.capstone.repository.PostTypeRepository;
 import vn.edu.fpt.capstone.repository.RoomRepository;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.RoomService;
+import vn.edu.fpt.capstone.service.UserService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +48,9 @@ public class PostServiceImpl implements PostService {
 	
 	@Autowired
 	private Constant constant;
+	
+	@Autowired
+	private UserService userService;
 	
 	public int TIMESTAMP_DAY = 86400000;
 
@@ -75,7 +80,7 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostResponse> findAll() {
-		List<PostModel> postModels = postRepository.findAll();
+		List<PostModel> postModels = postRepository.findAllQuery();
 		if (postModels == null || postModels.isEmpty()) {
 			return null;
 		}
@@ -144,6 +149,17 @@ public class PostServiceImpl implements PostService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<PostResponse> findAllByToken(String jwtToken) {
+		UserModel userModel = userService.getUserInformationByToken(jwtToken);
+		List<PostModel> postModels = postRepository.findAllByUsername(userModel.getUsername());
+		if (postModels == null || postModels.isEmpty()) {
+			return null;
+		}
+		List<PostResponse> postRes = convertEntity2Response(postModels);
+		return postRes;
 	}
 
 }

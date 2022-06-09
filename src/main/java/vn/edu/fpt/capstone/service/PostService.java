@@ -18,4 +18,6 @@ public interface PostService {
 
 	boolean isExist(Long id);
 
+	List<PostResponse> findAllByToken(String jwtToken);
+
 }
