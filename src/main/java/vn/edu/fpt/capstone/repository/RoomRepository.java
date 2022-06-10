@@ -10,4 +10,16 @@ import vn.edu.fpt.capstone.model.RoomModel;
 public interface RoomRepository extends JpaRepository<RoomModel,Long> {
 	@Query("SELECT rm FROM RoomModel rm WHERE rm.house.id = ?1")
 	Page<RoomModel> getListPage(Long house_id, Pageable pageable);
+
+	@Query("SELECT MAX(rm.rentalPrice) FROM RoomModel rm WHERE rm.house.id = ?1")
+	int getMaxPrice(Long idHouse);
+	
+	@Query("SELECT MIN(rm.rentalPrice) FROM RoomModel rm WHERE rm.house.id = ?1")
+	int getMinPrice(Long idHouse);
+
+	@Query("SELECT MIN(rm.area) FROM RoomModel rm WHERE rm.house.id = ?1")
+	int getMinArea(Long idHouse);
+
+	@Query("SELECT MAX(rm.area) FROM RoomModel rm WHERE rm.house.id = ?1")
+	int getMaxArea(Long idHouse);
 }

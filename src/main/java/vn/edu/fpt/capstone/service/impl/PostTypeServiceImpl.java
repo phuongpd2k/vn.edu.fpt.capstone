@@ -38,7 +38,7 @@ public class PostTypeServiceImpl implements PostTypeService{
 
 	@Override
 	public List<PostTypeDto> findAll() {
-		List<PostTypeModel> list = postTypeRepository.findAll();
+		List<PostTypeModel> list = postTypeRepository.findAllByEnable();
 		
 		List<PostTypeDto> listDto = Arrays.asList(modelMapper.map(list, PostTypeDto[].class));
 		return listDto;

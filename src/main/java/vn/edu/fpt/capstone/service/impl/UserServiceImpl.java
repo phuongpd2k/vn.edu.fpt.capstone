@@ -149,10 +149,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDto> getAllUserSearch(UserSearchDto userSearch) {
-//		List<UserModel> listModel = userRepository.findAllUserSearch(userSearch.getKeyword(), userSearch.isActive());
-//		if (listModel == null || listModel.isEmpty())
-//			return null;
-//		return convertToListDto(listModel);
 		String sql = "select entity from UserModel as entity where (1=1) ";
 		String whereClause = "";
 		

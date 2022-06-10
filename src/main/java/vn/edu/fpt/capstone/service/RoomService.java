@@ -14,4 +14,8 @@ public interface RoomService {
     RoomModel create(RoomDto roomDto);
     Page<RoomModel> getPage(int pageSize, int pageIndex, Long houseId);
 	void deleteRoom(Long id);
+	int maxPrice(Long idHouse);
+	int minPrice(Long id);
+	int minArea(Long idHouse);
+	int maxArea(Long idHouse);
 }

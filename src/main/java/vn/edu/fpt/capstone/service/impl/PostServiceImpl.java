@@ -13,6 +13,7 @@ import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDetails;
 import vn.edu.fpt.capstone.dto.RoomDto;
+import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.ThanhPhoDto;
 import vn.edu.fpt.capstone.model.HouseModel;
 import vn.edu.fpt.capstone.model.PostModel;
@@ -21,8 +22,11 @@ import vn.edu.fpt.capstone.repository.PostRepository;
 import vn.edu.fpt.capstone.repository.PostTypeRepository;
 import vn.edu.fpt.capstone.repository.RoomRepository;
 import vn.edu.fpt.capstone.response.PostResponse;
+import vn.edu.fpt.capstone.response.PostingResponse;
 import vn.edu.fpt.capstone.service.PostService;
+import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.RoomService;
+import vn.edu.fpt.capstone.service.ThanhPhoService;
 import vn.edu.fpt.capstone.service.UserService;
 
 import java.util.ArrayList;
@@ -30,28 +34,41 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 @Service
 public class PostServiceImpl implements PostService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostServiceImpl.class.getName());
 
 	@Autowired
 	private PostRepository postRepository;
-	
+
 	@Autowired
 	ModelMapper modelMapper;
-	
+
 	@Autowired
 	private RoomService roomService;
-	
+
 	@Autowired
 	private PostTypeRepository postTypeRepository;
-	
+
 	@Autowired
 	private Constant constant;
-	
+
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private QuanHuyenService quanHuyenService;
+	
+	@Autowired
+	private ThanhPhoService thanhPhoService;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	public int TIMESTAMP_DAY = 86400000;
 
 	public List<PostDto> convertEntity2Dto(List<PostModel> models) {
@@ -123,18 +140,20 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PostDto createPost(PostDto postDto) {
 		try {
-			//set cost
+			// set cost
 			int costPerDay = postTypeRepository.getById(postDto.getPostType().getId()).getPrice();
 			postDto.setCost(postDto.getNumberOfDays() * costPerDay);
-			
-			//set end date
-			Long expiredTime = postDto.getStartDate().getTime() + (postDto.getNumberOfDays() * TIMESTAMP_DAY);
+
+			// set end date
+			long currentDate = postDto.getStartDate().getTime();
+			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
+			Long expiredTime = currentDate + addDate;
 			postDto.setEndDate(new Date(expiredTime));
-			
+
 			PostModel postModel = modelMapper.map(postDto, PostModel.class);
-			
+
 			postModel.setStatus(constant.UNCENSORED);
-			
+
 			PostModel saveModel = postRepository.save(postModel);
 			return convertEntity2Dto(saveModel);
 		} catch (Exception e) {
@@ -160,6 +179,73 @@ public class PostServiceImpl implements PostService {
 		}
 		List<PostResponse> postRes = convertEntity2Response(postModels);
 		return postRes;
+	}
+
+	@Override
+	public List<PostingResponse> findAllPosting(SearchDto searchDto) {
+		// If SearchDto equal null then return
+		if (searchDto == null) {
+			return null;
+		}
+
+		// Get page index, page size
+//		int pageIndex = searchDto.getPageIndex();
+//		int pageSize = searchDto.getPageSize();
+//
+//		// If page index > 0 then reduction 1, else page index = 0
+//		if (pageIndex > 0) {
+//			pageIndex--;
+//		} else {
+//			pageIndex = 0;
+//		}
+
+		// Query
+		String whereClause = "";
+
+		// Order by create date descending
+		String orderBy = " ORDER BY entity.postType.price DESC";
+		// Count category
+		//String sqlCount = "select count(entity.id) from  Category as entity where (1=1)   ";
+		String sql = "select entity from  PostModel as entity where (entity.enable = true AND entity.isActive = true)  ";
+		
+		if(!searchDto.getKeyword().isEmpty()) {
+			whereClause += " AND ( entity.house.name LIKE :text)";
+		}
+		
+		sql += whereClause + orderBy;
+		Query query = entityManager.createQuery(sql, PostModel.class);
+		
+		if(!searchDto.getKeyword().isEmpty()) {
+			query.setParameter("text", '%' + searchDto.getKeyword().trim() + '%');
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<PostModel> list = query.getResultList();
+		
+		List<PostingResponse> listPostingResponse = convertToPostingResponse(list);
+		
+		return listPostingResponse;
+	}
+
+	private List<PostingResponse> convertToPostingResponse(List<PostModel> list) {
+		List<PostingResponse> listPostingResponse = new ArrayList<PostingResponse>();
+		for (PostModel postModel : list) {
+			PostingResponse postingResponse = new PostingResponse();
+			postingResponse.setNameHouse(postModel.getHouse().getName());
+			postingResponse.setImageUrl(postModel.getHouse().getImageUrl());
+			postingResponse.setStreet(postModel.getHouse().getAddress().getStreet());
+			postingResponse.setPhuongXa(postModel.getHouse().getAddress().getPhuongXa().getName());
+			
+			QuanHuyenDto dto = new QuanHuyenDto();
+			dto = quanHuyenService.findById(postModel.getHouse().getAddress().getPhuongXa().getMaQh());
+			postingResponse.setQuanHuyen(dto.getName());
+			postingResponse.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
+			Long idHouse = postModel.getHouse().getId();
+			postingResponse.setCostRange(roomService.minPrice(idHouse) + "-" + roomService.maxPrice(idHouse));
+			postingResponse.setAreaRange(roomService.minArea(idHouse) + "-" + roomService.maxArea(idHouse));
+			listPostingResponse.add(postingResponse);
+		}
+		return listPostingResponse;
 	}
 
 }

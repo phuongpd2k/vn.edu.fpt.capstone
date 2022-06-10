@@ -94,4 +94,24 @@ public class RoomServiceImpl implements RoomService {
 		roomRepository.save(roomModel);		
 	}
 
+	@Override
+	public int maxPrice(Long idHouse) {
+		return roomRepository.getMaxPrice(idHouse);
+	}
+	
+	@Override
+	public int minPrice(Long idHouse) {
+		return roomRepository.getMinPrice(idHouse);
+	}
+
+	@Override
+	public int minArea(Long idHouse) {
+		return roomRepository.getMinArea(idHouse);
+	}
+
+	@Override
+	public int maxArea(Long idHouse) {
+		return roomRepository.getMaxArea(idHouse);
+	}
+
 }
