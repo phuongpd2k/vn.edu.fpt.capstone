@@ -4,7 +4,12 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 
 import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.dto.HouseDto;
@@ -21,6 +26,7 @@ import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.repository.PostRepository;
 import vn.edu.fpt.capstone.repository.PostTypeRepository;
 import vn.edu.fpt.capstone.repository.RoomRepository;
+import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
 import vn.edu.fpt.capstone.service.PostService;
@@ -28,6 +34,7 @@ import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.ThanhPhoService;
 import vn.edu.fpt.capstone.service.UserService;
+import vn.edu.fpt.capstone.response.PageableResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,13 +66,13 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private QuanHuyenService quanHuyenService;
-	
+
 	@Autowired
 	private ThanhPhoService thanhPhoService;
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -182,49 +189,74 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostingResponse> findAllPosting(SearchDto searchDto) {
+	public PageableResponse findAllPosting(SearchDto searchDto) {
 		// If SearchDto equal null then return
 		if (searchDto == null) {
 			return null;
 		}
 
 		// Get page index, page size
-//		int pageIndex = searchDto.getPageIndex();
-//		int pageSize = searchDto.getPageSize();
-//
-//		// If page index > 0 then reduction 1, else page index = 0
-//		if (pageIndex > 0) {
-//			pageIndex--;
-//		} else {
-//			pageIndex = 0;
-//		}
+		int pageIndex = searchDto.getPageIndex();
+		int pageSize = searchDto.getPageSize();
+
+		// If page index > 0 then reduction 1, else page index = 0
+		if (pageIndex > 0) {
+			pageIndex--;
+		} else {
+			pageIndex = 0;
+		}
 
 		// Query
 		String whereClause = "";
 
 		// Order by create date descending
 		String orderBy = " ORDER BY entity.postType.price DESC";
+
+		String sql = "select entity from  PostModel as entity where (entity.enable = true AND entity.isActive = true) ";
+
 		// Count category
-		//String sqlCount = "select count(entity.id) from  Category as entity where (1=1)   ";
-		String sql = "select entity from  PostModel as entity where (entity.enable = true AND entity.isActive = true)  ";
-		
-		if(!searchDto.getKeyword().isEmpty()) {
+		String sqlCount = "select COUNT(entity) from  PostModel as entity where (entity.enable = true AND entity.isActive = true) ";
+
+		if (!searchDto.getKeyword().isEmpty()) {
 			whereClause += " AND ( entity.house.name LIKE :text)";
 		}
-		
+
 		sql += whereClause + orderBy;
+		sqlCount += whereClause;
 		Query query = entityManager.createQuery(sql, PostModel.class);
-		
-		if(!searchDto.getKeyword().isEmpty()) {
+		Query qCount = entityManager.createQuery(sqlCount);
+		if (!searchDto.getKeyword().isEmpty()) {
 			query.setParameter("text", '%' + searchDto.getKeyword().trim() + '%');
+			qCount.setParameter("text", '%' + searchDto.getKeyword().trim() + '%');
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		List<PostModel> list = query.getResultList();
+
+		// Get first position in list search
+		int startPosition = pageIndex * pageSize;
+
+		// Set index and size for get element search
+		query.setFirstResult(startPosition);
+		query.setMaxResults(pageSize);
+
+		// Count category in per page
+		long count = (long) qCount.getSingleResult();
+
+		Pageable pageable = PageRequest.of(pageIndex, pageSize);
+
+		// Get page contain Category by page index and page size
+		Page<PostModel> result = new PageImpl<PostModel>(list, pageable, count);
+		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
 		
-		List<PostingResponse> listPostingResponse = convertToPostingResponse(list);
-		
-		return listPostingResponse;
+		PageableResponse pageableResponse = new PageableResponse();
+		pageableResponse.setCurrentPage(pageIndex + 1);
+		pageableResponse.setPageSize(pageSize);
+		pageableResponse.setTotalPages(result.getTotalPages());
+		pageableResponse.setTotalItems(result.getTotalElements());
+		pageableResponse.setResults(listPostingResponse);
+
+		return pageableResponse;
 	}
 
 	private List<PostingResponse> convertToPostingResponse(List<PostModel> list) {
@@ -235,7 +267,7 @@ public class PostServiceImpl implements PostService {
 			postingResponse.setImageUrl(postModel.getHouse().getImageUrl());
 			postingResponse.setStreet(postModel.getHouse().getAddress().getStreet());
 			postingResponse.setPhuongXa(postModel.getHouse().getAddress().getPhuongXa().getName());
-			
+
 			QuanHuyenDto dto = new QuanHuyenDto();
 			dto = quanHuyenService.findById(postModel.getHouse().getAddress().getPhuongXa().getMaQh());
 			postingResponse.setQuanHuyen(dto.getName());
