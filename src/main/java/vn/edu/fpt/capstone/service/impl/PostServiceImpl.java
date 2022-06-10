@@ -12,20 +12,14 @@ import org.springframework.stereotype.Service;
 
 
 import vn.edu.fpt.capstone.constant.Constant;
-import vn.edu.fpt.capstone.dto.HouseDto;
-import vn.edu.fpt.capstone.dto.PhuongXaDto;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
-import vn.edu.fpt.capstone.dto.RoomDetails;
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
-import vn.edu.fpt.capstone.dto.ThanhPhoDto;
-import vn.edu.fpt.capstone.model.HouseModel;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.repository.PostRepository;
 import vn.edu.fpt.capstone.repository.PostTypeRepository;
-import vn.edu.fpt.capstone.repository.RoomRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
@@ -34,7 +28,6 @@ import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.ThanhPhoService;
 import vn.edu.fpt.capstone.service.UserService;
-import vn.edu.fpt.capstone.response.PageableResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;

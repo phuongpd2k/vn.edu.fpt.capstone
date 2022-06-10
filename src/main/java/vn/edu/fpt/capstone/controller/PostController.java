@@ -164,7 +164,6 @@ public class PostController {
 		}
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
 	@PostMapping(value = "/posting")
 	public ResponseEntity<ResponseObject> getAllPosting(@RequestBody SearchDto searchDto) {
 		try {
