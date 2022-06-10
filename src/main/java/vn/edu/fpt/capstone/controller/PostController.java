@@ -16,7 +16,6 @@ import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
-import vn.edu.fpt.capstone.response.PostingResponse;
 import vn.edu.fpt.capstone.service.HouseService;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.PostTypeService;
@@ -165,7 +164,6 @@ public class PostController {
 		}
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
 	@PostMapping(value = "/posting")
 	public ResponseEntity<ResponseObject> getAllPosting(@RequestBody SearchDto searchDto) {
 		try {
