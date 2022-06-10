@@ -14,6 +14,7 @@ import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SearchDto;
+import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
 import vn.edu.fpt.capstone.service.HouseService;
@@ -168,10 +169,11 @@ public class PostController {
 	@PostMapping(value = "/posting")
 	public ResponseEntity<ResponseObject> getAllPosting(@RequestBody SearchDto searchDto) {
 		try {
-			List<PostingResponse> list = postService.findAllPosting(searchDto);
-			LOGGER.info("get All posting: {}", list);
+			//List<PostingResponse> list = postService.findAllPosting(searchDto);
+			PageableResponse pageableResponse = postService.findAllPosting(searchDto);
+			LOGGER.info("get All posting: {}", pageableResponse.getResults());
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-					.message("Get posting successfully").messageCode("GET_POSTING_SUCCESSFULLY").results(list).build());
+					.message("Get posting successfully").messageCode("GET_POSTING_SUCCESSFULLY").results(pageableResponse).build());
 		} catch (Exception e) {
 			LOGGER.error("getAll posting: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
