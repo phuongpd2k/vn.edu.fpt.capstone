@@ -105,12 +105,12 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public int minArea(Long idHouse) {
+	public float minArea(Long idHouse) {
 		return roomRepository.getMinArea(idHouse);
 	}
 
 	@Override
-	public int maxArea(Long idHouse) {
+	public float maxArea(Long idHouse) {
 		return roomRepository.getMaxArea(idHouse);
 	}
 
