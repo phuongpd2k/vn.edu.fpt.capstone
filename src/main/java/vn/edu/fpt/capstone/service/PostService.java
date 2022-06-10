@@ -6,7 +6,6 @@ import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
-import vn.edu.fpt.capstone.response.PostingResponse;
 
 public interface PostService {
 	PostDto findById(Long id);
