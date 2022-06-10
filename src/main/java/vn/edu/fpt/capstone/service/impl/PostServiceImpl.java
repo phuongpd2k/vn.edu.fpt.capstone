@@ -273,8 +273,10 @@ public class PostServiceImpl implements PostService {
 			postingResponse.setQuanHuyen(dto.getName());
 			postingResponse.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
 			Long idHouse = postModel.getHouse().getId();
-			postingResponse.setCostRange(roomService.minPrice(idHouse) + "-" + roomService.maxPrice(idHouse));
-			postingResponse.setAreaRange(roomService.minArea(idHouse) + "-" + roomService.maxArea(idHouse));
+			postingResponse.setMinPrice(roomService.minPrice(idHouse));
+			postingResponse.setMaxPrice(roomService.maxPrice(idHouse));
+			postingResponse.setMinArea(roomService.minArea(idHouse));
+			postingResponse.setMaxArea(roomService.minArea(idHouse));
 			listPostingResponse.add(postingResponse);
 		}
 		return listPostingResponse;

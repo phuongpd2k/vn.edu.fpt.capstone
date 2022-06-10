@@ -16,6 +16,6 @@ public interface RoomService {
 	void deleteRoom(Long id);
 	int maxPrice(Long idHouse);
 	int minPrice(Long id);
-	int minArea(Long idHouse);
-	int maxArea(Long idHouse);
+	float minArea(Long idHouse);
+	float maxArea(Long idHouse);
 }

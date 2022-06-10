@@ -6,8 +6,10 @@ import lombok.Data;
 public class PostingResponse {
 	private String nameHouse;
 	private String imageUrl;
-	private String costRange;
-	private String areaRange;
+	private int minPrice;
+	private int maxPrice;
+	private float minArea;
+	private float maxArea;
 	private String street;
 	private String phuongXa;
 	private String quanHuyen;
