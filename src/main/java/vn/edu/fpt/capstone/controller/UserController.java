@@ -157,8 +157,38 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/user/lock")
+	public ResponseEntity<?> lockUser(@RequestParam(required = true) Long id) {
+		try {
+			userService.lockUserById(id);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("200")
+					.message("Lock user successfully!").messageCode("LOCK_USER_SUCCESSFULLY").build());
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Lock user fail:" + e.getMessage()).messageCode("LOCK_USER_FAIL").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/user/unlock")
+	public ResponseEntity<?> unLockUser(@RequestParam(required = true) Long id) {
+		try {
+			userService.unLockUserById(id);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("200")
+					.message("unlock user successfully!").messageCode("UNLOCK_USER_SUCCESSFULLY").build());
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Unlock user fail:" + e.getMessage()).messageCode("UNLOCK_USER_FAIL").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/user")
-	public ResponseEntity<ResponseObject> deleteUser(@RequestParam(required = true) Long id) {
+	public ResponseEntity<?> deleteUser(@RequestParam(required = true) Long id) {
 		try {
 			userService.deleteUserById(id);
 

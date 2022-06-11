@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void deleteUserById(Long id) {
 		UserModel userModel = userRepository.getById(id);
-		userModel.setActive(false);
+		userModel.setEnable(false);
 
 		userRepository.save(userModel);
 	}
@@ -181,5 +181,22 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int getTotalUser() {
 		return userRepository.getTotalUser();
+	}
+
+	@Override
+	public void lockUserById(Long id) {
+		UserModel userModel = userRepository.getById(id);
+		userModel.setActive(false);
+
+		userRepository.save(userModel);
+	}
+
+	@Override
+	public void unLockUserById(Long id) {
+		UserModel userModel = userRepository.getById(id);
+		userModel.setActive(true);
+
+		userRepository.save(userModel);
+		
 	}
 }
