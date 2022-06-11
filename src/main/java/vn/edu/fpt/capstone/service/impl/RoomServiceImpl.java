@@ -7,13 +7,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.dto.AmenityDto;
 import vn.edu.fpt.capstone.dto.ImageDto;
+import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
+import vn.edu.fpt.capstone.model.AmenityModel;
+import vn.edu.fpt.capstone.model.ImageModel;
 import vn.edu.fpt.capstone.model.RoomModel;
 import vn.edu.fpt.capstone.repository.RoomRepository;
+import vn.edu.fpt.capstone.response.RoomPostingResponse;
+import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.RoomService;
+import vn.edu.fpt.capstone.service.ThanhPhoService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +36,12 @@ public class RoomServiceImpl implements RoomService {
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private QuanHuyenService quanHuyenService;
+	
+	@Autowired
+	private ThanhPhoService thanhPhoService;
 
 	@Override
 	public RoomDto findById(Long id) {
@@ -112,6 +126,58 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public float maxArea(Long idHouse) {
 		return roomRepository.getMaxArea(idHouse);
+	}
+
+	@Override
+	public RoomPostingResponse getRoomPosting(Long lId) {
+		RoomModel roomModel = roomRepository.getByIdAndEnable(lId);	
+		if(roomModel != null) {
+			return convert2RoomPostingResponse(roomModel);
+		}
+		return null;
+	}
+
+	private RoomPostingResponse convert2RoomPostingResponse(RoomModel roomModel) {
+		RoomPostingResponse rp = new RoomPostingResponse();
+		
+		rp.setImages(Arrays.asList(modelMapper.map(roomModel.getImages(), ImageDto[].class)));
+		rp.setRoomName(roomModel.getName());
+		rp.setRoomType(roomModel.getRoomType().getName());
+		rp.setArea(roomModel.getArea());
+		rp.setMaximumNumberOfPeople(roomModel.getMaximumNumberOfPeople());
+		rp.setRentalPrice(roomModel.getRentalPrice());
+		rp.setStatusRental(roomModel.isStatus_rental());
+		rp.setElectricityPriceByNumber(roomModel.getElectricityPriceByNumber());
+		rp.setWaterPricePerMonth(roomModel.getWaterPricePerMonth());
+		rp.setRoomDescription(roomModel.getDescription());
+		rp.setFloor(roomModel.getFloor());
+		
+		rp.setStreet(roomModel.getHouse().getAddress().getStreet());
+		rp.setPhuongXa(roomModel.getHouse().getAddress().getPhuongXa().getName());
+		QuanHuyenDto dto = new QuanHuyenDto();
+		dto = quanHuyenService.findById(roomModel.getHouse().getAddress().getPhuongXa().getMaQh());
+		rp.setQuanHuyen(dto.getName());
+		rp.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
+		
+		
+		List<AmenityModel> list = new ArrayList<AmenityModel>();
+		for (AmenityModel model : roomModel.getAmenities()) {
+			if(model.isEnable() == true) {
+				list.add(model);
+			}
+		}
+		rp.setAmenities(Arrays.asList(modelMapper.map(list, AmenityDto[].class)));
+		
+		rp.setRoomCategoryName(roomModel.getRoomCategory().getName());
+		rp.setRoomCategoryDescription(roomModel.getRoomCategory().getDescription());	
+		
+		rp.setHouseName(roomModel.getHouse().getName());
+		rp.setHouseDescription(roomModel.getHouse().getDescription());
+		rp.setHostName(roomModel.getHouse().getUser().getFullName());
+		rp.setHostPhone(roomModel.getHouse().getUser().getPhoneNumber());
+		rp.setImageLinkHost(roomModel.getHouse().getUser().getImageLink());
+		
+		return rp;
 	}
 
 }

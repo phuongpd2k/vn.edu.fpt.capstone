@@ -15,6 +15,7 @@ import vn.edu.fpt.capstone.repository.HouseRepository;
 import vn.edu.fpt.capstone.repository.RoomCategoryRepository;
 import vn.edu.fpt.capstone.repository.RoomTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
+import vn.edu.fpt.capstone.response.RoomPostingResponse;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
@@ -57,9 +58,8 @@ public class RoomController {
 								.messageCode("GET_ROOM_SUCCESSFULLY").results(roomDto).build());
 			} else {
 				LOGGER.error("getById: {}", "ID Room is not exist");
-				return ResponseEntity.status(HttpStatus.NOT_FOUND)
-						.body(ResponseObject.builder().code("404").message("Get room Fail!")
-								.messageCode("GET_ROOM_FAIL").build());
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
+						.message("Get room Fail!").messageCode("GET_ROOM_FAIL").build());
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.error("getById: {}", e);
@@ -74,7 +74,25 @@ public class RoomController {
 		}
 	}
 
-	
+	@GetMapping(value = "/room")
+	public ResponseEntity<?> getRoomPostingById(@RequestParam(required = true) Long id) {
+		try {
+			Long lId = Long.valueOf(id);
+			RoomPostingResponse rpr = roomService.getRoomPosting(lId);
+			LOGGER.info("getById: {}", "roomDto");
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Get room successfully!").messageCode("GET_ROOM_SUCCESSFULLY").results(rpr).build());
+		} catch (NumberFormatException e) {
+			LOGGER.error("getById: {}", e);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
+					.message("Get room posting fail!").messageCode("GET_ROOM_POSTING_FAIL").build());
+		} catch (Exception ex) {
+			LOGGER.error("getById: {}", ex);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get room posting fail!").messageCode("GET_ROOM_POSTING_FAIL").build());
+		}
+	}
+
 	@PostMapping(value = "/room/page")
 	public ResponseEntity<?> getAllRoomByHouseId(@RequestParam(required = true) int pageIndex,
 			@RequestParam(required = true) int pageSize, @RequestBody HouseDto houseDto) {
@@ -120,9 +138,8 @@ public class RoomController {
 			RoomModel roomModel = roomService.create(roomDto);
 
 			if (roomModel != null) {
-				return ResponseEntity.status(HttpStatus.OK)
-						.body(ResponseObject.builder().code("200").message("Create room: successfully!")
-								.messageCode("CREATE_ROOM_SUCCESSFULLY").build());
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Create room: successfully!").messageCode("CREATE_ROOM_SUCCESSFULLY").build());
 			}
 			throw new Exception();
 		} catch (Exception e) {
@@ -157,9 +174,8 @@ public class RoomController {
 			RoomModel roomModel = roomService.create(roomDto);
 
 			if (roomModel != null) {
-				return ResponseEntity.status(HttpStatus.OK)
-						.body(ResponseObject.builder().code("200").message("Update room: successfully!")
-								.messageCode("UPDATE_ROOM_SUCCESSFULLY").build());
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Update room: successfully!").messageCode("UPDATE_ROOM_SUCCESSFULLY").build());
 			}
 			throw new Exception();
 		} catch (Exception e) {
@@ -176,8 +192,8 @@ public class RoomController {
 				LOGGER.error("deleteRoom: {}", "ID Room is not exist");
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder().code("404")
 						.message("Delete room fail: id not found").messageCode("DELETE_ROOM_FAIL").build());
-			}	
-			
+			}
+
 			roomService.deleteRoom(Long.valueOf(id));
 			LOGGER.info("deleteRoom: {}", "DELETED");
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")

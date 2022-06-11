@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.model.RoomModel;
+import vn.edu.fpt.capstone.response.RoomPostingResponse;
 
 public interface RoomService {
     RoomDto findById(Long id);
@@ -18,4 +19,5 @@ public interface RoomService {
 	int minPrice(Long id);
 	float minArea(Long idHouse);
 	float maxArea(Long idHouse);
+	RoomPostingResponse getRoomPosting(Long lId);
 }

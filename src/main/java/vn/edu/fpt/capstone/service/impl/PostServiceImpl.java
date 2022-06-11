@@ -224,6 +224,7 @@ public class PostServiceImpl implements PostService {
 		for (PostModel postModel : list) {
 			PostingResponse postingResponse = new PostingResponse();
 			postingResponse.setNameHouse(postModel.getHouse().getName());
+			postingResponse.setNameRoom(postModel.getRoom().getName());
 			postingResponse.setImageUrl(postModel.getHouse().getImageUrl());
 			postingResponse.setStreet(postModel.getHouse().getAddress().getStreet());
 			postingResponse.setPhuongXa(postModel.getHouse().getAddress().getPhuongXa().getName());

@@ -32,7 +32,7 @@ public class BankAccountModel extends Auditable<String>{
 	private Long numberAccount;
 	
 	@Column(name = "BRANCH")
-	private Long branch;
+	private String branch;
 	
 	@Column(name = "ENABLE", nullable = false)
 	private boolean enable = true;

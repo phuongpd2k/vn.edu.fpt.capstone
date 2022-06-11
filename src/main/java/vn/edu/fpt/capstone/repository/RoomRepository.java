@@ -22,4 +22,7 @@ public interface RoomRepository extends JpaRepository<RoomModel,Long> {
 
 	@Query("SELECT MAX(rm.area) FROM RoomModel rm WHERE rm.house.id = ?1")
 	int getMaxArea(Long idHouse);
+
+	@Query("SELECT rm FROM RoomModel rm WHERE rm.enable = true AND rm.house.enable = true AND rm.id = ?1")
+	RoomModel getByIdAndEnable(Long lId);
 }

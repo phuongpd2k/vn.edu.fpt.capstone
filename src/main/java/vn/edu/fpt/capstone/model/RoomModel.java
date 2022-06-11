@@ -63,7 +63,7 @@ public class RoomModel extends Auditable<String> implements Serializable {
 	private boolean status_rental;
 
 	@Column(name = "ENABLE")
-	private boolean enable;
+	private boolean enable = true;
 
 	@Column(name = "ELECTRICITY_PRICE_BY_NUMBER")
 	private int electricityPriceByNumber;
