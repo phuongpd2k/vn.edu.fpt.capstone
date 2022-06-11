@@ -76,9 +76,13 @@ public class UserModel extends Auditable<String> {
 
 	@Column(name = "verification_code", updatable = false)
 	private String verificationCode;
+	
 	@Column(name = "reset_code")
 	private String resetCode;
 	
 	@Column(name = "balance")
 	private float balance;
+	
+	@Column(name = "ENABLE", nullable = false)
+	private boolean enable = true;
 }

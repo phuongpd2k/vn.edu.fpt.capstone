@@ -99,13 +99,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if (!user.isActive()) {
 			logger.error("Account inactive!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("Authenticate request: account inactive!").messageCode("INACTIVE_ACCOUNT").build());
+					.message("Authenticate request: account lock!").messageCode("INACTIVE_ACCOUNT").build());
 		}
 
 		if (!user.isVerify()) {
 			logger.error("unverified account!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
 					.message("Authenticate request: unverified account!").messageCode("UNVERIFIED_ACCOUNT").build());
+		}
+		
+		if (!user.isEnable()) {
+			logger.error("Account deleted!");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
+					.message("Authenticate request: account deleted!").messageCode("DELETED_ACCOUNT").build());
 		}
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -315,6 +321,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if (!user.isVerify()) {
 			user.setVerify(true);
 			user = userRepository.save(user);
+		}
+		if (!user.isEnable()) {
+			logger.error("Account deleted!");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
+					.message("Authenticate request: account deleted!").messageCode("DELETED_ACCOUNT").build());
 		}
 
 		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService

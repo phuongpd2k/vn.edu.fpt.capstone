@@ -36,4 +36,8 @@ public interface UserService {
 	int getTotalUserActive();
 
 	int getTotalUser();
+
+	void lockUserById(Long id);
+
+	void unLockUserById(Long id);
 }

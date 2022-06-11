@@ -7,7 +7,9 @@ import lombok.Data;
 @Data
 public class PostResponse {
 	private Long id;
+	private Long postTypeId;
 	private String postType;
+	private String houseName;
 	private Date startDate;
 	private Date endDate;
 	private int cost;
