@@ -31,4 +31,7 @@ public class BankAccountModel extends Auditable<String>{
 	@Column(name = "NUMBER_ACCOUNT")
 	private Long numberAccount;
 	
+	@Column(name = "ENABLE", nullable = false)
+	private boolean enable = true;
+	
 }
