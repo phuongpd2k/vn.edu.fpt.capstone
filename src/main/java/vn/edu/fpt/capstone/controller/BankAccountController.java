@@ -56,15 +56,15 @@ public class BankAccountController {
 		try {
 			if ((bankAccountDto.getBankName().trim().isEmpty())) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-						.message("Create bank account: bank name is empty!").messageCode("BANK_NAME_IS_EMPTY").build());
+						.message("Create bank account: bank name is empty!").messageCode("CREATE_BANK_ACCOUNT_FAIL").build());
 			}
 			if ((bankAccountDto.getUsername().trim().isEmpty())) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-						.message("Create bank account: user name is empty!").messageCode("USERNAME_IS_EMPTY").build());
+						.message("Create bank account: user name is empty!").messageCode("CREATE_BANK_ACCOUNT_FAIL").build());
 			}
 			if (bankAccountDto.getNumberAccount() == null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-						.message("Create bank account: number account is null!").messageCode("NUMBER_ACCOUNT_NULL").build());
+						.message("Create bank account: number account is null!").messageCode("CREATE_BANK_ACCOUNT_FAIL").build());
 			}
 			BankAccountModel bankAccountModel = bankAccountService.create(bankAccountDto);
 
@@ -85,19 +85,19 @@ public class BankAccountController {
 		try {
 			if (bankAccountDto.getId() == null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-						.message("Update bank account: id is null!").messageCode("ID_NULL").build());
+						.message("Update bank account: id is null!").messageCode("UPDATE_BANK_ACCOUNT_FAIL").build());
 			}
 			if ((bankAccountDto.getBankName().trim().isEmpty())) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-						.message("Update bank account: bank name is empty!").messageCode("BANK_NAME_IS_EMPTY").build());
+						.message("Update bank account: bank name is empty!").messageCode("UPDATE_BANK_ACCOUNT_FAIL").build());
 			}
 			if ((bankAccountDto.getUsername().trim().isEmpty())) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-						.message("Update bank account: user name is empty!").messageCode("USERNAME_IS_EMPTY").build());
+						.message("Update bank account: user name is empty!").messageCode("UPDATE_BANK_ACCOUNT_FAIL").build());
 			}
 			if (bankAccountDto.getNumberAccount() == null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-						.message("Update bank account: number account is null!").messageCode("NUMBER_ACCOUNT_NULL").build());
+						.message("Update bank account: number account is null!").messageCode("UPDATE_BANK_ACCOUNT_FAIL").build());
 			}
 			BankAccountModel bankAccountModel = bankAccountService.create(bankAccountDto);
 

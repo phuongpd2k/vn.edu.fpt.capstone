@@ -191,6 +191,11 @@ public class PostServiceImpl implements PostService {
 		// Get page index, page size
 		int pageIndex = searchDto.getPageIndex();
 		int pageSize = searchDto.getPageSize();
+		String key = searchDto.getKeyword();
+		
+		if(searchDto.getKeyword() == null) {
+			key = "";
+		}
 
 		// If page index > 0 then reduction 1, else page index = 0
 		if (pageIndex > 0) {
@@ -199,47 +204,9 @@ public class PostServiceImpl implements PostService {
 			pageIndex = 0;
 		}
 
-		// Query
-		String whereClause = "";
-
-		// Order by create date descending
-		String orderBy = " ORDER BY entity.postType.price DESC";
-
-		String sql = "select entity from  PostModel as entity where (entity.enable = true AND entity.isActive = true) ";
-
-		// Count category
-		String sqlCount = "select COUNT(entity) from  PostModel as entity where (entity.enable = true AND entity.isActive = true) ";
-
-		if (!searchDto.getKeyword().isEmpty()) {
-			whereClause += " AND ( entity.house.name LIKE :text)";
-		}
-
-		sql += whereClause + orderBy;
-		sqlCount += whereClause;
-		Query query = entityManager.createQuery(sql, PostModel.class);
-		Query qCount = entityManager.createQuery(sqlCount);
-		if (!searchDto.getKeyword().isEmpty()) {
-			query.setParameter("text", '%' + searchDto.getKeyword().trim() + '%');
-			qCount.setParameter("text", '%' + searchDto.getKeyword().trim() + '%');
-		}
-
-		@SuppressWarnings("unchecked")
-		List<PostModel> list = query.getResultList();
-
-		// Get first position in list search
-		int startPosition = pageIndex * pageSize;
-
-		// Set index and size for get element search
-		query.setFirstResult(startPosition);
-		query.setMaxResults(pageSize);
-
-		// Count category in per page
-		long count = (long) qCount.getSingleResult();
 
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
-
-		// Get page contain Category by page index and page size
-		Page<PostModel> result = new PageImpl<PostModel>(list, pageable, count);
+		Page<PostModel> result = postRepository.getListPage(key, pageable);
 		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
 		
 		PageableResponse pageableResponse = new PageableResponse();
@@ -269,7 +236,7 @@ public class PostServiceImpl implements PostService {
 			postingResponse.setMinPrice(roomService.minPrice(idHouse));
 			postingResponse.setMaxPrice(roomService.maxPrice(idHouse));
 			postingResponse.setMinArea(roomService.minArea(idHouse));
-			postingResponse.setMaxArea(roomService.minArea(idHouse));
+			postingResponse.setMaxArea(roomService.maxArea(idHouse));
 			listPostingResponse.add(postingResponse);
 		}
 		return listPostingResponse;

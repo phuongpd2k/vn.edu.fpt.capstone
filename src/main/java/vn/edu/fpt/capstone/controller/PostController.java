@@ -167,7 +167,6 @@ public class PostController {
 	@PostMapping(value = "/posting")
 	public ResponseEntity<ResponseObject> getAllPosting(@RequestBody SearchDto searchDto) {
 		try {
-			//List<PostingResponse> list = postService.findAllPosting(searchDto);
 			PageableResponse pageableResponse = postService.findAllPosting(searchDto);
 			LOGGER.info("get All posting: {}", pageableResponse.getResults());
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
