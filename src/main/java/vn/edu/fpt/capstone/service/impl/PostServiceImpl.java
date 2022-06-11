@@ -108,7 +108,9 @@ public class PostServiceImpl implements PostService {
 		for (PostModel model : postModels) {
 			PostResponse postResponse = new PostResponse();
 			postResponse.setId(model.getId());
+			postResponse.setPostTypeId(model.getPostType().getId());
 			postResponse.setPostType(model.getPostType().getType());
+			postResponse.setHouseName(model.getHouse().getName());
 			postResponse.setStartDate(model.getStartDate());
 			postResponse.setEndDate(model.getEndDate());
 			postResponse.setCost(model.getCost());
