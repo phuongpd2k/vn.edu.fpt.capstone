@@ -66,6 +66,10 @@ public class BankAccountController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 						.message("Create bank account: number account is null!").messageCode("CREATE_BANK_ACCOUNT_FAIL").build());
 			}
+			if ((bankAccountDto.getBranch().trim().isEmpty())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create bank account: branch name is empty!").messageCode("CREATE_BANK_ACCOUNT_FAIL").build());
+			}
 			BankAccountModel bankAccountModel = bankAccountService.create(bankAccountDto);
 
 			if (bankAccountModel != null) {
@@ -94,6 +98,10 @@ public class BankAccountController {
 			if ((bankAccountDto.getUsername().trim().isEmpty())) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 						.message("Update bank account: user name is empty!").messageCode("UPDATE_BANK_ACCOUNT_FAIL").build());
+			}
+			if ((bankAccountDto.getBranch().trim().isEmpty())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Update bank account: branch name is empty!").messageCode("UPDATE_BANK_ACCOUNT_FAIL").build());
 			}
 			if (bankAccountDto.getNumberAccount() == null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
