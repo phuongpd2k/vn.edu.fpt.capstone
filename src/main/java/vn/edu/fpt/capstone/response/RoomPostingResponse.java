@@ -30,13 +30,15 @@ public class RoomPostingResponse{
 	private String thanhPho;
 	
 	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate","id", "type"})
-	private List<AmenityDto> amenities;
+	private List<AmenityDto> amenitiesRoom;
 	
 	private String roomCategoryName;
 	private String roomCategoryDescription;
 	
 	private String houseName;
 	private String houseDescription;
+	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate","id", "type"})
+	private List<AmenityDto> amenitiesHouse;
 	
 	private String hostName;
 	private String hostPhone;

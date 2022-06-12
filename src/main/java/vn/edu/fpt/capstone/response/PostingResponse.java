@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PostingResponse {
+	private Long idRoom;
 	private String nameHouse;
 	private String nameRoom;
 	private String imageUrl;
