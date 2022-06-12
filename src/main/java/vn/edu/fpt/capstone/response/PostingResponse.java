@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class PostingResponse {
 	private String nameHouse;
+	private String nameRoom;
 	private String imageUrl;
 	private int minPrice;
 	private int maxPrice;

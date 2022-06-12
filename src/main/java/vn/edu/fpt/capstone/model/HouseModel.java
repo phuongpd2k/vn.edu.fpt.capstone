@@ -26,7 +26,7 @@ public class HouseModel extends Auditable<String> {
 	@Column(name = "NAME")
 	private String name;
 	@Column(name = "ENABLE")
-	private boolean enable;
+	private boolean enable = true;
 	@Column(name = "AREA")
 	private int area = 0;
 	@Column(name = "HOUSE_DIRECTION")
