@@ -34,6 +34,9 @@ public class BankAccountModel extends Auditable<String>{
 	@Column(name = "BRANCH")
 	private String branch;
 	
+	@Column(name = "IMAGE_URL")
+	private String imageUrl;
+	
 	@Column(name = "ENABLE", nullable = false)
 	private boolean enable = true;
 	
