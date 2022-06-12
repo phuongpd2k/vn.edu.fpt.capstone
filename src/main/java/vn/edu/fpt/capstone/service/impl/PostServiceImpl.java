@@ -110,6 +110,7 @@ public class PostServiceImpl implements PostService {
 			postResponse.setId(model.getId());
 			postResponse.setPostTypeId(model.getPostType().getId());
 			postResponse.setPostType(model.getPostType().getType());
+			postResponse.setRoomName(model.getRoom().getName());
 			postResponse.setHouseName(model.getHouse().getName());
 			postResponse.setStartDate(model.getStartDate());
 			postResponse.setEndDate(model.getEndDate());
@@ -223,6 +224,7 @@ public class PostServiceImpl implements PostService {
 		List<PostingResponse> listPostingResponse = new ArrayList<PostingResponse>();
 		for (PostModel postModel : list) {
 			PostingResponse postingResponse = new PostingResponse();
+			postingResponse.setIdRoom(postModel.getRoom().getId());
 			postingResponse.setNameHouse(postModel.getHouse().getName());
 			postingResponse.setNameRoom(postModel.getRoom().getName());
 			postingResponse.setImageUrl(postModel.getHouse().getImageUrl());
@@ -241,6 +243,31 @@ public class PostServiceImpl implements PostService {
 			listPostingResponse.add(postingResponse);
 		}
 		return listPostingResponse;
+	}
+
+	@Override
+	public PostModel extendPost(PostDto postDto) {
+		PostModel postModel = postRepository.getById(postDto.getId());
+		if(postModel != null) {
+			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
+			postModel.setCost(postDto.getNumberOfDays() * costPerDay);
+			
+			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
+			if(postDto.getStartDate() == null) {
+				long currentDate = postModel.getEndDate().getTime();
+				Long expiredTime = currentDate + addDate;
+				postModel.setEndDate(new Date(expiredTime));
+			}else {
+				long currentDate = postDto.getStartDate().getTime();
+				Long expiredTime = currentDate + addDate;
+				postModel.setStartDate(postDto.getStartDate());
+				postModel.setEndDate(new Date(expiredTime));
+				postModel.setStatus(constant.UNCENSORED);
+			}
+			
+			return postRepository.save(postModel);
+		}
+		return null;
 	}
 
 }

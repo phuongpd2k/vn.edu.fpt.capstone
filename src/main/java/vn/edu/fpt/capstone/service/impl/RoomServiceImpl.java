@@ -12,7 +12,6 @@ import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.model.AmenityModel;
-import vn.edu.fpt.capstone.model.ImageModel;
 import vn.edu.fpt.capstone.model.RoomModel;
 import vn.edu.fpt.capstone.repository.RoomRepository;
 import vn.edu.fpt.capstone.response.RoomPostingResponse;
@@ -160,13 +159,13 @@ public class RoomServiceImpl implements RoomService {
 		rp.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
 		
 		
-		List<AmenityModel> list = new ArrayList<AmenityModel>();
+		List<AmenityModel> listARoom = new ArrayList<AmenityModel>();
 		for (AmenityModel model : roomModel.getAmenities()) {
 			if(model.isEnable() == true) {
-				list.add(model);
+				listARoom.add(model);
 			}
 		}
-		rp.setAmenities(Arrays.asList(modelMapper.map(list, AmenityDto[].class)));
+		rp.setAmenitiesRoom(Arrays.asList(modelMapper.map(listARoom, AmenityDto[].class)));
 		
 		rp.setRoomCategoryName(roomModel.getRoomCategory().getName());
 		rp.setRoomCategoryDescription(roomModel.getRoomCategory().getDescription());	
@@ -176,6 +175,13 @@ public class RoomServiceImpl implements RoomService {
 		rp.setHostName(roomModel.getHouse().getUser().getFullName());
 		rp.setHostPhone(roomModel.getHouse().getUser().getPhoneNumber());
 		rp.setImageLinkHost(roomModel.getHouse().getUser().getImageLink());
+		List<AmenityModel> listAHouse = new ArrayList<AmenityModel>();
+		for (AmenityModel model : roomModel.getHouse().getAmenities()) {
+			if(model.isEnable() == true) {
+				listAHouse.add(model);
+			}
+		}
+		rp.setAmenitiesHouse(Arrays.asList(modelMapper.map(listAHouse, AmenityDto[].class)));
 		
 		return rp;
 	}

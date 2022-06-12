@@ -14,6 +14,7 @@ import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SearchDto;
+import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.service.HouseService;
@@ -164,8 +165,37 @@ public class PostController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
+	@PutMapping(value = "/post-extend")
+	// DungTV29
+	public ResponseEntity<?> extendPost(@RequestBody PostDto postDto) {
+		try {
+			LOGGER.info("postExtend: {}", postDto);
+			if (postDto.getId() == null || !postService.isExist(postDto.getId())) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Extend post: id house null or not exits").messageCode("EXTEND_POST_FAILED").build());
+			}
+			
+			if (postDto.getNumberOfDays() <= 0) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Extend post: number of day < 0").messageCode("EXTEND_POST_FAILED").build());
+			}
+			
+			PostModel model = postService.extendPost(postDto);
+			if(model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Extend post: successfully").messageCode("EXTEND_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("postExtend: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Extend post: " + e.getMessage()).messageCode("EXTEND_POST_FAILED").build());
+		}
+	}
+	
 	@PostMapping(value = "/posting")
-	public ResponseEntity<ResponseObject> getAllPosting(@RequestBody SearchDto searchDto) {
+	public ResponseEntity<?> getAllPosting(@RequestBody SearchDto searchDto) {
 		try {
 			PageableResponse pageableResponse = postService.findAllPosting(searchDto);
 			LOGGER.info("get All posting: {}", pageableResponse.getResults());

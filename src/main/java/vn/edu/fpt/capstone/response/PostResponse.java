@@ -9,6 +9,7 @@ public class PostResponse {
 	private Long id;
 	private Long postTypeId;
 	private String postType;
+	private String roomName;
 	private String houseName;
 	private Date startDate;
 	private Date endDate;
