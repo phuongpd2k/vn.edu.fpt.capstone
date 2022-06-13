@@ -275,13 +275,6 @@ public class TransactionController {
 				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
-			if (transactionDto.getId() != null) {
-				LOGGER.error("putTransaction: {}", "Wrong body format");
-				response.setCode("406");
-				response.setMessage("Wrong body format");
-				response.setMessageCode(Message.NOT_ACCEPTABLE);
-				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-			}
 			if (transactionDto.getUser() == null || transactionDto.getUser().getId() == null) {
 				LOGGER.error("putTransaction: {}", "ID User is not exist");
 				response.setCode("406");
