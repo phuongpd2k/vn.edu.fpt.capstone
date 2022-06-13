@@ -45,16 +45,4 @@ public class RoomPostingResponse{
 	private String imageLinkHost;
 	
 	private List<String> typeCategory;
-	
-	
-	//private RoomCategoryDto roomCategory;
-	
-	//private HouseDto house;
-
-	
-	
-	
-	
-
-	
 }
