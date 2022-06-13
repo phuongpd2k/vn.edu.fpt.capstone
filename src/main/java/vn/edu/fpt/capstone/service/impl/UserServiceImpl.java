@@ -41,10 +41,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
-	
+
 	@Autowired
 	private Constant constant;
 
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserModel createUser(SignUpDto signUpDto) {
 		UserModel userModel = convertToEntity(signUpDto);
-		if(userModel.getRole().getRole().equals(constant.ROLE_USER)) {
+		if (userModel.getRole().getRole().equals(constant.ROLE_USER)) {
 			userModel.setBalance(constant.DEFAULT_BALANCE);
 		}
 		return userRepository.save(userModel);
@@ -151,28 +151,27 @@ public class UserServiceImpl implements UserService {
 	public List<UserDto> getAllUserSearch(UserSearchDto userSearch) {
 		String sql = "select entity from UserModel as entity where (1=1) ";
 		String whereClause = "";
-		
-		if(!userSearch.getKeyword().isEmpty()) {
+
+		if (!userSearch.getKeyword().isEmpty()) {
 			whereClause += " AND ( entity.fullName LIKE :text)";
 		}
-		
-		if(userSearch.getIsActive() == 1) {
+
+		if (userSearch.getIsActive() == 1) {
 			whereClause += " AND (entity.isActive = true)";
 		}
-		
-		if(userSearch.getIsActive() == 0) {
+
+		if (userSearch.getIsActive() == 0) {
 			whereClause += " AND (entity.isActive = false)";
 		}
-			
+
 		sql += whereClause;
-		
+
 		Query query = entityManager.createQuery(sql, UserModel.class);
-		
-		
-		if(!userSearch.getKeyword().isEmpty()) {
+
+		if (!userSearch.getKeyword().isEmpty()) {
 			query.setParameter("text", '%' + userSearch.getKeyword().trim() + '%');
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		List<UserModel> list = query.getResultList();
 		return convertToListDto(list);
@@ -197,6 +196,22 @@ public class UserServiceImpl implements UserService {
 		userModel.setActive(true);
 
 		userRepository.save(userModel);
-		
+
+	}
+
+	@Override
+	public UserDto getUserById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserDto getUserByToken(String jwtToken) {
+		String username = jwtTokenUtil.getUsernameFromToken(jwtToken.substring(7));
+		UserModel model = userRepository.findByUsername(username).orElse(null);
+		if (model == null)
+			return null;
+
+		return modelMapper.map(model, UserDto.class);
 	}
 }

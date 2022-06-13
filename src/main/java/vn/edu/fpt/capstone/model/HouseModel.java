@@ -36,7 +36,7 @@ public class HouseModel extends Auditable<String> {
 	@Column(name = "IMAGE_URL")
 	private String imageUrl;
 	@Column(name = "PHONE_NUMBER")
-	private Long phoneNumber;
+	private String phoneNumber;
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "house_amenitiess", joinColumns = @JoinColumn(name = "house_id", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "amenity_id", insertable = false, updatable = false))
 	private List<AmenityModel> amenities = new ArrayList<AmenityModel>();
@@ -48,16 +48,17 @@ public class HouseModel extends Auditable<String> {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
+	@JsonBackReference
 	private UserModel user;
 
 	@OneToMany(mappedBy = "house")
 	@JsonBackReference
 	private List<RoomModel> room;
-	
+
 	@OneToOne
 	@JoinColumn(name = "address_id")
 	private AddressModel address;
-	
+
 	@OneToMany(mappedBy = "house")
 	@JsonBackReference
 	private List<PostModel> posts;

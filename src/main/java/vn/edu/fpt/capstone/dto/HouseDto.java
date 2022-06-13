@@ -22,7 +22,7 @@ public class HouseDto extends Auditable<String> {
 	@JsonProperty(index = 2)
 	private boolean enable;
 	@JsonProperty(index = 3)
-	private Long phoneNumber;
+	private String phoneNumber;
 	@JsonProperty(index = 4)
 	private int area;
 	@JsonProperty(index = 5)

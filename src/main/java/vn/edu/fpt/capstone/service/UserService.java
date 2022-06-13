@@ -25,6 +25,10 @@ public interface UserService {
 
 	UserModel getUserInformationByToken(String jwtToken);
 
+	UserDto getUserById(Long id);
+
+	UserDto getUserByToken(String jwtToken);
+
 	UserModel findByVerificationCode(String code);
 
 	UserModel findByEmail(String email);
