@@ -5,7 +5,8 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import vn.edu.fpt.capstone.model.Auditable;
@@ -13,6 +14,7 @@ import vn.edu.fpt.capstone.model.Auditable;
 @Data
 @JsonIgnoreProperties({ "password" })
 @EqualsAndHashCode(callSuper = false)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class UserDto extends Auditable<String> {
 	@JsonProperty(index = 0)
 	private Long id;
@@ -49,8 +51,9 @@ public class UserDto extends Auditable<String> {
 
 	@JsonProperty(index = 11)
 	private RoleDto role;
+
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String resetCode;
-	
+
 	private float balance;
 }

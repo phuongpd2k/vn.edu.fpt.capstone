@@ -147,7 +147,7 @@ public class HouseController {
 				responseObject.setCode("404");
 				responseObject.setMessage("Invalid User");
 				responseObject.setMessageCode(Message.NOT_FOUND);
-				return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 			List<HouseDto> houseDtos = houseService.findAllByUserId(userModel.getId());
 			if (houseDtos == null || houseDtos.isEmpty()) {
