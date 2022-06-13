@@ -33,7 +33,7 @@ public class HouseDto extends Auditable<String> {
 	private String imageUrl;
 	@JsonProperty(index = 8)
 	@JsonIgnoreProperties({ "email", "username", "imageLink", "role", "delete", "active", "dob", "gender",
-			"phoneNumber", "lastName", "firstName", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
+			"phoneNumber", "lastName", "firstName", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate","verify","balance" })
 	private UserDto user;
 	@JsonProperty(index = 9)
 	private RoomDetails roomDetails;
