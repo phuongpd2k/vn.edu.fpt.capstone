@@ -139,6 +139,8 @@ public class RoomServiceImpl implements RoomService {
 	private RoomPostingResponse convert2RoomPostingResponse(RoomModel roomModel) {
 		RoomPostingResponse rp = new RoomPostingResponse();
 		
+		rp.setId(roomModel.getId());
+		
 		rp.setImages(Arrays.asList(modelMapper.map(roomModel.getImages(), ImageDto[].class)));
 		rp.setRoomName(roomModel.getName());
 		rp.setRoomType(roomModel.getRoomType().getName());

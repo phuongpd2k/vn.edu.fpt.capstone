@@ -10,6 +10,8 @@ import vn.edu.fpt.capstone.dto.ImageDto;
 
 @Data
 public class RoomPostingResponse{
+	private Long id;
+	
 	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate","id"})
 	private List<ImageDto> images;
 	
