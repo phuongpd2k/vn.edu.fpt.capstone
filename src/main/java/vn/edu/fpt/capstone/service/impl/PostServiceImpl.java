@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 
 import vn.edu.fpt.capstone.constant.Constant;
+import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
@@ -117,6 +118,24 @@ public class PostServiceImpl implements PostService {
 			postResponse.setCost(model.getCost());
 			postResponse.setNumberOfDays(model.getNumberOfDays());
 			postResponse.setStatus(model.getStatus());
+			
+			postResponse.setRoomType(model.getRoom().getRoomType().getName());
+			postResponse.setRoomCategory(model.getRoom().getRoomCategory().getName());
+			postResponse.setArea(model.getRoom().getArea());
+			postResponse.setRentalPrice(model.getRoom().getRentalPrice());
+			
+			postResponse.setStreet(model.getHouse().getAddress().getStreet());
+			postResponse.setPhuongXa(model.getHouse().getAddress().getPhuongXa().getName());
+			QuanHuyenDto dto = new QuanHuyenDto();
+			dto = quanHuyenService.findById(model.getHouse().getAddress().getPhuongXa().getMaQh());
+			postResponse.setQuanHuyen(dto.getName());
+			postResponse.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
+			
+			postResponse.setHostName(model.getHouse().getUser().getFullName());
+			postResponse.setHostPhone(model.getHouse().getUser().getPhoneNumber());
+			
+			postResponse.setImages(Arrays.asList(modelMapper.map(model.getRoom().getImages(), ImageDto[].class)));
+			
 			postRes.add(postResponse);
 		}
 		return postRes;
