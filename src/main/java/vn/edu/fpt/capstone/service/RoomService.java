@@ -20,4 +20,5 @@ public interface RoomService {
 	float minArea(Long idHouse);
 	float maxArea(Long idHouse);
 	RoomPostingResponse getRoomPosting(Long lId);
+	boolean roomTypeAndRoomCategoryExits(Long roomType, Long roomCategory, Long houseId);
 }

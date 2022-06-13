@@ -1,8 +1,11 @@
 package vn.edu.fpt.capstone.repository;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.capstone.model.RoomModel;
 
@@ -25,4 +28,12 @@ public interface RoomRepository extends JpaRepository<RoomModel,Long> {
 
 	@Query("SELECT rm FROM RoomModel rm WHERE rm.enable = true AND rm.house.enable = true AND rm.id = ?1")
 	RoomModel getByIdAndEnable(Long lId);
+
+	@Query("SELECT rm FROM RoomModel rm WHERE (rm.enable = true AND rm.house.enable = true AND rm.roomType.id = :typeId "
+			+ "AND rm.roomCategory.id = :categoryId AND rm.house.id = :houseId)")
+	RoomModel getRoomByTypeAndCategory(@Param("typeId") Long roomType,
+			@Param("categoryId") Long roomCategory, @Param("houseId") Long houseId);
+
+	@Query("SELECT rm FROM RoomModel rm WHERE rm.enable = true AND rm.house.enable = true AND rm.house.id = ?1")
+	List<RoomModel> getAllRoomOfHouse(Long id);
 }

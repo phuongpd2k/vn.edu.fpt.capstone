@@ -183,7 +183,24 @@ public class RoomServiceImpl implements RoomService {
 		}
 		rp.setAmenitiesHouse(Arrays.asList(modelMapper.map(listAHouse, AmenityDto[].class)));
 		
+		
+		List<RoomModel> listRooms = roomRepository.getAllRoomOfHouse(roomModel.getHouse().getId());
+		List<String> listTypeCategory = new ArrayList<String>();
+		for (RoomModel r : listRooms) {
+			listTypeCategory.add(r.getRoomCategory().getName() + " - " + r.getRoomType().getName());
+		}
+		rp.setTypeCategory(listTypeCategory);
+		
 		return rp;
+	}
+
+	@Override
+	public boolean roomTypeAndRoomCategoryExits(Long roomType, Long roomCategory, Long houseId) {
+		RoomModel roomModel = roomRepository.getRoomByTypeAndCategory(roomType, roomCategory, houseId);
+		if(roomModel != null) {
+			return true;
+		}
+		return false;
 	}
 
 }

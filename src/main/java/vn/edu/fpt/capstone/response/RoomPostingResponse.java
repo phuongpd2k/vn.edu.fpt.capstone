@@ -44,6 +44,8 @@ public class RoomPostingResponse{
 	private String hostPhone;
 	private String imageLinkHost;
 	
+	private List<String> typeCategory;
+	
 	
 	//private RoomCategoryDto roomCategory;
 	

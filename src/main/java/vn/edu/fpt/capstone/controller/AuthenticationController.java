@@ -73,7 +73,7 @@ public class AuthenticationController {
 			logger.error(e.getMessage());
 
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseObject.builder().code("401")
-					.message("sign in undefined error: " + e.getMessage()).messageCode("SIGN_IN_FAIL").build());
+					.message("sign in undefined error: " + e.getMessage()).messageCode("USERNAME_PASSWORD_WRONG").build());
 
 		}
 	}

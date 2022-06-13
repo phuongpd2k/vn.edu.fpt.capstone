@@ -162,7 +162,7 @@ public class UserController {
 		try {
 			userService.lockUserById(id);
 
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("200")
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.message("Lock user successfully!").messageCode("LOCK_USER_SUCCESSFULLY").build());
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
@@ -177,7 +177,7 @@ public class UserController {
 		try {
 			userService.unLockUserById(id);
 
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("200")
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.message("unlock user successfully!").messageCode("UNLOCK_USER_SUCCESSFULLY").build());
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
