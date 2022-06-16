@@ -7,14 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.TransactionDto;
 import vn.edu.fpt.capstone.dto.UserDto;
-import vn.edu.fpt.capstone.model.TransactionModel;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.TransactionService;
@@ -431,5 +429,166 @@ public class TransactionController {
 //							.messageCode("DELETE_LIST_AMENITY_FAIL").build());
 //		}
 //	}
+	
+	@PostMapping(value = "/transaction/deposit")
+	@Transactional(rollbackFor = {Exception.class, Throwable.class})
+	public ResponseEntity<ResponseObject> postTransactionDeposit(@RequestBody TransactionDto transactionDto,
+			@RequestHeader(value = "Authorization") String jwtToken) {
+		ResponseObject response = new ResponseObject();
+		try {
+			UserDto userDto = userService.getUserByToken(jwtToken);
+
+			// Check user ID
+			if (userDto == null) {
+				LOGGER.error("postTransaction: {}", userDto);
+				response.setCode("404");
+				response.setMessage("Invalid User");
+				response.setMessageCode(Message.NOT_FOUND);
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			}
+			if (transactionDto.getId() != null) {
+				LOGGER.error("postTransaction: {}", "Wrong body format");
+				response.setCode("406");
+				response.setMessage("Wrong body format");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+
+			transactionDto.setTransferType("DEPOSIT");
+			transactionDto.setStatus("PENDING");
+			transactionDto.setAction("PLUS");
+			transactionDto.setTransferContent("Nạp tiền");
+			transactionDto.setUser(userDto);
+			
+			transactionDto.setLastBalance(userDto.getBalance());
+			
+			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
+			if (transactionDto2 == null) {
+				response.setCode("500");
+				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			response.setCode("200");
+			response.setMessageCode("DEPOSIT_SUCCESSFULLY");
+			LOGGER.info("postTransaction: {}", transactionDto2);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error("postTransaction: {}", e);
+			response.setCode("500");
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PutMapping(value = "/transaction/confirm")
+	@Transactional(rollbackFor = {Exception.class, Throwable.class})
+	public ResponseEntity<ResponseObject> confirmTransactionDeposit(@RequestBody TransactionDto transactionDto) {
+		ResponseObject response = new ResponseObject();
+		try {
+			UserDto userDto = userService.getUserById(transactionDto.getUser().getId());
+
+			// Check user ID
+			if (userDto == null) {
+				LOGGER.error("confirmTransaction: {}", userDto);
+				response.setCode("404");
+				response.setMessage("Invalid User");
+				response.setMessageCode(Message.NOT_FOUND);
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			}
+			if (transactionDto.getId() == null) {
+				LOGGER.error("confirmTransaction: {}", "Wrong body format");
+				response.setCode("406");
+				response.setMessage("Wrong body format");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+			if (transactionDto.getUser() == null || transactionDto.getUser().getId() == null) {
+				LOGGER.error("confirmTransaction: {}", "ID User is not exist");
+				response.setCode("406");
+				response.setMessage("ID User is not exist");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			} else {
+				if (transactionDto.getUser().getId() != userDto.getId()) {
+					LOGGER.error("confirmTransaction: {}", userDto);
+					response.setCode("404");
+					response.setMessage("Invalid User");
+					response.setMessageCode(Message.NOT_FOUND);
+					return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+				}
+			}
+			
+			userDto.setBalance(userDto.getBalance() + transactionDto.getActualAmount());
+			
+			//Update balance in user
+			UserModel user = userService.updateUser(userDto);
+			if (user == null) {
+				LOGGER.error("confirmTransaction: {}", "update user fail");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Confirm transaction: update user fail").messageCode("CONFIRM_TRANSACTION_DEPOSIT_FAILED").build());
+			}
+
+			TransactionDto dto = transactionService.findById(transactionDto.getId());
+			dto.setTransferType("DEPOSIT");
+			dto.setStatus("SUCCESS");
+			dto.setAction("PLUS");
+			dto.setActualAmount(transactionDto.getActualAmount());
+			dto.setLastBalance(userDto.getBalance());
+			dto.setNote(transactionDto.getNote());
+			
+			TransactionDto transactionDto2 = transactionService.createTransaction(dto);
+			if (transactionDto2 == null) {
+				response.setCode("500");
+				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			response.setCode("200");
+			response.setMessageCode("CONFIRM_TRANSACTION_DEPOSIT_SUCCESSFULLY");
+			LOGGER.info("postTransaction: {}", transactionDto2);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error("postTransaction: {}", e);
+			response.setCode("500");
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PutMapping(value = "/transaction/reject")
+	@Transactional(rollbackFor = {Exception.class, Throwable.class})
+	public ResponseEntity<ResponseObject> rejectTransactionDeposit(@RequestBody TransactionDto transactionDto) {
+		ResponseObject response = new ResponseObject();
+		try {
+			if (transactionDto.getId() == null) {
+				LOGGER.error("confirmTransaction: {}", "Wrong body format");
+				response.setCode("406");
+				response.setMessage("Wrong body format");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+
+			TransactionDto dto = transactionService.findById(transactionDto.getId());
+			dto.setTransferType("DEPOSIT");
+			dto.setStatus("FAILED");
+			dto.setAction("DO_NOTHING");
+			dto.setNote(transactionDto.getNote());
+			
+			TransactionDto transactionDto2 = transactionService.createTransaction(dto);
+			if (transactionDto2 == null) {
+				response.setCode("500");
+				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			response.setCode("200");
+			response.setMessageCode("REJECT_TRANSACTION_SUCCESSFULLY");
+			LOGGER.info("postTransaction: {}", transactionDto2);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error("postTransaction: {}", e);
+			response.setCode("500");
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 }

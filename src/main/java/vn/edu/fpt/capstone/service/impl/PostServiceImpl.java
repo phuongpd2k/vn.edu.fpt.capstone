@@ -160,10 +160,6 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PostDto createPost(PostDto postDto) {
 		try {
-			// set cost
-			int costPerDay = postTypeRepository.getById(postDto.getPostType().getId()).getPrice();
-			postDto.setCost(postDto.getNumberOfDays() * costPerDay);
-
 			// set end date
 			long currentDate = postDto.getStartDate().getTime();
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));

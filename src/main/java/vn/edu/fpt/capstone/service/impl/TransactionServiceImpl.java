@@ -59,20 +59,6 @@ public class TransactionServiceImpl implements TransactionService {
 	public TransactionDto createTransaction(TransactionDto transactionDto) {
 		try {
 			TransactionModel transactionModel = modelMapper.map(transactionDto, TransactionModel.class);
-//			if (transactionModel.getCreatedAt() == null || transactionModel.getCreatedAt().toString().isEmpty()) {
-//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-//				transactionModel.setCreatedAt(formatter.parse(formatter.format(date)));
-//				transactionModel.setModifiedAt(formatter.parse(formatter.format(date)));
-//			} else {
-//				transactionModel.setModifiedAt(transactionModel.getCreatedAt());
-//			}
-//			if (transactionModel.getCreatedBy() == null || transactionModel.getCreatedBy().isEmpty()) {
-//				transactionModel.setCreatedBy("SYSTEM");
-//				transactionModel.setModifiedBy("SYSTEM");
-//			} else {
-//				transactionModel.setModifiedBy(transactionModel.getCreatedBy());
-//			}
 			TransactionModel saveModel = transactionRepository.save(transactionModel);
 			return modelMapper.map(saveModel, TransactionDto.class);
 		} catch (Exception e) {

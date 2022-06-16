@@ -21,11 +21,14 @@ public class TransactionModel extends Auditable<String> {
 	@SequenceGenerator(name = "TRANSACTION_SeqGen", sequenceName = "TRANSACTION_Seq", allocationSize = 1)
 	private Long id;
 	
-	@Column(name = "CODE")
+	@Column(name = "CODE", updatable = false, insertable = false)
 	private String code;
 	
 	@Column(name = "AMOUNT")
 	private float amount;
+	
+	@Column(name = "ACTUAL_AMOUNT")
+	private float actualAmount;
 
 	@Column(name = "LAST_BALANCE")
 	private float lastBalance;
@@ -46,5 +49,8 @@ public class TransactionModel extends Auditable<String> {
 	@JoinColumn(name = "user_id")
 	@JsonBackReference
 	private UserModel user;
+	
+	@Column(name = "NOTE")
+	private String note;
 
 }

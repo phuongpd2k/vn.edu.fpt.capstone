@@ -201,8 +201,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto getUserById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		UserModel userModel = userRepository.getById(id);
+		if(userModel == null) {
+			return null;
+		}
+		return modelMapper.map(userModel, UserDto.class);
 	}
 
 	@Override
