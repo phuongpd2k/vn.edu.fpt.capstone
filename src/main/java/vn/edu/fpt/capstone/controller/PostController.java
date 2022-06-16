@@ -1,11 +1,13 @@
 package vn.edu.fpt.capstone.controller;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,13 +16,18 @@ import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SearchDto;
+import vn.edu.fpt.capstone.dto.TransactionDto;
+import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.PostModel;
+import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.service.HouseService;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.PostTypeService;
 import vn.edu.fpt.capstone.service.RoomService;
+import vn.edu.fpt.capstone.service.TransactionService;
+import vn.edu.fpt.capstone.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +46,21 @@ public class PostController {
 
 	@Autowired
 	private HouseService houseService;
-	
+
 	@Autowired
 	private PostTypeService postTypeService;
+	
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	ObjectMapper objectMapper;
+	
+	@Autowired
+	private ModelMapper modelMapper;
+	
+	@Autowired
+	private TransactionService transactionService;
 
 	public static int TIMESTAMP_DAY = 86400000;
 
@@ -100,7 +116,7 @@ public class PostController {
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@GetMapping(value = "/post")
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
@@ -126,7 +142,9 @@ public class PostController {
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
 	@PostMapping(value = "/post")
 	// DungTV29
-	public ResponseEntity<ResponseObject> postCreatePost(@RequestBody PostDto postDto) {
+	@Transactional(rollbackFor = {Exception.class, Throwable.class})
+	public ResponseEntity<ResponseObject> postCreatePost(@RequestBody PostDto postDto,
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
 			LOGGER.info("postHouseCreate: {}", postDto);
 			if (postDto.getHouse().getId() == null || !houseService.isExist(postDto.getHouse().getId())) {
@@ -143,7 +161,7 @@ public class PostController {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Create post: id post type null").messageCode("CREATE_POST_FAILED").build());
 			}
-			
+
 			if (postDto.getStartDate() == null) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Create post: start date null").messageCode("CREATE_POST_FAILED").build());
@@ -153,9 +171,59 @@ public class PostController {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Create post: number of day < 0").messageCode("CREATE_POST_FAILED").build());
 			}
+
+			// set cost
+			int costPerDay = postTypeService.getById(postDto.getPostType().getId()).getPrice();
+			int cost = postDto.getNumberOfDays() * costPerDay;
+
+			UserModel userModel = userService.getUserInformationByToken(jwtToken);
+			if (userModel == null) {
+				throw new Exception();
+			}
+			if(cost > userModel.getBalance()) {
+				LOGGER.error("postPost: {}", "Not enough money for post");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Create post: not enough money!").messageCode("MONEY_NOT_ENOUGH").build());
+			}else {
+				userModel.setBalance(userModel.getBalance() - cost);
+			}
 			
-			postService.createPost(postDto);
+			//Update balance in user
+			UserModel user2 = userService.updateUser(modelMapper.map(userModel, UserDto.class));
+			if (user2 == null) {
+				LOGGER.error("postPost: {}", "update user fail");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Create post: update user fail").messageCode("CREATE_POST_FAILED").build());
+			}
 			
+			
+			TransactionDto transactionDto = new TransactionDto();
+			transactionDto.setAction("MINUS");
+			transactionDto.setAmount(cost);
+			transactionDto.setLastBalance(userModel.getBalance());
+			transactionDto.setStatus("PENDING");
+			transactionDto.setTransferType("POSTING");
+			transactionDto.setTransferContent("Đăng tin");
+			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
+			
+			
+			//Create transaction for post
+			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
+			if (transactionDto2 == null) {
+				LOGGER.error("postPost: {}", "Transaction fail");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Create post: transaction fail").messageCode("CREATE_POST_FAILED").build());
+			}
+			
+			
+			postDto.setCost(cost);
+			
+			//Create post
+			PostDto model = postService.createPost(postDto);
+			if (model == null) {
+				throw new Exception();
+			}
+
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.message("Create post: successfully").messageCode("CREATE_POST_SUCCESSFULLY").build());
 		} catch (Exception e) {
@@ -164,7 +232,7 @@ public class PostController {
 					.message("Create post: " + e.getMessage()).messageCode("CREATE_POST_FAILED").build());
 		}
 	}
-	
+
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
 	@PutMapping(value = "/post-extend")
 	// DungTV29
@@ -175,14 +243,14 @@ public class PostController {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Extend post: id house null or not exits").messageCode("EXTEND_POST_FAILED").build());
 			}
-			
+
 			if (postDto.getNumberOfDays() <= 0) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Extend post: number of day < 0").messageCode("EXTEND_POST_FAILED").build());
 			}
-			
+
 			PostModel model = postService.extendPost(postDto);
-			if(model != null) {
+			if (model != null) {
 				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 						.message("Extend post: successfully").messageCode("EXTEND_POST_SUCCESSFULLY").build());
 			}
@@ -193,14 +261,15 @@ public class PostController {
 					.message("Extend post: " + e.getMessage()).messageCode("EXTEND_POST_FAILED").build());
 		}
 	}
-	
+
 	@PostMapping(value = "/posting")
 	public ResponseEntity<?> getAllPosting(@RequestBody SearchDto searchDto) {
 		try {
 			PageableResponse pageableResponse = postService.findAllPosting(searchDto);
 			LOGGER.info("get All posting: {}", pageableResponse.getResults());
-			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
-					.message("Get posting successfully").messageCode("GET_POSTING_SUCCESSFULLY").results(pageableResponse).build());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Get posting successfully")
+							.messageCode("GET_POSTING_SUCCESSFULLY").results(pageableResponse).build());
 		} catch (Exception e) {
 			LOGGER.error("getAll posting: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
