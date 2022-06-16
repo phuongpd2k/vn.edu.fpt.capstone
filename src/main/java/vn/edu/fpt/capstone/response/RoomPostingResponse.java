@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import vn.edu.fpt.capstone.dto.AmenityDto;
+import vn.edu.fpt.capstone.dto.CategoryTypeDto;
 import vn.edu.fpt.capstone.dto.ImageDto;
 
 @Data
@@ -46,5 +47,5 @@ public class RoomPostingResponse{
 	private String hostPhone;
 	private String imageLinkHost;
 	
-	private List<String> typeCategory;
+	private List<CategoryTypeDto> categoryTypes;
 }

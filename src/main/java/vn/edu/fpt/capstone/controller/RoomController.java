@@ -159,6 +159,32 @@ public class RoomController {
 		}
 	}
 
+	@PostMapping(value = "/room/check-unique")
+	public ResponseEntity<?> checkRoomUnique(@RequestBody RoomDto roomDto) {
+		try {
+			if (houseRepository.findById(roomDto.getHouse().getId()) == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create room: id house not exist!").messageCode("ID_HOUSE_NOT_EXIST").build());
+			}
+
+			if (roomService.roomTypeAndRoomCategoryExits(roomDto.getRoomType().getId(),
+					roomDto.getRoomCategory().getId(), roomDto.getHouse().getId())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(ResponseObject.builder().code("400")
+								.message("Create room: room type and room category existed!")
+								.messageCode("TYPE_AND_CATEGORY_ROOM_EXISTED").build());
+			}
+
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Create room: type and category ok!").messageCode("TYPE_AND_CATEGORY_ROOM_OK").build());
+
+		} catch (Exception e) {
+			LOGGER.error("Create room fail: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Create room fail: " + e.getMessage()).messageCode("TYPE_AND_CATEGORY_ROOM_EXISTED").build());
+		}
+	}
+
 	@PutMapping(value = "/room")
 	public ResponseEntity<?> putRoom(@RequestBody RoomDto roomDto) {
 		try {

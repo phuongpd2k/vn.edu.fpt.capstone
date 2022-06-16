@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.capstone.dto.AmenityDto;
+import vn.edu.fpt.capstone.dto.CategoryTypeDto;
 import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
@@ -187,11 +188,14 @@ public class RoomServiceImpl implements RoomService {
 		
 		
 		List<RoomModel> listRooms = roomRepository.getAllRoomOfHouse(roomModel.getHouse().getId());
-		List<String> listTypeCategory = new ArrayList<String>();
+		List<CategoryTypeDto> listTypeCategory = new ArrayList<CategoryTypeDto>();
 		for (RoomModel r : listRooms) {
-			listTypeCategory.add(r.getRoomCategory().getName() + " - " + r.getRoomType().getName());
+			CategoryTypeDto categoryTypeDto = new CategoryTypeDto();
+			categoryTypeDto.setRoomId(r.getId());
+			categoryTypeDto.setCategoryType(r.getRoomCategory().getName() + " - " + r.getRoomType().getName());
+			listTypeCategory.add(categoryTypeDto);
 		}
-		rp.setTypeCategory(listTypeCategory);
+		rp.setCategoryTypes(listTypeCategory);
 		
 		return rp;
 	}
