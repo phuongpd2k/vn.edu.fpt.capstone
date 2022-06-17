@@ -16,6 +16,7 @@ import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.dto.UserSearchDto;
 import vn.edu.fpt.capstone.model.RoleModel;
 import vn.edu.fpt.capstone.model.UserModel;
+import vn.edu.fpt.capstone.random.RandomString;
 import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.security.JwtTokenUtil;
 import vn.edu.fpt.capstone.service.UserService;
@@ -47,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private Constant constant;
+	
+	@Autowired
+	private RandomString random;
 
 	private UserModel convertToEntity(SignUpDto signUpDto) {
 		signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
@@ -70,6 +74,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserModel createUser(SignUpDto signUpDto) {
 		UserModel userModel = convertToEntity(signUpDto);
+		userModel.setCodeTransaction("HLH" + (userRepository.getLastId()+1) + random.generateCodeTransaction(4));
 		if (userModel.getRole().getRole().equals(constant.ROLE_USER)) {
 			userModel.setBalance(constant.DEFAULT_BALANCE);
 		}

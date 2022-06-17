@@ -47,11 +47,6 @@ public class MailServiceImpl implements MailService {
 		String senderName = "Hola Boarding House";
 		String verifyURL = "https://holahouses.netlify.app/verify-account?code=" + code;
 
-//		String mailContent = "<p>Dear " + username + ",</p>";
-//		mailContent += "<p>Please click the link below to verify to your registration:</p>";
-//		mailContent += "<h3><a href=\"" + verifyURL +"\">VERIFY</a></h3>";
-//		mailContent += "<p>Thank you<br>The Hola Team!</p>";
-
 		String mailContent = "Dear [[name]],<br><br>" + "Please click the link below to verify your registration:<br>"
 				+ "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>" + "Thank you,<br>" + "The Hola Team!";
 

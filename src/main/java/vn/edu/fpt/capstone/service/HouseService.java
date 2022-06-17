@@ -1,6 +1,7 @@
 package vn.edu.fpt.capstone.service;
 
 import vn.edu.fpt.capstone.dto.HouseDto;
+import vn.edu.fpt.capstone.response.HouseHistoryResponse;
 
 import java.util.List;
 
@@ -20,5 +21,7 @@ public interface HouseService {
 	HouseDto createHouse(HouseDto houseDto);
 
 	boolean isExist(Long id);
+
+	List<HouseHistoryResponse> getListHouseHistory(String username, Long id);
 
 }

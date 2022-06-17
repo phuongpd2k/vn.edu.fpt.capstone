@@ -89,4 +89,7 @@ public class UserModel extends Auditable<String> {
 
 	@Column(name = "ENABLE", nullable = false)
 	private boolean enable = true;
+	
+	@Column(name = "CODE_TRANSACTION")
+	private String codeTransaction;
 }
