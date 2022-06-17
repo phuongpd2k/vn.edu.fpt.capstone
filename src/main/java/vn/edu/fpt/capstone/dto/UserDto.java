@@ -57,4 +57,7 @@ public class UserDto extends Auditable<String> {
 
 	@JsonProperty(index = 12)
 	private float balance;
+	
+	@JsonProperty(index = 13)
+	private String codeTransaction;
 }

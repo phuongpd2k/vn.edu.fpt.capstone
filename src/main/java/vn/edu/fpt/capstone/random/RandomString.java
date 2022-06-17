@@ -62,5 +62,16 @@ public class RandomString {
 		}
 		return code.trim();
 	}
+	
+	public String generateCodeTransaction(int length) {
+		String numbers = "1234567890";
+		Random random = new Random();
+		String code = "";
+
+		for (int i = 0; i < length; i++) {
+			code += numbers.charAt(random.nextInt(numbers.length()));
+		}
+		return code.trim();
+	}
 
 }

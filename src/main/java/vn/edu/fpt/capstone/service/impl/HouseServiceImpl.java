@@ -12,6 +12,8 @@ import vn.edu.fpt.capstone.dto.RoomDetails;
 import vn.edu.fpt.capstone.dto.ThanhPhoDto;
 import vn.edu.fpt.capstone.model.HouseModel;
 import vn.edu.fpt.capstone.repository.HouseRepository;
+import vn.edu.fpt.capstone.repository.PostRepository;
+import vn.edu.fpt.capstone.response.HouseHistoryResponse;
 import vn.edu.fpt.capstone.service.HouseService;
 import vn.edu.fpt.capstone.service.PhuongXaService;
 import vn.edu.fpt.capstone.service.QuanHuyenService;
@@ -35,6 +37,8 @@ public class HouseServiceImpl implements HouseService {
 	PhuongXaService phuongXaService;
 	@Autowired
 	ModelMapper modelMapper;
+	@Autowired
+	private PostRepository postRepository;
 
 	public List<HouseDto> convertEntity2Dto(List<HouseModel> models) {
 		List<HouseDto> houseDtos = Arrays.asList(modelMapper.map(models, HouseDto[].class));
@@ -171,6 +175,11 @@ public class HouseServiceImpl implements HouseService {
 		}
 		List<HouseDto> houseDtos = convertEntity2Dto(houseModels);
 		return houseDtos;
+	}
+
+	@Override
+	public List<HouseHistoryResponse> getListHouseHistory(String username, Long id) {
+		return postRepository.getListHouseHistory(username, id);
 	}
 
 }

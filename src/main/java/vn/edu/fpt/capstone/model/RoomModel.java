@@ -89,6 +89,9 @@ public class RoomModel extends Auditable<String> implements Serializable {
 
 	@Column(name = "FLOOR")
 	private int floor;
+	
+	@Column(name = "TYPE")
+	private String type;
 
 	@OneToMany(mappedBy = "room")
 	@JsonBackReference
