@@ -10,6 +10,7 @@ import lombok.Data;
 public class HouseHistoryResponse {
 	private String type;
 	private int price;
-	private Date date;
+	private Date startDate;
+	private Date endDate;
 	private String status;
 }

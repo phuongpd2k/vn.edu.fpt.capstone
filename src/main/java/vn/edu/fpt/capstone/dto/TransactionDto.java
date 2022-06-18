@@ -31,7 +31,7 @@ public class TransactionDto extends Auditable<String> {
 	@JsonProperty(index = 8)
 	private String transferType;
 	@JsonProperty(index = 9)
-	@JsonIgnoreProperties({ "email", "username", "imageLink", "role", "delete", "active", "dob", "gender",
+	@JsonIgnoreProperties({ "email", "imageLink", "role", "delete", "active", "dob", "gender",
 			"phoneNumber", "lastName", "firstName", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate",
 			"verify" })
 	private UserDto user;
