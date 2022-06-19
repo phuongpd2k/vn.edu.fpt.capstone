@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
@@ -61,6 +62,9 @@ public class PostController {
 	
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private Constant constant;
 
 	public static int TIMESTAMP_DAY = 86400000;
 
@@ -230,6 +234,81 @@ public class PostController {
 			LOGGER.error("postPost: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Create post: " + e.getMessage()).messageCode("CREATE_POST_FAILED").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/post/confirm")
+	// DungTV29
+	public ResponseEntity<?> confirmPost(@RequestBody PostDto postDto) {
+		try {
+			LOGGER.info("confirmPost: {}");
+			if (postDto== null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Confirm post: post not exits").messageCode("CONFIRM_POST_FAILED").build());
+			}
+			postDto.setStatus(constant.CENSORED);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Confirm post: successfully").messageCode("CONFIRM_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("confirmExtend: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Confirm post: " + e.getMessage()).messageCode("CONFIRM_POST_FAILED").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/post/reject")
+	// DungTV29
+	public ResponseEntity<?> rejectPost(@RequestBody PostDto postDto) {
+		try {
+			LOGGER.info("rejectPost: {}");
+			if (postDto== null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Reject post: post not exits").messageCode("REJECTED_POST_FAILED").build());
+			}
+			postDto.setStatus(constant.REJECTED);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Reject post: successfully").messageCode("REJECTED_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("rejectExtend: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Reject post: " + e.getMessage()).messageCode("REJECTED_POST_FAILED").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/post/delete")
+	// DungTV29
+	public ResponseEntity<?> deletedPost(@RequestBody PostDto postDto) {
+		try {
+			LOGGER.info("rejectPost: {}");
+			if (postDto== null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Delete post: post not exits").messageCode("DELETED_POST_FAILED").build());
+			}
+			postDto.setStatus(constant.DELETED);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Delete post: successfully").messageCode("DELETED_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("deleteExtend: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Delete post: " + e.getMessage()).messageCode("DELETED_POST_FAILED").build());
 		}
 	}
 

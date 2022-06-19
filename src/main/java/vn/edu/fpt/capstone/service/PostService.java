@@ -27,4 +27,6 @@ public interface PostService {
 
 	PostModel extendPost(PostDto postDto);
 
+	PostModel confirmPost(PostDto postDto);
+
 }

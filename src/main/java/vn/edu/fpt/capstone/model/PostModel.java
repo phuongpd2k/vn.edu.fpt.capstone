@@ -60,6 +60,9 @@ public class PostModel extends Auditable<String> {
 	private String status;
 	
 	
+	@Column(name = "note")
+	private String note;
+	
 //	@Column(name = "TITLE")
 //	private String title;
 //	@Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT NULL")

@@ -285,4 +285,10 @@ public class PostServiceImpl implements PostService {
 		return null;
 	}
 
+	@Override
+	public PostModel confirmPost(PostDto postDto) {
+		PostModel postModel = modelMapper.map(postDto, PostModel.class);
+		return postRepository.save(postModel);
+	}
+
 }

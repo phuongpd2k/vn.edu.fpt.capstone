@@ -12,5 +12,7 @@ public class Constant {
 	
 	public final String UNCENSORED = "UNCENSORED";
 	public final String CENSORED = "CENSORED";
+	public final String REJECTED = "REJECTED";
+	public final String DELETED = "DELETED";
 	
 }
