@@ -14,7 +14,9 @@ import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.TransactionDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.UserModel;
+import vn.edu.fpt.capstone.response.TransactionResponse;
 import vn.edu.fpt.capstone.dto.ResponseObject;
+import vn.edu.fpt.capstone.dto.SearchTransactionDto;
 import vn.edu.fpt.capstone.service.TransactionService;
 import vn.edu.fpt.capstone.service.UserService;
 
@@ -429,9 +431,9 @@ public class TransactionController {
 //							.messageCode("DELETE_LIST_AMENITY_FAIL").build());
 //		}
 //	}
-	
+
 	@PostMapping(value = "/transaction/deposit")
-	@Transactional(rollbackFor = {Exception.class, Throwable.class})
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	public ResponseEntity<ResponseObject> postTransactionDeposit(@RequestBody TransactionDto transactionDto,
 			@RequestHeader(value = "Authorization") String jwtToken) {
 		ResponseObject response = new ResponseObject();
@@ -459,9 +461,9 @@ public class TransactionController {
 			transactionDto.setAction("PLUS");
 			transactionDto.setTransferContent("Nạp tiền");
 			transactionDto.setUser(userDto);
-			
+
 			transactionDto.setLastBalance(userDto.getBalance());
-			
+
 			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
 			if (transactionDto2 == null) {
 				response.setCode("500");
@@ -479,9 +481,9 @@ public class TransactionController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@PutMapping(value = "/transaction/confirm")
-	@Transactional(rollbackFor = {Exception.class, Throwable.class})
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	public ResponseEntity<ResponseObject> confirmTransactionDeposit(@RequestBody TransactionDto transactionDto) {
 		ResponseObject response = new ResponseObject();
 		try {
@@ -517,15 +519,16 @@ public class TransactionController {
 					return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 				}
 			}
-			
+
 			userDto.setBalance(userDto.getBalance() + transactionDto.getActualAmount());
-			
-			//Update balance in user
+
+			// Update balance in user
 			UserModel user = userService.updateUser(userDto);
 			if (user == null) {
 				LOGGER.error("confirmTransaction: {}", "update user fail");
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-						.message("Confirm transaction: update user fail").messageCode("CONFIRM_TRANSACTION_DEPOSIT_FAILED").build());
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+						.body(ResponseObject.builder().code("500").message("Confirm transaction: update user fail")
+								.messageCode("CONFIRM_TRANSACTION_DEPOSIT_FAILED").build());
 			}
 
 			TransactionDto dto = transactionService.findById(transactionDto.getId());
@@ -535,7 +538,7 @@ public class TransactionController {
 			dto.setActualAmount(transactionDto.getActualAmount());
 			dto.setLastBalance(userDto.getBalance());
 			dto.setNote(transactionDto.getNote());
-			
+
 			TransactionDto transactionDto2 = transactionService.createTransaction(dto);
 			if (transactionDto2 == null) {
 				response.setCode("500");
@@ -553,9 +556,9 @@ public class TransactionController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@PutMapping(value = "/transaction/reject")
-	@Transactional(rollbackFor = {Exception.class, Throwable.class})
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	public ResponseEntity<ResponseObject> rejectTransactionDeposit(@RequestBody TransactionDto transactionDto) {
 		ResponseObject response = new ResponseObject();
 		try {
@@ -572,7 +575,7 @@ public class TransactionController {
 			dto.setStatus("FAILED");
 			dto.setAction("DO_NOTHING");
 			dto.setNote(transactionDto.getNote());
-			
+
 			TransactionDto transactionDto2 = transactionService.createTransaction(dto);
 			if (transactionDto2 == null) {
 				response.setCode("500");
@@ -588,6 +591,21 @@ public class TransactionController {
 			response.setCode("500");
 			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PostMapping(value = "/transaction/search")
+	public ResponseEntity<?> searchTransaction(@RequestBody SearchTransactionDto search) {
+		try {	
+			List<TransactionResponse> list = transactionService.search(search);
+			
+			LOGGER.error("searchTransaction: {}");
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("500")
+					.messageCode("SEARCH_TRANSACTION_SUCCESSFULL").results(list).build());
+		} catch (Exception e) {
+			LOGGER.error("searchTransaction: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Search failed: " + e.getMessage()).messageCode("SEARCH_TRANSACTION_FAILED").build());
 		}
 	}
 
