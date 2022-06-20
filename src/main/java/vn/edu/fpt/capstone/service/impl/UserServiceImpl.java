@@ -130,6 +130,8 @@ public class UserServiceImpl implements UserService {
 		UserModel userModel = userService.getUserInformationByToken(jwtToken);
 		RoleModel roleModel = modelMapper.map(userDto.getRole(), RoleModel.class);
 		userModel.setRole(roleModel);
+		userModel.setPhoneNumber(userDto.getPhoneNumber());
+		userModel.setCccd(userDto.getCccd());
 
 		return userRepository.save(userModel);
 	}
