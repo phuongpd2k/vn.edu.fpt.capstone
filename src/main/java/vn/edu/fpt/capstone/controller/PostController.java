@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
@@ -30,6 +31,7 @@ import vn.edu.fpt.capstone.service.TransactionService;
 import vn.edu.fpt.capstone.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -49,18 +51,21 @@ public class PostController {
 
 	@Autowired
 	private PostTypeService postTypeService;
-	
+
 	@Autowired
 	private UserService userService;
 
 	@Autowired
 	ObjectMapper objectMapper;
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	@Autowired
 	private TransactionService transactionService;
+
+	@Autowired
+	private Constant constant;
 
 	public static int TIMESTAMP_DAY = 86400000;
 
@@ -142,7 +147,7 @@ public class PostController {
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
 	@PostMapping(value = "/post")
 	// DungTV29
-	@Transactional(rollbackFor = {Exception.class, Throwable.class})
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	public ResponseEntity<ResponseObject> postCreatePost(@RequestBody PostDto postDto,
 			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
@@ -180,15 +185,15 @@ public class PostController {
 			if (userModel == null) {
 				throw new Exception();
 			}
-			if(cost > userModel.getBalance()) {
+			if (cost > userModel.getBalance()) {
 				LOGGER.error("postPost: {}", "Not enough money for post");
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 						.message("Create post: not enough money!").messageCode("MONEY_NOT_ENOUGH").build());
-			}else {
+			} else {
 				userModel.setBalance(userModel.getBalance() - cost);
 			}
-			
-			//Update balance in user
+
+			// Update balance in user
 			UserModel user2 = userService.updateUser(modelMapper.map(userModel, UserDto.class));
 			if (user2 == null) {
 				LOGGER.error("postPost: {}", "update user fail");
@@ -197,28 +202,28 @@ public class PostController {
 			}
 			
 			
+
 			TransactionDto transactionDto = new TransactionDto();
 			transactionDto.setAction("MINUS");
 			transactionDto.setAmount(cost);
 			transactionDto.setLastBalance(userModel.getBalance());
-			transactionDto.setStatus("PENDING");
+			transactionDto.setStatus(constant.SUCCESS);
 			transactionDto.setTransferType("POSTING");
 			transactionDto.setTransferContent("Đăng tin");
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
 			
-			
-			//Create transaction for post
-			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
-			if (transactionDto2 == null) {
-				LOGGER.error("postPost: {}", "Transaction fail");
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-						.message("Create post: transaction fail").messageCode("CREATE_POST_FAILED").build());
-			}
-			
-			
 			postDto.setCost(cost);
+			// set end date
+			long currentDate = postDto.getStartDate().getTime();
+			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
+			Long expiredTime = currentDate + addDate;
+			postDto.setEndDate(new Date(expiredTime));
+			postDto.setStatus(constant.UNCENSORED);
+			postDto.setTransaction(transactionDto);
+
 			
-			//Create post
+
+			// Create post
 			PostDto model = postService.createPost(postDto);
 			if (model == null) {
 				throw new Exception();
@@ -233,10 +238,109 @@ public class PostController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/post/confirm")
+	// DungTV29
+	public ResponseEntity<?> confirmPost(@RequestParam(required = true) Long id) {
+		try {
+			LOGGER.info("confirmPost: {}");
+			PostDto postDto = postService.findById(id);
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Confirm post: post not exits").messageCode("CONFIRM_POST_FAILED").build());
+			}
+			postDto.setStatus(constant.CENSORED);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Confirm post: successfully").messageCode("CONFIRM_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("confirmExtend: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Confirm post: " + e.getMessage()).messageCode("CONFIRM_POST_FAILED").build());
+		}
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/post/reject")
+	// DungTV29
+	public ResponseEntity<?> rejectPost(@RequestBody PostDto post) {
+		try {
+			LOGGER.info("rejectPost: {}");
+			PostDto postDto = postService.findById(post.getId());
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Reject post: post not exits").messageCode("REJECTED_POST_FAILED").build());
+			}
+			
+			UserDto userDto = postDto.getTransaction().getUser();
+			userDto.setBalance(userDto.getBalance() + postDto.getTransaction().getAmount());
+			
+			UserModel user = userService.updateUser(userDto);
+			
+			TransactionDto transactionDto = new TransactionDto();
+			transactionDto.setAction("PLUS");
+			transactionDto.setAmount(postDto.getTransaction().getAmount());
+			transactionDto.setLastBalance(userDto.getBalance());
+			transactionDto.setStatus(constant.SUCCESS);
+			transactionDto.setTransferType("REFUND");
+			transactionDto.setTransferContent("Hoàn tiền");
+			transactionDto.setUser(modelMapper.map(user, UserDto.class));
+			transactionDto.setNote(post.getNote());	
+			transactionService.createTransaction(transactionDto);
+			
+			
+			postDto.setStatus(constant.REJECTED);
+			postDto.setNote(post.getNote());
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Reject post: successfully").messageCode("REJECTED_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("rejectExtend: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Reject post: " + e.getMessage()).messageCode("REJECTED_POST_FAILED").build());
+		}
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/post/delete")
+	// DungTV29
+	public ResponseEntity<?> deletedPost(@RequestBody PostDto post) {
+		try {
+			LOGGER.info("rejectPost: {}");
+			PostDto postDto = postService.findById(post.getId());
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Delete post: post not exits").messageCode("DELETED_POST_FAILED").build());
+			}
+			postDto.setStatus(constant.DELETED);
+			postDto.setNote(post.getNote());
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Delete post: successfully").messageCode("DELETED_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("deleteExtend: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Delete post: " + e.getMessage()).messageCode("DELETED_POST_FAILED").build());
+		}
+	}
+
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
 	@PutMapping(value = "/post-extend")
 	// DungTV29
-	public ResponseEntity<?> extendPost(@RequestBody PostDto postDto) {
+	public ResponseEntity<?> extendPost(@RequestBody PostDto postDto,
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
 			LOGGER.info("postExtend: {}", postDto);
 			if (postDto.getId() == null || !postService.isExist(postDto.getId())) {
@@ -247,6 +351,49 @@ public class PostController {
 			if (postDto.getNumberOfDays() <= 0) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Extend post: number of day < 0").messageCode("EXTEND_POST_FAILED").build());
+			}
+
+			PostDto pd = postService.findById(postDto.getId());
+
+			// set cost
+			int costPerDay = postTypeService.getById(pd.getPostType().getId()).getPrice();
+			int cost = postDto.getNumberOfDays() * costPerDay;
+
+			UserModel userModel = userService.getUserInformationByToken(jwtToken);
+			if (userModel == null) {
+				throw new Exception();
+			}
+			if (cost > userModel.getBalance()) {
+				LOGGER.error("postPost: {}", "Not enough money for post");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Extend post: not enough money!").messageCode("MONEY_NOT_ENOUGH").build());
+			} else {
+				userModel.setBalance(userModel.getBalance() - cost);
+			}
+
+			// Update balance in user
+			UserModel user2 = userService.updateUser(modelMapper.map(userModel, UserDto.class));
+			if (user2 == null) {
+				LOGGER.error("extendPost: {}", "update user fail");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Extend post: update user fail").messageCode("EXTEND_POST_FAILED").build());
+			}
+
+			TransactionDto transactionDto = new TransactionDto();
+			transactionDto.setAction("MINUS");
+			transactionDto.setAmount(cost);
+			transactionDto.setLastBalance(userModel.getBalance());
+			transactionDto.setStatus("SUCCESS");
+			transactionDto.setTransferType("POSTING");
+			transactionDto.setTransferContent("Gia hạn");
+			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
+
+			// Create transaction for post
+			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
+			if (transactionDto2 == null) {
+				LOGGER.error("extendPost: {}", "Transaction fail");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Extend post: transaction fail").messageCode("EXTEND_POST_FAILED").build());
 			}
 
 			PostModel model = postService.extendPost(postDto);

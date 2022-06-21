@@ -161,14 +161,14 @@ public class PostServiceImpl implements PostService {
 	public PostDto createPost(PostDto postDto) {
 		try {
 			// set end date
-			long currentDate = postDto.getStartDate().getTime();
-			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-			Long expiredTime = currentDate + addDate;
-			postDto.setEndDate(new Date(expiredTime));
+//			long currentDate = postDto.getStartDate().getTime();
+//			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
+//			Long expiredTime = currentDate + addDate;
+//			postDto.setEndDate(new Date(expiredTime));
 
 			PostModel postModel = modelMapper.map(postDto, PostModel.class);
 
-			postModel.setStatus(constant.UNCENSORED);
+			//postModel.setStatus(constant.UNCENSORED);
 
 			PostModel saveModel = postRepository.save(postModel);
 			return convertEntity2Dto(saveModel);
@@ -267,6 +267,12 @@ public class PostServiceImpl implements PostService {
 			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
 			postModel.setCost(postDto.getNumberOfDays() * costPerDay);
 			
+			if((new Date()).before(postModel.getEndDate())) {
+				postModel.setStatus(constant.CENSORED);
+			}else {
+				postModel.setStatus(constant.UNCENSORED);
+			}
+			
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 			if(postDto.getStartDate() == null) {
 				long currentDate = postModel.getEndDate().getTime();
@@ -277,12 +283,18 @@ public class PostServiceImpl implements PostService {
 				Long expiredTime = currentDate + addDate;
 				postModel.setStartDate(postDto.getStartDate());
 				postModel.setEndDate(new Date(expiredTime));
-				postModel.setStatus(constant.UNCENSORED);
-			}
+				
+			}	
 			
 			return postRepository.save(postModel);
 		}
 		return null;
+	}
+
+	@Override
+	public PostModel confirmPost(PostDto postDto) {
+		PostModel postModel = modelMapper.map(postDto, PostModel.class);
+		return postRepository.save(postModel);
 	}
 
 }

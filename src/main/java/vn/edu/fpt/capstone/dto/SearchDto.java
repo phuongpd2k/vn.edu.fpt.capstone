@@ -10,6 +10,6 @@ public class SearchDto {
 	private int pageSize;
 	private String keyword;
 	private String text;
-	private Date fromDate;
-	private Date toDate;
+	private Long fromDate;
+	private Long toDate;
 }
