@@ -40,4 +40,7 @@ public class TransactionDto extends Auditable<String> {
 	
 	@JsonProperty(index = 10)
 	private String note;
+	
+	@JsonProperty(index = 11)
+	private PostDto post;
 }

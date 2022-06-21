@@ -90,6 +90,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 							.messageCode("USERNAME_PASSWORD_INVALID").build());
 
 		}
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(signInDto.getUsername(), signInDto.getPassword()));
 
 		UserModel user = userRepository.findByUsername(signInDto.getUsername()).get();
 
@@ -111,8 +113,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 					.message("Authenticate request: account deleted!").messageCode("DELETED_ACCOUNT").build());
 		}
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(signInDto.getUsername(), signInDto.getPassword()));
+		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService

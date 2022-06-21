@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Constant {
+	
 	public final int Sign_In_Normal = 0;
 	public final int Sign_In_By_Google = 1;
 	public final int PAGE_SIZE = 10;
@@ -14,5 +15,6 @@ public class Constant {
 	public final String CENSORED = "CENSORED";
 	public final String REJECTED = "REJECTED";
 	public final String DELETED = "DELETED";
+	public final String SUCCESS = "SUCCESS";
 	
 }

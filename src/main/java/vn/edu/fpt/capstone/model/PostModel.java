@@ -63,6 +63,11 @@ public class PostModel extends Auditable<String> {
 	@Column(name = "note")
 	private String note;
 	
+	
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "transaction_id")
+    private TransactionModel transaction;
+	
 //	@Column(name = "TITLE")
 //	private String title;
 //	@Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT NULL")

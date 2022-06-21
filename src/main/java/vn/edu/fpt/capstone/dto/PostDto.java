@@ -18,4 +18,5 @@ public class PostDto extends Auditable<String> {
 	private int cost;
 	private String status;
 	private String note;
+	private TransactionDto transaction;
 }

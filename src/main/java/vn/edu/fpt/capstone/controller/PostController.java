@@ -200,25 +200,28 @@ public class PostController {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 						.message("Create post: update user fail").messageCode("CREATE_POST_FAILED").build());
 			}
+			
+			
 
 			TransactionDto transactionDto = new TransactionDto();
 			transactionDto.setAction("MINUS");
 			transactionDto.setAmount(cost);
 			transactionDto.setLastBalance(userModel.getBalance());
-			transactionDto.setStatus("PENDING");
+			transactionDto.setStatus(constant.SUCCESS);
 			transactionDto.setTransferType("POSTING");
 			transactionDto.setTransferContent("Đăng tin");
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
-
-			// Create transaction for post
-			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
-			if (transactionDto2 == null) {
-				LOGGER.error("postPost: {}", "Transaction fail");
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-						.message("Create post: transaction fail").messageCode("CREATE_POST_FAILED").build());
-			}
-
+			
 			postDto.setCost(cost);
+			// set end date
+			long currentDate = postDto.getStartDate().getTime();
+			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
+			Long expiredTime = currentDate + addDate;
+			postDto.setEndDate(new Date(expiredTime));
+			postDto.setStatus(constant.UNCENSORED);
+			postDto.setTransaction(transactionDto);
+
+			
 
 			// Create post
 			PostDto model = postService.createPost(postDto);
@@ -238,9 +241,10 @@ public class PostController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/post/confirm")
 	// DungTV29
-	public ResponseEntity<?> confirmPost(@RequestBody PostDto postDto) {
+	public ResponseEntity<?> confirmPost(@RequestParam(required = true) Long id) {
 		try {
 			LOGGER.info("confirmPost: {}");
+			PostDto postDto = postService.findById(id);
 			if (postDto == null) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Confirm post: post not exits").messageCode("CONFIRM_POST_FAILED").build());
@@ -263,14 +267,34 @@ public class PostController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/post/reject")
 	// DungTV29
-	public ResponseEntity<?> rejectPost(@RequestBody PostDto postDto) {
+	public ResponseEntity<?> rejectPost(@RequestBody PostDto post) {
 		try {
 			LOGGER.info("rejectPost: {}");
+			PostDto postDto = postService.findById(post.getId());
 			if (postDto == null) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Reject post: post not exits").messageCode("REJECTED_POST_FAILED").build());
 			}
+			
+			UserDto userDto = postDto.getTransaction().getUser();
+			userDto.setBalance(userDto.getBalance() + postDto.getTransaction().getAmount());
+			
+			UserModel user = userService.updateUser(userDto);
+			
+			TransactionDto transactionDto = new TransactionDto();
+			transactionDto.setAction("PLUS");
+			transactionDto.setAmount(postDto.getTransaction().getAmount());
+			transactionDto.setLastBalance(userDto.getBalance());
+			transactionDto.setStatus(constant.SUCCESS);
+			transactionDto.setTransferType("REFUND");
+			transactionDto.setTransferContent("Hoàn tiền");
+			transactionDto.setUser(modelMapper.map(user, UserDto.class));
+			transactionDto.setNote(post.getNote());	
+			transactionService.createTransaction(transactionDto);
+			
+			
 			postDto.setStatus(constant.REJECTED);
+			postDto.setNote(post.getNote());
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -288,14 +312,16 @@ public class PostController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/post/delete")
 	// DungTV29
-	public ResponseEntity<?> deletedPost(@RequestBody PostDto postDto) {
+	public ResponseEntity<?> deletedPost(@RequestBody PostDto post) {
 		try {
 			LOGGER.info("rejectPost: {}");
+			PostDto postDto = postService.findById(post.getId());
 			if (postDto == null) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Delete post: post not exits").messageCode("DELETED_POST_FAILED").build());
 			}
 			postDto.setStatus(constant.DELETED);
+			postDto.setNote(post.getNote());
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -326,7 +352,7 @@ public class PostController {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Extend post: number of day < 0").messageCode("EXTEND_POST_FAILED").build());
 			}
-			
+
 			PostDto pd = postService.findById(postDto.getId());
 
 			// set cost

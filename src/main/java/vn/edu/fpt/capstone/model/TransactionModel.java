@@ -52,5 +52,8 @@ public class TransactionModel extends Auditable<String> {
 	
 	@Column(name = "NOTE")
 	private String note;
+	
+	@OneToOne(mappedBy = "transaction")
+    private PostModel post;
 
 }

@@ -161,14 +161,14 @@ public class PostServiceImpl implements PostService {
 	public PostDto createPost(PostDto postDto) {
 		try {
 			// set end date
-			long currentDate = postDto.getStartDate().getTime();
-			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-			Long expiredTime = currentDate + addDate;
-			postDto.setEndDate(new Date(expiredTime));
+//			long currentDate = postDto.getStartDate().getTime();
+//			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
+//			Long expiredTime = currentDate + addDate;
+//			postDto.setEndDate(new Date(expiredTime));
 
 			PostModel postModel = modelMapper.map(postDto, PostModel.class);
 
-			postModel.setStatus(constant.UNCENSORED);
+			//postModel.setStatus(constant.UNCENSORED);
 
 			PostModel saveModel = postRepository.save(postModel);
 			return convertEntity2Dto(saveModel);
