@@ -1,5 +1,6 @@
 package vn.edu.fpt.capstone.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,6 +14,7 @@ import vn.edu.fpt.capstone.model.Auditable;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+//@JsonIgnoreProperties({"post"})
 public class TransactionDto extends Auditable<String> {
 	@JsonProperty(index = 0)
 	private Long id;
@@ -41,6 +43,4 @@ public class TransactionDto extends Auditable<String> {
 	@JsonProperty(index = 10)
 	private String note;
 	
-	@JsonProperty(index = 11)
-	private PostDto post;
 }
