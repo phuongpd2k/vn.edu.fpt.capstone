@@ -21,8 +21,6 @@ import vn.edu.fpt.capstone.service.ThanhPhoService;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 @Service
 public class HouseServiceImpl implements HouseService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HouseServiceImpl.class.getName());

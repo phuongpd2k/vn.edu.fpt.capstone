@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	public List<TransactionDto> findAll() {
-		List<TransactionModel> transactionModels = transactionRepository.findAll();
+		List<TransactionModel> transactionModels = transactionRepository.findAllByOrderByCreatedDateDesc();
 		if (transactionModels == null || transactionModels.isEmpty()) {
 			return null;
 		}

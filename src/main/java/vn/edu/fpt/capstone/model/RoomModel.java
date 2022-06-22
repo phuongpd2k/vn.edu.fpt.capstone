@@ -57,7 +57,7 @@ public class RoomModel extends Auditable<String> implements Serializable {
 	private int rentalPrice;
 
 	@Column(name = "DEPOSIT")
-	private boolean deposit;
+	private int deposit;
 
 	@Column(name = "STATUS")
 	private boolean status_rental;

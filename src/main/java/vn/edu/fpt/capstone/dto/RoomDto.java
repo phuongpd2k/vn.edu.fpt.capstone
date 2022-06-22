@@ -36,7 +36,7 @@ public class RoomDto extends Auditable<String> {
 	private int rentalPrice;
 	
 	@JsonProperty("deposit")
-	private boolean deposit;
+	private int deposit;
 	
 	@JsonProperty("status")
 	private boolean status_rental;

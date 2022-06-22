@@ -13,4 +13,6 @@ import vn.edu.fpt.capstone.model.TransactionModel;
 public interface TransactionRepository extends JpaRepository<TransactionModel, Long> {
 	@Query(value = "select transaction.* from transaction where transaction.user_id= :userId", nativeQuery = true)
 	List<TransactionModel> findByUserId(@Param("userId") Long userId);
+
+	List<TransactionModel> findAllByOrderByCreatedDateDesc();
 }
