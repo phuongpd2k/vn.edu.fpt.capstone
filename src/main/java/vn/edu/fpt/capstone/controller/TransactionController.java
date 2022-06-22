@@ -95,7 +95,7 @@ public class TransactionController {
 	public ResponseEntity<ResponseObject> getAllByToken(@RequestHeader(value = "Authorization") String jwtToken) {
 		ResponseObject responseObject = new ResponseObject();
 		try {
-			UserDto userDto = userService.getUserByToken(jwtToken);
+			//UserDto userDto = userService.getUserByToken(jwtToken);
 			List<TransactionDto> transactionDtos = transactionService.findAll();
 			if (transactionDtos == null || transactionDtos.isEmpty()) {
 				responseObject.setResults(new ArrayList<>());

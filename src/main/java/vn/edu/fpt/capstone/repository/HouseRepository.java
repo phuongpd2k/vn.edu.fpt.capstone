@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.capstone.model.HouseModel;
-import vn.edu.fpt.capstone.response.HouseHistoryResponse;
 
 @Repository
 public interface HouseRepository extends JpaRepository<HouseModel, Long> {
@@ -17,7 +16,7 @@ public interface HouseRepository extends JpaRepository<HouseModel, Long> {
 	@Query(value = "select count(*) from house inner join room on house.id = room.house_id where house.id= :houseId", nativeQuery = true)
 	int countRoomByHouseId(@Param("houseId") Long houseId);
 
-	@Query(value = "select house.* from house where house.user_id= :userId", nativeQuery = true)
+	@Query(value = "select house.* from house where house.enable = true AND house.user_id= :userId", nativeQuery = true)
 	List<HouseModel> findByUserId(@Param("userId") Long userId);
 
 }
