@@ -74,7 +74,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserModel createUser(SignUpDto signUpDto) {
 		UserModel userModel = convertToEntity(signUpDto);
-		userModel.setCodeTransaction("HLH" + (userRepository.getLastId()+1) + random.generateCodeTransaction(4));
+		String code = "";
+		while (true) {
+			code = "HLH" + random.generateCodeTransaction(5);
+			
+			if(userRepository.getTotalUserCode(code) == 0)
+				break;
+		}
+		
+		userModel.setCodeTransaction(code);
 		if (userModel.getRole().getRole().equals(constant.ROLE_USER)) {
 			userModel.setBalance(constant.DEFAULT_BALANCE);
 		}

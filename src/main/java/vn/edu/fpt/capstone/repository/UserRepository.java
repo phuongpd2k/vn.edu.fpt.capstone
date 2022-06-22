@@ -28,6 +28,7 @@ public interface UserRepository extends JpaRepository<UserModel, Long>{
 	@Query("SELECT COUNT(u) FROM UserModel u")
 	int getTotalUser();
 	
-	@Query("SELECT MAX(id) FROM UserModel")
-	Long getLastId();
+	@Query("SELECT COUNT(u) FROM UserModel u WHERE u.codeTransaction = ?1")
+	int getTotalUserCode(String code);
+	
 }
