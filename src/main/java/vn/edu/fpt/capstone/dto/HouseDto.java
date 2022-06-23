@@ -20,7 +20,7 @@ public class HouseDto extends Auditable<String> {
 	@JsonProperty(index = 1)
 	private String name;
 	@JsonProperty(index = 2)
-	private boolean enable;
+	private boolean enable = true;
 	@JsonProperty(index = 3)
 	private String phoneNumber;
 	@JsonProperty(index = 4)

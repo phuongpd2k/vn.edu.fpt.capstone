@@ -115,7 +115,9 @@ public class HouseServiceImpl implements HouseService {
 	@Override
 	public boolean removeHouse(Long id) {
 		if (houseRepository.existsById(id)) {
-			houseRepository.deleteById(id);
+			HouseModel model = houseRepository.getById(id);
+			model.setEnable(false);
+			houseRepository.save(model);
 			return true;
 		}
 		return false;
