@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.SearchTransactionDto;
 import vn.edu.fpt.capstone.dto.TransactionDto;
 import vn.edu.fpt.capstone.model.TransactionModel;
+import vn.edu.fpt.capstone.random.RandomString;
 import vn.edu.fpt.capstone.repository.TransactionRepository;
 import vn.edu.fpt.capstone.response.TransactionResponse;
 import vn.edu.fpt.capstone.service.TransactionService;
@@ -33,6 +34,9 @@ public class TransactionServiceImpl implements TransactionService {
 	
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Autowired
+	private RandomString random;
 
 	@Override
 	public TransactionDto findById(Long id) {
@@ -70,7 +74,17 @@ public class TransactionServiceImpl implements TransactionService {
 	@Override
 	public TransactionDto createTransaction(TransactionDto transactionDto) {
 		try {
+			String code = "";
+			while (true) {
+				code = "HLH" + random.generateCodeTransaction(5);
+				
+				if(transactionRepository.getTotalCode(code) == 0)
+					break;
+			}
+			transactionDto.setCode(code);
+			
 			TransactionModel transactionModel = modelMapper.map(transactionDto, TransactionModel.class);
+			
 			TransactionModel saveModel = transactionRepository.save(transactionModel);
 			return modelMapper.map(saveModel, TransactionDto.class);
 		} catch (Exception e) {

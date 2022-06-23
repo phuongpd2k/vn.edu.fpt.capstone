@@ -83,9 +83,8 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		userModel.setCodeTransaction(code);
-		if (userModel.getRole().getRole().equals(constant.ROLE_USER)) {
-			userModel.setBalance(constant.DEFAULT_BALANCE);
-		}
+		userModel.setBalance(constant.DEFAULT_BALANCE);
+		
 		return userRepository.save(userModel);
 	}
 

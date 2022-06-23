@@ -21,7 +21,7 @@ public class TransactionModel extends Auditable<String> {
 	@SequenceGenerator(name = "TRANSACTION_SeqGen", sequenceName = "TRANSACTION_Seq", allocationSize = 1)
 	private Long id;
 	
-	@Column(name = "CODE", updatable = false, insertable = false)
+	@Column(name = "CODE")
 	private String code;
 	
 	@Column(name = "AMOUNT")
