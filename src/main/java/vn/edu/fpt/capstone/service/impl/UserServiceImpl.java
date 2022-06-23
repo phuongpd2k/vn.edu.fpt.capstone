@@ -83,20 +83,9 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		userModel.setCodeTransaction(code);
-		if (userModel.getRole().getRole().equals(constant.ROLE_USER)) {
-			userModel.setBalance(constant.DEFAULT_BALANCE);
-		}
+		userModel.setBalance(constant.DEFAULT_BALANCE);
+		
 		return userRepository.save(userModel);
-	}
-
-	@Override
-	public UserModel updateUser(UserDto userDto) {
-		UserModel user = userRepository.getById(userDto.getId());
-		if (user != null) {
-			userDto.setPassword(user.getPassword());
-			return userRepository.save(convertToEntity(userDto));
-		}
-		return null;
 	}
 
 	@Override
@@ -231,5 +220,38 @@ public class UserServiceImpl implements UserService {
 			return null;
 
 		return modelMapper.map(model, UserDto.class);
+	}
+
+	@Override
+	public UserModel updateUser(UserDto userDto) {
+		UserModel user = userRepository.getById(userDto.getId());
+		if (user != null) {
+			userDto.setPassword(user.getPassword());
+			return userRepository.save(convertToEntity(userDto));
+		}
+		return null;
+
+	}
+
+	@Override
+	public UserModel updateUserByToken(String jwtToken, UserDto userDto) {
+		UserModel user = userService.getUserInformationByToken(jwtToken);
+		if (user != null) {
+			if(userDto.getCccd() != null)
+				user.setCccd(userDto.getCccd());
+			if(userDto.getEmail() != null)
+				user.setEmail(userDto.getEmail());
+			if(userDto.getFullName() != null)
+				user.setFullName(userDto.getFullName());
+			if(userDto.getPhoneNumber() != null)
+				user.setPhoneNumber(userDto.getPhoneNumber());
+			if(userDto.getUsername() != null)
+				user.setUsername(userDto.getFullName());
+			
+			user.setGender(userDto.isGender());
+			
+			return userRepository.save(user);
+		}
+		return null;
 	}
 }

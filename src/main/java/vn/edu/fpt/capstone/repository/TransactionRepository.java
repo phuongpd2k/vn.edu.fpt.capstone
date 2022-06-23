@@ -15,4 +15,8 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	List<TransactionModel> findByUserId(@Param("userId") Long userId);
 
 	List<TransactionModel> findAllByOrderByCreatedDateDesc();
+
+	
+	@Query("SELECT COUNT(u) FROM TransactionModel u WHERE u.code = ?1")
+	int getTotalCode(String code);
 }
