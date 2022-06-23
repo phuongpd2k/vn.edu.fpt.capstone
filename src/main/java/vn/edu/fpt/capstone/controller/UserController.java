@@ -140,9 +140,9 @@ public class UserController {
 	}
 
 	@PutMapping(value = "/user")
-	public ResponseEntity<?> putUser(@RequestBody UserDto userDto) {
+	public ResponseEntity<?> putUser(@RequestHeader(value = "Authorization") String jwtToken, @RequestBody UserDto userDto) {
 		try {
-			UserModel user = userService.updateUser(userDto);
+			UserModel user = userService.updateUserByToken(jwtToken, userDto);
 			if (user != null) {
 				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 						.message("Update user: successfully!").messageCode("UPDATE_USER_SUCCESSFULLY").build());
