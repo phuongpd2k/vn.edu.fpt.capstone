@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import vn.edu.fpt.capstone.dto.TransactionDto;
 import vn.edu.fpt.capstone.model.TransactionModel;
 
 @Repository
@@ -19,4 +20,7 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	
 	@Query("SELECT COUNT(u) FROM TransactionModel u WHERE u.code = ?1")
 	int getTotalCode(String code);
+
+	@Query("SELECT t FROM TransactionModel t WHERE t.postId = ?1")
+	TransactionModel findByPostId(Long id);
 }

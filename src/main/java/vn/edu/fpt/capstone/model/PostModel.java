@@ -2,13 +2,11 @@ package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.Date;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -64,13 +62,6 @@ public class PostModel extends Auditable<String> {
 	
 	@Column(name = "note")
 	private String note;
-	
-	//@JsonIgnore
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "transaction_id")
-//	@JsonBackReference
-//	@ToString.Exclude
-    private TransactionModel transaction;
 	
 //	@Column(name = "TITLE")
 //	private String title;

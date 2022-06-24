@@ -24,4 +24,6 @@ public interface TransactionService {
 
 	List<TransactionResponse> search(SearchTransactionDto search);
 
+	TransactionDto findByPostId(Long id);
+
 }
