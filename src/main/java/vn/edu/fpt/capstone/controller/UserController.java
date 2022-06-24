@@ -147,7 +147,7 @@ public class UserController {
 	@PutMapping(value = "/user")
 	public ResponseEntity<?> putUser(@RequestHeader(value = "Authorization") String jwtToken, @RequestBody UserDto userDto) {
 		try {
-			UserModel user = userService.getUserInformationByToken(jwtToken);
+			UserModel user = userService.getUserInformationById(userDto.getId());
 			
 			if(userDto.getCccd() != null)
 				user.setCccd(userDto.getCccd());
@@ -157,12 +157,17 @@ public class UserController {
 				user.setFullName(userDto.getFullName());
 			if(userDto.getPhoneNumber() != null)
 				user.setPhoneNumber(userDto.getPhoneNumber());
-			if(userDto.getUsername() != null)
-				user.setUsername(userDto.getUsername());
-			if(userService.existsByUsername(userDto.getUsername())) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-						.message("Update user: username has exits!").messageCode("UPDATE_USER_FAIL").build());
+			if(userDto.getUsername() != null) {
+				if(!userDto.getUsername().equalsIgnoreCase(user.getUsername())) {
+					if(userService.existsByUsername(userDto.getUsername())) {
+						return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+								.message("Update user: username has exits!").messageCode("UPDATE_USER_FAIL").build());
+					}
+					user.setUsername(userDto.getUsername());
+				}		
 			}
+				
+			
 			if(userDto.getDob() != null) {
 				user.setDob(userDto.getDob());
 			}
