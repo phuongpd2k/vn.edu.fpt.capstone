@@ -44,6 +44,4 @@ public interface UserService {
 	void lockUserById(Long id);
 
 	void unLockUserById(Long id);
-
-	UserModel updateUserByToken(String jwtToken, UserDto userDto);
 }

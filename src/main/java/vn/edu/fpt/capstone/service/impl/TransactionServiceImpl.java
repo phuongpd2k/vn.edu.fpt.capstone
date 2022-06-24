@@ -168,4 +168,10 @@ public class TransactionServiceImpl implements TransactionService {
 		return listObject;
 	}
 
+	@Override
+	public TransactionDto findByPostId(Long id) {
+		// TODO Auto-generated method stub
+		return modelMapper.map(transactionRepository.findByPostId(id), TransactionDto.class);
+	}
+
 }

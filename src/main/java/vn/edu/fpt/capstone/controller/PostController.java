@@ -203,6 +203,24 @@ public class PostController {
 			
 			
 
+			
+			
+			postDto.setCost(cost);
+			// set end date
+			long currentDate = postDto.getStartDate().getTime();
+			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
+			Long expiredTime = currentDate + addDate;
+			postDto.setEndDate(new Date(expiredTime));
+			postDto.setStatus(constant.UNCENSORED);
+
+			
+
+			// Create post
+			PostDto model = postService.createPost(postDto);
+			if (model == null) {
+				throw new Exception();
+			}
+			
 			TransactionDto transactionDto = new TransactionDto();
 			transactionDto.setAction("MINUS");
 			transactionDto.setAmount(cost);
@@ -212,20 +230,10 @@ public class PostController {
 			transactionDto.setTransferContent("Đăng tin");
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
 			
-			postDto.setCost(cost);
-			// set end date
-			long currentDate = postDto.getStartDate().getTime();
-			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-			Long expiredTime = currentDate + addDate;
-			postDto.setEndDate(new Date(expiredTime));
-			postDto.setStatus(constant.UNCENSORED);
-			postDto.setTransaction(transactionDto);
-
+			transactionDto.setPostId(model.getId());
 			
-
-			// Create post
-			PostDto model = postService.createPost(postDto);
-			if (model == null) {
+			TransactionDto model2 = transactionService.createTransaction(transactionDto);
+			if (model2 == null) {
 				throw new Exception();
 			}
 
@@ -266,6 +274,7 @@ public class PostController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/post/reject")
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	// DungTV29
 	public ResponseEntity<?> rejectPost(@RequestBody PostDto post) {
 		try {
@@ -275,26 +284,31 @@ public class PostController {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Reject post: post not exits").messageCode("REJECTED_POST_FAILED").build());
 			}
+			postDto.setStatus(constant.REJECTED);
+			postDto.setNote(post.getNote());
 			
-			UserDto userDto = postDto.getTransaction().getUser();
-			userDto.setBalance(userDto.getBalance() + postDto.getTransaction().getAmount());
+			TransactionDto dto = transactionService.findByPostId(postDto.getId());
+			if(dto == null) {
+				throw new Exception();
+			}
+			
+			UserDto userDto = dto.getUser();
+			userDto.setBalance(userDto.getBalance() + dto.getAmount());
 			
 			UserModel user = userService.updateUser(userDto);
 			
 			TransactionDto transactionDto = new TransactionDto();
 			transactionDto.setAction("PLUS");
-			transactionDto.setAmount(postDto.getTransaction().getAmount());
+			transactionDto.setAmount(dto.getAmount());
 			transactionDto.setLastBalance(userDto.getBalance());
 			transactionDto.setStatus(constant.SUCCESS);
 			transactionDto.setTransferType("REFUND");
 			transactionDto.setTransferContent("Hoàn tiền");
 			transactionDto.setUser(modelMapper.map(user, UserDto.class));
 			transactionDto.setNote(post.getNote());	
-			transactionService.createTransaction(transactionDto);
+			transactionDto.setPostId(postDto.getId());
 			
-			
-			postDto.setStatus(constant.REJECTED);
-			postDto.setNote(post.getNote());
+			transactionService.createTransaction(transactionDto);		
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -384,11 +398,12 @@ public class PostController {
 			transactionDto.setAmount(cost);
 			transactionDto.setLastBalance(userModel.getBalance());
 			transactionDto.setStatus("SUCCESS");
-			transactionDto.setTransferType("POSTING");
+			transactionDto.setTransferType("POSTING_EXTEND");
 			transactionDto.setTransferContent("Gia hạn");
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
+			transactionDto.setPostId(pd.getId());
 
-			// Create transaction for post
+			// Create transaction
 			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
 			if (transactionDto2 == null) {
 				LOGGER.error("extendPost: {}", "Transaction fail");

@@ -14,7 +14,6 @@ import vn.edu.fpt.capstone.model.Auditable;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-//@JsonIgnoreProperties({"post"})
 public class TransactionDto extends Auditable<String> {
 	@JsonProperty(index = 0)
 	private Long id;
@@ -42,5 +41,8 @@ public class TransactionDto extends Auditable<String> {
 	
 	@JsonProperty(index = 10)
 	private String note;
+	
+	@JsonProperty(index = 11)
+	private Long postId;
 	
 }

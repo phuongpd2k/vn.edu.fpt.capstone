@@ -11,7 +11,6 @@ import vn.edu.fpt.capstone.model.Auditable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@JsonIgnoreProperties({"transaction"})
 public class PostDto extends Auditable<String> {
 	private Long id;
 	private HouseDto house;
@@ -23,5 +22,4 @@ public class PostDto extends Auditable<String> {
 	private int cost;
 	private String status;
 	private String note;
-	private TransactionDto transaction;
 }

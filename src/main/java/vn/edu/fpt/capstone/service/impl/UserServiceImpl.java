@@ -233,25 +233,4 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	@Override
-	public UserModel updateUserByToken(String jwtToken, UserDto userDto) {
-		UserModel user = userService.getUserInformationByToken(jwtToken);
-		if (user != null) {
-			if(userDto.getCccd() != null)
-				user.setCccd(userDto.getCccd());
-			if(userDto.getEmail() != null)
-				user.setEmail(userDto.getEmail());
-			if(userDto.getFullName() != null)
-				user.setFullName(userDto.getFullName());
-			if(userDto.getPhoneNumber() != null)
-				user.setPhoneNumber(userDto.getPhoneNumber());
-			if(userDto.getUsername() != null)
-				user.setUsername(userDto.getFullName());
-			
-			user.setGender(userDto.isGender());
-			
-			return userRepository.save(user);
-		}
-		return null;
-	}
 }

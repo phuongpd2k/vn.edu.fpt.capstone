@@ -1,7 +1,9 @@
 package vn.edu.fpt.capstone.controller;
 
+import java.util.Date;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ public class UserController {
 
 	@Autowired
 	private UserServiceImpl userServiceImpl;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping(value = "/user")
@@ -142,8 +147,30 @@ public class UserController {
 	@PutMapping(value = "/user")
 	public ResponseEntity<?> putUser(@RequestHeader(value = "Authorization") String jwtToken, @RequestBody UserDto userDto) {
 		try {
-			UserModel user = userService.updateUserByToken(jwtToken, userDto);
-			if (user != null) {
+			UserModel user = userService.getUserInformationByToken(jwtToken);
+			
+			if(userDto.getCccd() != null)
+				user.setCccd(userDto.getCccd());
+			if(userDto.getEmail() != null)
+				user.setEmail(userDto.getEmail());
+			if(userDto.getFullName() != null)
+				user.setFullName(userDto.getFullName());
+			if(userDto.getPhoneNumber() != null)
+				user.setPhoneNumber(userDto.getPhoneNumber());
+			if(userDto.getUsername() != null)
+				user.setUsername(userDto.getUsername());
+			if(userService.existsByUsername(userDto.getUsername())) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Update user: username has exits!").messageCode("UPDATE_USER_FAIL").build());
+			}
+			if(userDto.getDob() != null) {
+				user.setDob(userDto.getDob());
+			}
+			
+			user.setGender(userDto.isGender());
+			
+			UserModel user2 = userService.updateUser(modelMapper.map(user, UserDto.class));
+			if (user2 != null) {
 				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 						.message("Update user: successfully!").messageCode("UPDATE_USER_SUCCESSFULLY").build());
 			}

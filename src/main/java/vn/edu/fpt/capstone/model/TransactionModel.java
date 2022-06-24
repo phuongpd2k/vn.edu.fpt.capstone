@@ -53,10 +53,7 @@ public class TransactionModel extends Auditable<String> {
 	@Column(name = "NOTE")
 	private String note;
 	
-	//@JsonIgnore
-	@OneToOne(mappedBy = "transaction")
-//	@JsonManagedReference
-//	@ToString.Exclude
-    private PostModel post;
+	@Column(name = "post_id")
+    private Long postId;
 
 }
