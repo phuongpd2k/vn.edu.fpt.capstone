@@ -44,4 +44,6 @@ public interface UserService {
 	void lockUserById(Long id);
 
 	void unLockUserById(Long id);
+
+	UserModel findByUserName(String username);
 }

@@ -152,26 +152,26 @@ public class AuthenticationController {
 		}
 	}
 
-//	@PostMapping("/reset")
-//	public ResponseEntity<?> resetPassword(@RequestParam(value = "email", required = false) String email,
-//			@RequestParam(value = "resetCode", required = false) String code) {
-//		try {
-//			UserModel userModel = userService.findByEmail(email);
-//			logger.info("model: {}", userModel);
-//			if (userModel != null) {
-//				if (userModel.getResetCode() == code) {
-//					return authenticationService.resetPassword(userModel);
-//				}
-//			}
-//			return ResponseEntity.status(HttpStatus.OK)
-//					.body(ResponseObject.builder().code("200").message("Successfully").messageCode(Message.OK).build());
-//		} catch (Exception e) {
-//			logger.error("Undefined error reset password");
-//			logger.error("Exception {}", e);
-//
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-//					.message(e.getMessage()).messageCode(Message.INTERNAL_SERVER_ERROR).build());
-//
-//		}
-//	}
+	@PostMapping("/send-mail-verify")
+	public ResponseEntity<?> sendMailVerify(@RequestParam(value = "username", required = false) String username) {
+		try {
+			if (!(username == null || username.trim().isEmpty())) {
+				UserModel userModel = userService.findByUserName(username);
+				if (userModel == null) {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+							.body(ResponseObject.builder().code("400").message("Usename fail").messageCode("SEND_MAIL_VERIFY_FAIL").build());
+				}
+				mailService.sendMailVerifyCode(userModel.getEmail(), userModel.getUsername(), userModel.getVerificationCode());
+			}
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Successful").messageCode("SEND_MAIL_VERIFY_SUCCESSFULL").build());
+		} catch (Exception e) {
+			logger.error("Undefined error change password");
+			logger.error("Exception {}", e);
+
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("500")
+					.message(e.getMessage()).messageCode(Message.INTERNAL_SERVER_ERROR).build());
+
+		}
+	}
 }

@@ -1,6 +1,5 @@
 package vn.edu.fpt.capstone.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -145,7 +144,7 @@ public class UserController {
 	}
 
 	@PutMapping(value = "/user")
-	public ResponseEntity<?> putUser(@RequestHeader(value = "Authorization") String jwtToken, @RequestBody UserDto userDto) {
+	public ResponseEntity<?> putUser(@RequestBody UserDto userDto) {
 		try {
 			UserModel user = userService.getUserInformationById(userDto.getId());
 			
