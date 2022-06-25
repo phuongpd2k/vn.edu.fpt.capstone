@@ -233,4 +233,9 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	@Override
+	public UserModel findByUserName(String username) {
+		return userRepository.findByUsername(username).orElse(null);
+	}
+
 }
