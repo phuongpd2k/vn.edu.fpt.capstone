@@ -62,4 +62,7 @@ public class HouseModel extends Auditable<String> {
 	@OneToMany(mappedBy = "house")
 	@JsonBackReference
 	private List<PostModel> posts;
+	
+	@Column(name = "link_fb")
+	private String linkFb;
 }

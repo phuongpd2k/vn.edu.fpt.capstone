@@ -159,7 +159,7 @@ public class UserController {
 			if(userDto.getUsername() != null) {
 				if(!userDto.getUsername().equalsIgnoreCase(user.getUsername())) {
 					if(userService.existsByUsername(userDto.getUsername())) {
-						return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 								.message("Update user: username has exits!").messageCode("UPDATE_USER_FAIL").build());
 					}
 					user.setUsername(userDto.getUsername());

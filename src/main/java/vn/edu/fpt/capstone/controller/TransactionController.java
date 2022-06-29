@@ -73,7 +73,7 @@ public class TransactionController {
 	public ResponseEntity<ResponseObject> getAll() {
 		ResponseObject responseObject = new ResponseObject();
 		try {
-			List<TransactionDto> transactionDtos = transactionService.findAll();
+			List<TransactionResponse> transactionDtos = transactionService.findAll();
 			if (transactionDtos == null || transactionDtos.isEmpty()) {
 				responseObject.setResults(new ArrayList<>());
 			} else {
@@ -96,7 +96,7 @@ public class TransactionController {
 		ResponseObject responseObject = new ResponseObject();
 		try {
 			//UserDto userDto = userService.getUserByToken(jwtToken);
-			List<TransactionDto> transactionDtos = transactionService.findAll();
+			List<TransactionResponse> transactionDtos = transactionService.findAll();
 			if (transactionDtos == null || transactionDtos.isEmpty()) {
 				responseObject.setResults(new ArrayList<>());
 			} else {
@@ -600,7 +600,7 @@ public class TransactionController {
 			List<TransactionResponse> list = transactionService.search(search);
 			
 			LOGGER.error("searchTransaction: {}");
-			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("500")
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.messageCode("SEARCH_TRANSACTION_SUCCESSFULL").results(list).build());
 		} catch (Exception e) {
 			LOGGER.error("searchTransaction: {}", e);

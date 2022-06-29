@@ -6,10 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.SearchTransactionDto;
 import vn.edu.fpt.capstone.dto.TransactionDto;
+import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.model.TransactionModel;
 import vn.edu.fpt.capstone.random.RandomString;
+import vn.edu.fpt.capstone.repository.PostRepository;
 import vn.edu.fpt.capstone.repository.TransactionRepository;
 import vn.edu.fpt.capstone.response.TransactionResponse;
 import vn.edu.fpt.capstone.service.TransactionService;
@@ -29,6 +32,10 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Autowired
 	private TransactionRepository transactionRepository;
+	
+	@Autowired
+	private PostRepository postRepository;
+	
 	@Autowired
 	ModelMapper modelMapper;
 	
@@ -45,15 +52,17 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	@Override
-	public List<TransactionDto> findAll() {
+	public List<TransactionResponse> findAll() {
 		List<TransactionModel> transactionModels = transactionRepository.findAllByOrderByCreatedDateDesc();
 		if (transactionModels == null || transactionModels.isEmpty()) {
 			return null;
 		}
-		List<TransactionDto> transactionDtos = Arrays
-				.asList(modelMapper.map(transactionModels, TransactionDto[].class));
-		return transactionDtos;
+//		List<TransactionDto> transactionDtos = Arrays
+//				.asList(modelMapper.map(transactionModels, TransactionDto[].class));
+		List<TransactionResponse> list = convertToListDto(transactionModels);
+		return list;
 	}
+
 
 	@Override
 	public TransactionDto updateTransaction(TransactionDto transactionDto) {
@@ -162,7 +171,19 @@ public class TransactionServiceImpl implements TransactionService {
 	private List<TransactionResponse> convertToListDto(List<TransactionModel> list) {
 		List<TransactionResponse> listObject = new ArrayList<TransactionResponse>();
 		for (TransactionModel t : list) {
-			TransactionResponse tr = new TransactionResponse(t.getUser().getFullName(), t.getAmount(), t.getActualAmount(), t.getCode(), t.getCreatedDate(), t.getStatus());
+			PostModel post = new PostModel();
+			TransactionResponse tr = new TransactionResponse();
+			if(t.getPostId() != null) {
+				post = postRepository.getById(t.getPostId());
+				tr = new TransactionResponse(
+						t.getUser().getFullName(), t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), 
+						t.getCode(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), post.getPostType().getType(), t.getCreatedDate(), (int)(t.getAmount()/post.getPostType().getPrice()));
+			}else {
+				tr = new TransactionResponse(
+						t.getUser().getFullName(), t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), 
+						t.getCode(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), null, null, 0);
+			}
+			
 			listObject.add(tr);
 		}
 		return listObject;
