@@ -10,7 +10,7 @@ public interface TransactionService {
 
 	TransactionDto findById(Long id);
 
-	List<TransactionDto> findAll();
+	List<TransactionResponse> findAll();
 
 	List<TransactionDto> findAllByUserId(Long userId);
 

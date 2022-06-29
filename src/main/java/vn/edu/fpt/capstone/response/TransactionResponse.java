@@ -2,24 +2,24 @@ package vn.edu.fpt.capstone.response;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import vn.edu.fpt.capstone.dto.UserDto;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class TransactionResponse {
 	private String fullname;
-//	@JsonIgnoreProperties({ "email", "imageLink", "role", "delete", "active", "dob", "gender",
-//		"phoneNumber", "lastName", "firstName", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate",
-//		"verify" })
-//private UserDto user;
+	private String username;
 	private float amount;
 	private float actualAmount;
 	private String code;
-	private Date date;
+	private Date dateCreate;
 	private String status;
-	
+	private String typeOfTransaction;
+	private String typeOfPosting;
+	private Date datePostingOrExtend;
+	private int dayAmount;
 }
