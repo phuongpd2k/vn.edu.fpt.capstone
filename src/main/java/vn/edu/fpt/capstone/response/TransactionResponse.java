@@ -24,4 +24,6 @@ public class TransactionResponse {
 	private int dayAmount;
 	private String action;
 	private String note;
+	private Date lastModifiedDate;
+	private float lastBalance;
 }

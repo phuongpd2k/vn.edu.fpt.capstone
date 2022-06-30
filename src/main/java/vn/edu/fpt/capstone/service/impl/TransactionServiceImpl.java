@@ -177,11 +177,13 @@ public class TransactionServiceImpl implements TransactionService {
 				tr = new TransactionResponse(
 						t.getUser().getFullName(), t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), 
 						t.getCode(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), post.getPostType().getType(), 
-						t.getCreatedDate(), (int)(t.getAmount()/post.getPostType().getPrice()), t.getAction(), t.getNote());
+						t.getCreatedDate(), (int)(t.getAmount()/post.getPostType().getPrice()), t.getAction(), t.getNote(),
+						t.getLastModifiedDate(), t.getLastBalance());
 			}else {
 				tr = new TransactionResponse(
 						t.getUser().getFullName(), t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), 
-						t.getCode(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), null, null, 0, t.getAction(), t.getNote());
+						t.getCode(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), null, null, 0, t.getAction(), 
+						t.getNote(), t.getLastModifiedDate(), t.getLastBalance());
 			}
 			
 			listObject.add(tr);
