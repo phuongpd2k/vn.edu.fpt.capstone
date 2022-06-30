@@ -174,13 +174,13 @@ public class TransactionServiceImpl implements TransactionService {
 			TransactionResponse tr = new TransactionResponse();
 			if(t.getPostId() != null) {
 				post = postRepository.getById(t.getPostId());
-				tr = new TransactionResponse(
+				tr = new TransactionResponse(t.getId(), t.getUser().getId(),
 						t.getUser().getFullName(), t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), 
 						t.getCode(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), post.getPostType().getType(), 
 						t.getCreatedDate(), (int)(t.getAmount()/post.getPostType().getPrice()), t.getAction(), t.getNote(),
 						t.getLastModifiedDate(), t.getLastBalance());
 			}else {
-				tr = new TransactionResponse(
+				tr = new TransactionResponse(t.getId(), t.getUser().getId(),
 						t.getUser().getFullName(), t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), 
 						t.getCode(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), null, null, 0, t.getAction(), 
 						t.getNote(), t.getLastModifiedDate(), t.getLastBalance());
