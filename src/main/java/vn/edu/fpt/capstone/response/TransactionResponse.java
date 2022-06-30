@@ -22,4 +22,6 @@ public class TransactionResponse {
 	private String typeOfPosting;
 	private Date datePostingOrExtend;
 	private int dayAmount;
+	private String action;
+	private String note;
 }
