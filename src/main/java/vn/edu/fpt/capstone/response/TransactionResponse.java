@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionResponse {
+	private Long id;
+	private Long userId;
 	private String fullname;
 	private String username;
 	private float amount;
