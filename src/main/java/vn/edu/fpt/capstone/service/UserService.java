@@ -46,4 +46,8 @@ public interface UserService {
 	void unLockUserById(Long id);
 
 	UserModel findByUserName(String username);
+
+	boolean existsByEmail(String email);
+
+	UserModel createByAdmin(SignUpDto signUpDto);
 }
