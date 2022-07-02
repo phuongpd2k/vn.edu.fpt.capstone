@@ -38,8 +38,6 @@ public class SignUpDto {
     private boolean isVerify;
     
     private boolean isActive;
-    
-    //private boolean isDelete;
 	
 	private String verificationCode;
 }

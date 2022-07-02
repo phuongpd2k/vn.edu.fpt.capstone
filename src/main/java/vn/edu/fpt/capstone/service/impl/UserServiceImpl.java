@@ -238,4 +238,20 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByUsername(username).orElse(null);
 	}
 
+	@Override
+	public boolean existsByEmail(String email) {
+		return userRepository.existsByEmail(email);
+	}
+
+	@Override
+	public UserModel createByAdmin(SignUpDto signUpDto) {
+		signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+		UserModel userModel = modelMapper.map(signUpDto, UserModel.class);
+		userModel.setEnable(true);
+		userModel.setActive(true);
+		userModel.setVerify(true);
+		
+		return userRepository.save(userModel);
+	}
+
 }

@@ -76,13 +76,13 @@ public class RoomModel extends Auditable<String> implements Serializable {
 
 	@Column(name = "INTRO_IMAGE_URL")
 	private String introImageUrl;
-
-	@ManyToMany(cascade = { CascadeType.MERGE })
+	
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "room_amenity", joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "amenity_id"))
 	@JsonManagedReference
 	private Collection<AmenityModel> amenities;
 
-	@ManyToMany(cascade = { CascadeType.MERGE })
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "room_images", joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "image_id"))
 	@JsonManagedReference
 	private Collection<ImageModel> images;

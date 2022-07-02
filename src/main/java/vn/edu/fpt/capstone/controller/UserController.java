@@ -22,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import vn.edu.fpt.capstone.dto.ResponseObject;
+import vn.edu.fpt.capstone.dto.SignUpDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.dto.UserSearchDto;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.UserListRespone;
 import vn.edu.fpt.capstone.service.UserService;
 import vn.edu.fpt.capstone.service.impl.UserServiceImpl;
+import vn.edu.fpt.capstone.validate.Validation;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -42,6 +44,14 @@ public class UserController {
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private Validation validation;
+	
+	private String regex_username = "^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
+	private String regex_password = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
+	private String regex_email = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping(value = "/user")
@@ -229,6 +239,72 @@ public class UserController {
 			LOGGER.error(e.toString());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Delete user fail:" + e.getMessage()).messageCode("DELETE_USER_FAIL").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PostMapping(value = "/user")
+	public ResponseEntity<?> postUser(@RequestBody SignUpDto signUpDto) {
+		try {
+			if(signUpDto == null) {
+				throw new Exception();
+			}
+			if(userService.existsByUsername(signUpDto.getUsername())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create user: username has exits!").messageCode("CREATE_USER_FAIL").build());
+			}
+			// Validate email
+			if (!validation.checkRegex(regex_email, signUpDto.getEmail()) || signUpDto.getEmail().isEmpty()) {
+				LOGGER.error("Email invalid!");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create user by admin: email invalid!").messageCode("EMAIL_INVALID").build());
+			}
+
+			// Validate user name
+			// user name is 8-20 characters long
+			// no _ or . at the beginning
+			// no __ or _. or ._ or .. inside
+			// allowed characters
+			// no _ or . at the end
+			if (!validation.checkRegex(regex_username, signUpDto.getUsername()) || signUpDto.getUsername().isEmpty()) {
+				LOGGER.error("Username invalid!");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create user by admin: username invalid!").messageCode("USERNAME_INVALID").build());
+			}
+
+			// Validate password
+			// Minimum eight characters, at least one letter and one number
+			if (!validation.checkRegex(regex_password, signUpDto.getPassword()) || signUpDto.getPassword().isEmpty()) {
+				LOGGER.error("Email invalid!");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create user by admin: password invalid!").messageCode("PASSWORD_INVALID").build());
+			}
+
+			// Check for User name exists in a DB
+			if (userService.existsByUsername(signUpDto.getUsername())) {
+				LOGGER.error("User name has exits!");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create user by admin: user name has exist!").messageCode("USERNAME_HAS_EXISTED").build());
+			}
+
+			// Check for email exists in a DB
+			if (userService.existsByEmail(signUpDto.getEmail())) {
+				LOGGER.error("Email has exits!");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create user by admin: Email has exits!").messageCode("EMAIL_HAS_EXISTED").build());
+			}
+			
+			UserModel user2 = userService.createByAdmin(signUpDto);
+			if (user2 != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Create user by admin: successfully!").messageCode("CREATE_USER_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
+					.message("Create user by admin: " + e.getMessage()).messageCode("UPDATE_USER_FAIL").build());
 		}
 	}
 
