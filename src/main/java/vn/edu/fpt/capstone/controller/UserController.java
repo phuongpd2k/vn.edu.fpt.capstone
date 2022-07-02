@@ -333,7 +333,7 @@ public class UserController {
 			UserDto user = userService.getUserById(userDto.getId());
 			user.setImageLink(userDto.getImageLink());
 			
-			UserModel userModel = userService.updateUser(userDto);
+			UserModel userModel = userService.updateUser(user);
 			if (userModel != null) {
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(ResponseObject.builder().code("200").message("Update image user: successfully!")
