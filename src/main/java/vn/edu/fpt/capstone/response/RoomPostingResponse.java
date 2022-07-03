@@ -26,6 +26,8 @@ public class RoomPostingResponse{
 	private int waterPricePerMonth;	
 	private String roomDescription;
 	private int floor;
+	private String timeType;
+	private String linkFb;
 	
 	private String street;
 	private String phuongXa;
