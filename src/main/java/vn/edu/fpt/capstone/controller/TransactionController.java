@@ -19,6 +19,7 @@ import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SearchTransactionDto;
 import vn.edu.fpt.capstone.service.TransactionService;
 import vn.edu.fpt.capstone.service.UserService;
+import vn.edu.fpt.capstone.constant.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,9 @@ public class TransactionController {
 
 	@Autowired
 	ModelMapper modelMapper;
+	
+	@Autowired
+	private Constant constant;
 
 	@GetMapping(value = "/transaction/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
@@ -608,5 +612,130 @@ public class TransactionController {
 					.message("Search failed: " + e.getMessage()).messageCode("SEARCH_TRANSACTION_FAILED").build());
 		}
 	}
+	
+	@PostMapping(value = "/transaction-by-admin")
+	public ResponseEntity<?> postTransactionByAdmin(@RequestBody TransactionDto transactionDto) {
+		ResponseObject response = new ResponseObject();
+		try {
+
+			// Check user ID
+//			if (transactionDto.getUser() == null) {
+//				LOGGER.error("postTransaction: {}");
+//				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+//						.message("Create transaction failed: user null").messageCode("USER_NULL").build());
+//			}
+//			if (transactionDto.getId() != null) {
+//				LOGGER.error("postTransaction: {}", "Wrong body format");
+//				response.setCode("406");
+//				response.setMessage("Wrong body format");
+//				response.setMessageCode(Message.NOT_ACCEPTABLE);
+//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+//			}
+//			
+//			transactionDto.setTransferType(constant.);
+//
+//			// Check transaction type
+//			if (transactionDto.getTransferType() == null) {
+//				LOGGER.error("postTransaction: {}", "Invalid transferType");
+//				response.setCode("406");
+//				response.setMessage("Invalid transferType");
+//				response.setMessageCode(Message.NOT_ACCEPTABLE);
+//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+//			} else {
+//				switch (transactionDto.getTransferType().toUpperCase()) {
+//				case "DEPOSIT":
+//					break;
+//				case "POSTING":
+//					break;
+//				case "POSTING_EXTEND":
+//					break;
+//				case "GET_NOTIFICATIONS":
+//					break;
+//				case "REFUND":
+//					break;
+//				default:
+//					LOGGER.error("postTransaction: {}", "Invalid transferType");
+//					response.setCode("406");
+//					response.setMessage("Invalid transferType");
+//					response.setMessageCode(Message.NOT_ACCEPTABLE);
+//					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+//				}
+//			}
+//
+//			// Check status
+//			if (transactionDto.getStatus() == null) {
+//				LOGGER.error("postTransaction: {}", "Invalid status");
+//				response.setCode("406");
+//				response.setMessage("Invalid status");
+//				response.setMessageCode(Message.NOT_ACCEPTABLE);
+//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+//			} else {
+//				switch (transactionDto.getStatus().toUpperCase()) {
+//				case "SUCCESS":
+//					break;
+//				case "FAILED":
+//					break;
+//				case "PENDING":
+//					break;
+//				case "POSTING_FAILED":
+//					break;
+//				case "POSTING_EXTEND_FAILED":
+//					break;
+//				case "GET_NOTIFICATIONS_FAILED":
+//					break;
+//				default:
+//					LOGGER.error("postTransaction: {}", "Invalid status");
+//					response.setCode("406");
+//					response.setMessage("Invalid status");
+//					response.setMessageCode(Message.NOT_ACCEPTABLE);
+//					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+//				}
+//			}
+//
+//			// Check action
+//			if (transactionDto.getAction() == null) {
+//				LOGGER.error("postTransaction: {}", "Invalid action");
+//				response.setCode("406");
+//				response.setMessage("Invalid action");
+//				response.setMessageCode(Message.NOT_ACCEPTABLE);
+//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+//			} else {
+//				switch (transactionDto.getAction().toUpperCase()) {
+//				case "PLUS":
+//					break;
+//				case "MINUS":
+//					break;
+//				case "WAITING":
+//					break;
+//				case "DO_NOTHING":
+//					break;
+//				default:
+//					LOGGER.error("postTransaction: {}", "Invalid action");
+//					response.setCode("406");
+//					response.setMessage("Invalid action");
+//					response.setMessageCode(Message.NOT_ACCEPTABLE);
+//					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+//				}
+//			}
+//			transactionDto.setLastBalance(userDto.getBalance());
+//			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
+//			if (transactionDto2 == null) {
+//				response.setCode("500");
+//				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+//				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
+//			response.setCode("200");
+//			response.setMessageCode(Message.OK);
+//			response.setResults(transactionDto2);
+//			LOGGER.info("postTransaction: {}", transactionDto2);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error("postTransaction: {}", e);
+			response.setCode("500");
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 
 }

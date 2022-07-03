@@ -35,6 +35,9 @@ public class SignUpDto {
 	@JsonProperty("role")
     private RoleDto role;
 	
+	@JsonProperty("role")
+	private String cccd;
+	
     private boolean isVerify;
     
     private boolean isActive;
