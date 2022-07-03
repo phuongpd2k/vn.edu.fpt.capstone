@@ -153,6 +153,8 @@ public class RoomServiceImpl implements RoomService {
 		rp.setWaterPricePerMonth(roomModel.getWaterPricePerMonth());
 		rp.setRoomDescription(roomModel.getDescription());
 		rp.setFloor(roomModel.getFloor());
+		rp.setTimeType(roomModel.getType());
+		rp.setLinkFb(roomModel.getHouse().getLinkFb());
 		
 		rp.setStreet(roomModel.getHouse().getAddress().getStreet());
 		rp.setPhuongXa(roomModel.getHouse().getAddress().getPhuongXa().getName());

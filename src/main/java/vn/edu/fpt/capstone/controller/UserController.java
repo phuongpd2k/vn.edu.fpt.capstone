@@ -304,7 +304,7 @@ public class UserController {
 		} catch (Exception e) {
 			LOGGER.error(e.toString());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("1001")
-					.message("Create user by admin: " + e.getMessage()).messageCode("UPDATE_USER_FAIL").build());
+					.message("Create user by admin: " + e.getMessage()).messageCode("CREATE_USER_FAIL").build());
 		}
 	}
 
