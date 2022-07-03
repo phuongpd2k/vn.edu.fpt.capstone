@@ -325,4 +325,25 @@ public class UserController {
 					.message("Update role user: " + e.getMessage()).messageCode("UPDATE_ROLE_USER_FAIL").build());
 		}
 	}
+	
+	@PutMapping(value = "/user/update-image")
+	public ResponseEntity<?> putUserUpdateImage(@RequestBody UserDto userDto,
+			@RequestHeader(value = "Authorization") String jwtToken) {
+		try {
+			UserDto user = userService.getUserById(userDto.getId());
+			user.setImageLink(userDto.getImageLink());
+			
+			UserModel userModel = userService.updateUser(user);
+			if (userModel != null) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseObject.builder().code("200").message("Update image user: successfully!")
+								.messageCode("UPDATE_IMAGE_USER_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error(e.toString());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Update image user: " + e.getMessage()).messageCode("UPDATE_IMAGE_USER_FAIL").build());
+		}
+	}
 }
