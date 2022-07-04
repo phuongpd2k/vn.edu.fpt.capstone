@@ -83,7 +83,7 @@ public class TransactionController {
 			} else {
 				responseObject.setResults(transactionDtos);
 			}
-			LOGGER.info("getAll: {}", transactionDtos);
+			LOGGER.info("getAll: {}");
 			responseObject.setCode("200");
 			responseObject.setMessageCode(Message.OK);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
@@ -99,14 +99,14 @@ public class TransactionController {
 	public ResponseEntity<ResponseObject> getAllByToken(@RequestHeader(value = "Authorization") String jwtToken) {
 		ResponseObject responseObject = new ResponseObject();
 		try {
-			//UserDto userDto = userService.getUserByToken(jwtToken);
-			List<TransactionResponse> transactionDtos = transactionService.findAll();
+			UserDto userDto = userService.getUserByToken(jwtToken);
+			List<TransactionResponse> transactionDtos = transactionService.findAllByToken(userDto.getId());
 			if (transactionDtos == null || transactionDtos.isEmpty()) {
 				responseObject.setResults(new ArrayList<>());
 			} else {
 				responseObject.setResults(transactionDtos);
 			}
-			LOGGER.info("getAll: {}", transactionDtos);
+			LOGGER.info("getAll: {}");
 			responseObject.setCode("200");
 			responseObject.setMessageCode(Message.OK);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
@@ -421,21 +421,6 @@ public class TransactionController {
 		}
 	}
 
-//	@DeleteMapping(value = "/transaction")
-//	public ResponseEntity<?> deleteListTransaction(@RequestBody ListIdDto listIdDto) {
-//		try {
-//			transactionService.removeListTransaction(listIdDto);
-//			return ResponseEntity.status(HttpStatus.OK)
-//					.body(ResponseObject.builder().code("200").message("Delete list transaction successfully!")
-//							.messageCode("DELETE_LIST_AMENITY_SUCCESSFULL").build());
-//		} catch (Exception e) {
-//			LOGGER.error(e.toString());
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//					.body(ResponseObject.builder().code("400").message("Delete list transaction fail!")
-//							.messageCode("DELETE_LIST_AMENITY_FAIL").build());
-//		}
-//	}
-
 	@PostMapping(value = "/transaction/deposit")
 	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	public ResponseEntity<ResponseObject> postTransactionDeposit(@RequestBody TransactionDto transactionDto,
@@ -613,127 +598,72 @@ public class TransactionController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/transaction-by-admin")
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	public ResponseEntity<?> postTransactionByAdmin(@RequestBody TransactionDto transactionDto) {
-		ResponseObject response = new ResponseObject();
 		try {
 
-			// Check user ID
-//			if (transactionDto.getUser() == null) {
-//				LOGGER.error("postTransaction: {}");
-//				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-//						.message("Create transaction failed: user null").messageCode("USER_NULL").build());
-//			}
-//			if (transactionDto.getId() != null) {
-//				LOGGER.error("postTransaction: {}", "Wrong body format");
-//				response.setCode("406");
-//				response.setMessage("Wrong body format");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			}
-//			
-//			transactionDto.setTransferType(constant.);
-//
-//			// Check transaction type
-//			if (transactionDto.getTransferType() == null) {
-//				LOGGER.error("postTransaction: {}", "Invalid transferType");
-//				response.setCode("406");
-//				response.setMessage("Invalid transferType");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			} else {
-//				switch (transactionDto.getTransferType().toUpperCase()) {
-//				case "DEPOSIT":
-//					break;
-//				case "POSTING":
-//					break;
-//				case "POSTING_EXTEND":
-//					break;
-//				case "GET_NOTIFICATIONS":
-//					break;
-//				case "REFUND":
-//					break;
-//				default:
-//					LOGGER.error("postTransaction: {}", "Invalid transferType");
-//					response.setCode("406");
-//					response.setMessage("Invalid transferType");
-//					response.setMessageCode(Message.NOT_ACCEPTABLE);
-//					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//				}
-//			}
-//
-//			// Check status
-//			if (transactionDto.getStatus() == null) {
-//				LOGGER.error("postTransaction: {}", "Invalid status");
-//				response.setCode("406");
-//				response.setMessage("Invalid status");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			} else {
-//				switch (transactionDto.getStatus().toUpperCase()) {
-//				case "SUCCESS":
-//					break;
-//				case "FAILED":
-//					break;
-//				case "PENDING":
-//					break;
-//				case "POSTING_FAILED":
-//					break;
-//				case "POSTING_EXTEND_FAILED":
-//					break;
-//				case "GET_NOTIFICATIONS_FAILED":
-//					break;
-//				default:
-//					LOGGER.error("postTransaction: {}", "Invalid status");
-//					response.setCode("406");
-//					response.setMessage("Invalid status");
-//					response.setMessageCode(Message.NOT_ACCEPTABLE);
-//					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//				}
-//			}
-//
-//			// Check action
-//			if (transactionDto.getAction() == null) {
-//				LOGGER.error("postTransaction: {}", "Invalid action");
-//				response.setCode("406");
-//				response.setMessage("Invalid action");
-//				response.setMessageCode(Message.NOT_ACCEPTABLE);
-//				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//			} else {
-//				switch (transactionDto.getAction().toUpperCase()) {
-//				case "PLUS":
-//					break;
-//				case "MINUS":
-//					break;
-//				case "WAITING":
-//					break;
-//				case "DO_NOTHING":
-//					break;
-//				default:
-//					LOGGER.error("postTransaction: {}", "Invalid action");
-//					response.setCode("406");
-//					response.setMessage("Invalid action");
-//					response.setMessageCode(Message.NOT_ACCEPTABLE);
-//					return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-//				}
-//			}
-//			transactionDto.setLastBalance(userDto.getBalance());
-//			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
-//			if (transactionDto2 == null) {
-//				response.setCode("500");
-//				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-//				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//			}
-//			response.setCode("200");
-//			response.setMessageCode(Message.OK);
-//			response.setResults(transactionDto2);
-//			LOGGER.info("postTransaction: {}", transactionDto2);
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			// Check user
+			if (transactionDto.getUser() == null) {
+				LOGGER.error("postTransaction: {}");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create transaction failed: user null").messageCode("USER_NULL").build());
+			}
+			
+			if (transactionDto.getAmount() <= 0) {
+				LOGGER.error("postTransaction: {}");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create transaction failed: amount must be > 0").messageCode("AMOUNT_ERROR").build());
+			}
+			
+			UserDto userDto = userService.getUserById(transactionDto.getUser().getId());
+			
+			if (userDto.getBalance() < transactionDto.getAmount()) {
+				LOGGER.error("postTransaction: {}");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create transaction failed: user balance not enough").messageCode("USER_BALANCE_NOT_ENOUGH").build());
+			}
+			
+			if(transactionDto.getAction().equals(constant.PLUS)) {
+				userDto.setBalance(userDto.getBalance() + transactionDto.getAmount());
+				transactionDto.setTransferContent("Nạp tiền");
+			}else if(transactionDto.getAction().equals(constant.MINUS)) {
+				userDto.setBalance(userDto.getBalance() - transactionDto.getAmount());
+				transactionDto.setTransferContent("Trừ tiền");
+			}else {
+				LOGGER.error("postTransaction: {}");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create transaction failed: action error").messageCode("ACTION_ERROR").build());
+			}
+			
+
+			// Update balance in user
+			UserModel user = userService.updateUser(userDto);
+			if (user == null) {
+				LOGGER.error("confirmTransaction: {}", "update user fail");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+						.body(ResponseObject.builder().code("500").message("Create transaction: update user fail")
+								.messageCode("CREATE_TRANSACTION_DEPOSIT_FAILED").build());
+			}
+			
+			
+			transactionDto.setTransferType(constant.DEPOSIT);
+			transactionDto.setStatus(constant.SUCCESS);
+			transactionDto.setLastBalance(userDto.getBalance());
+			
+			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
+			if (transactionDto2 != null) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseObject.builder().code("200").message("Create transaction: successfull")
+								.messageCode("CREATE_TRANSACTION_DEPOSIT_SUCCESSFULL").build());
+			}
+			throw new Exception();
 		} catch (Exception e) {
 			LOGGER.error("postTransaction: {}", e);
-			response.setCode("500");
-			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(ResponseObject.builder().code("400").message("Create transaction: " + e.getMessage())
+							.messageCode("CREATE_TRANSACTION_DEPOSIT_FAILED").build());
 		}
 	}
 
