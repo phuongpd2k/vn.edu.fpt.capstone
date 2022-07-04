@@ -18,6 +18,7 @@ public class TransactionResponse {
 	private float amount;
 	private float actualAmount;
 	private String code;
+	private String userCode;
 	private Date dateCreate;
 	private String status;
 	private String typeOfTransaction;

@@ -23,6 +23,6 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	@Query("SELECT t FROM TransactionModel t WHERE t.postId = ?1")
 	TransactionModel findByPostId(Long id);
 
-	@Query("SELECT t FROM TransactionModel t WHERE t.user.id = ?1")
+	@Query("SELECT t FROM TransactionModel t WHERE t.user.id = ?1 order by t.createdDate desc")
 	List<TransactionModel> findAllById(Long id);
 }
