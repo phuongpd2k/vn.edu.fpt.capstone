@@ -42,7 +42,7 @@ public class UserPrincipal implements UserDetails{
     }
     
     public String getUsername() {
-        return this.user.getUsername();
+        return this.user.getEmail();
     }
     
     public boolean isAccountNonExpired() {

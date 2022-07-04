@@ -613,6 +613,7 @@ public class TransactionController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/transaction-by-admin")
 	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	public ResponseEntity<?> postTransactionByAdmin(@RequestBody TransactionDto transactionDto) {

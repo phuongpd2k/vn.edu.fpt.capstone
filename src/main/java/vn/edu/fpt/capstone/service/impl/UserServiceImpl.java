@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserModel getUserInformationByToken(String jwtToken) {
 		String username = jwtTokenUtil.getUsernameFromToken(jwtToken.substring(7));
-		return userRepository.findByUsername(username).orElse(null);
+		return userRepository.findByEmail(username).orElse(null);
 	}
 
 	@Override

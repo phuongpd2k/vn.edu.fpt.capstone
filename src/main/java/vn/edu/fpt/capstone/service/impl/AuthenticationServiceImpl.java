@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -90,10 +91,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 							.messageCode("USERNAME_PASSWORD_INVALID").build());
 
 		}
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(signInDto.getUsername(), signInDto.getPassword()));
+//		Authentication authentication = authenticationManager.authenticate(
+//				new UsernamePasswordAuthenticationToken(signInDto.getUsername(), signInDto.getPassword()));
 
 		UserModel user = userRepository.findByUsername(signInDto.getUsername()).get();
+
+		if (user == null || !passwordEncoder.matches(signInDto.getPassword(), user.getPassword()) 
+				|| !user.getUsername().equals(signInDto.getUsername())) {
+			logger.error("username or pasword wrong!");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401").message("sign in request: username or pasword wrong!")
+							.messageCode("USERNAME_PASSWORD_WRONG").build());
+		}
+		
 
 		if (!user.isActive()) {
 			logger.error("Account inactive!");
@@ -114,10 +124,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 
 		
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+		//SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
-				.loadUserByUsername(signInDto.getUsername());
+				.loadUserByUsername(user.getEmail());
 
 		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
 
@@ -262,7 +272,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		UserModel user = userService.createUser(signUpDto);
 
 		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
-				.loadUserByUsername(user.getUsername());
+				.loadUserByUsername(user.getEmail());
 
 		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
 
@@ -301,7 +311,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			UserModel userNew = userService.createUser(signUpDto);
 
 			final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
-					.loadUserByUsername(userNew.getUsername());
+					.loadUserByUsername(userNew.getEmail());
 
 			JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
 
@@ -327,7 +337,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 
 		final UserPrincipal userPrincipal = (UserPrincipal) customUserDetailService
-				.loadUserByUsername(user.getUsername());
+				.loadUserByUsername(user.getEmail());
 
 		JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userPrincipal));
 
