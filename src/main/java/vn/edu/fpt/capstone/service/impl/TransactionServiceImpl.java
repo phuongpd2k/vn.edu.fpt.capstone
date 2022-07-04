@@ -56,8 +56,6 @@ public class TransactionServiceImpl implements TransactionService {
 		if (transactionModels == null || transactionModels.isEmpty()) {
 			return null;
 		}
-//		List<TransactionDto> transactionDtos = Arrays
-//				.asList(modelMapper.map(transactionModels, TransactionDto[].class));
 		List<TransactionResponse> list = convertToListDto(transactionModels);
 		return list;
 	}
@@ -195,6 +193,16 @@ public class TransactionServiceImpl implements TransactionService {
 	public TransactionDto findByPostId(Long id) {
 		// TODO Auto-generated method stub
 		return modelMapper.map(transactionRepository.findByPostId(id), TransactionDto.class);
+	}
+
+	@Override
+	public List<TransactionResponse> findAllByToken(Long id) {
+		List<TransactionModel> transactionModels = transactionRepository.findAllById(id);
+		if (transactionModels == null || transactionModels.isEmpty()) {
+			return null;
+		}
+		List<TransactionResponse> list = convertToListDto(transactionModels);
+		return list;
 	}
 
 }

@@ -83,7 +83,7 @@ public class TransactionController {
 			} else {
 				responseObject.setResults(transactionDtos);
 			}
-			LOGGER.info("getAll: {}", transactionDtos);
+			LOGGER.info("getAll: {}");
 			responseObject.setCode("200");
 			responseObject.setMessageCode(Message.OK);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
@@ -99,14 +99,14 @@ public class TransactionController {
 	public ResponseEntity<ResponseObject> getAllByToken(@RequestHeader(value = "Authorization") String jwtToken) {
 		ResponseObject responseObject = new ResponseObject();
 		try {
-			//UserDto userDto = userService.getUserByToken(jwtToken);
-			List<TransactionResponse> transactionDtos = transactionService.findAll();
+			UserDto userDto = userService.getUserByToken(jwtToken);
+			List<TransactionResponse> transactionDtos = transactionService.findAllByToken(userDto.getId());
 			if (transactionDtos == null || transactionDtos.isEmpty()) {
 				responseObject.setResults(new ArrayList<>());
 			} else {
 				responseObject.setResults(transactionDtos);
 			}
-			LOGGER.info("getAll: {}", transactionDtos);
+			LOGGER.info("getAll: {}");
 			responseObject.setCode("200");
 			responseObject.setMessageCode(Message.OK);
 			return new ResponseEntity<>(responseObject, HttpStatus.OK);
@@ -420,21 +420,6 @@ public class TransactionController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
-//	@DeleteMapping(value = "/transaction")
-//	public ResponseEntity<?> deleteListTransaction(@RequestBody ListIdDto listIdDto) {
-//		try {
-//			transactionService.removeListTransaction(listIdDto);
-//			return ResponseEntity.status(HttpStatus.OK)
-//					.body(ResponseObject.builder().code("200").message("Delete list transaction successfully!")
-//							.messageCode("DELETE_LIST_AMENITY_SUCCESSFULL").build());
-//		} catch (Exception e) {
-//			LOGGER.error(e.toString());
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//					.body(ResponseObject.builder().code("400").message("Delete list transaction fail!")
-//							.messageCode("DELETE_LIST_AMENITY_FAIL").build());
-//		}
-//	}
 
 	@PostMapping(value = "/transaction/deposit")
 	@Transactional(rollbackFor = { Exception.class, Throwable.class })

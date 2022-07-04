@@ -26,4 +26,6 @@ public interface TransactionService {
 
 	TransactionDto findByPostId(Long id);
 
+	List<TransactionResponse> findAllByToken(Long id);
+
 }
