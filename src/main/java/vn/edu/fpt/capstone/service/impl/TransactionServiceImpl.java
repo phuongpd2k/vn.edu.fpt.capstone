@@ -31,16 +31,16 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Autowired
 	private TransactionRepository transactionRepository;
-	
+
 	@Autowired
 	private PostRepository postRepository;
-	
+
 	@Autowired
 	ModelMapper modelMapper;
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
-	
+
 	@Autowired
 	private RandomString random;
 
@@ -59,7 +59,6 @@ public class TransactionServiceImpl implements TransactionService {
 		List<TransactionResponse> list = convertToListDto(transactionModels);
 		return list;
 	}
-
 
 	@Override
 	public TransactionDto updateTransaction(TransactionDto transactionDto) {
@@ -83,14 +82,14 @@ public class TransactionServiceImpl implements TransactionService {
 			String code = "";
 			while (true) {
 				code = "HLH" + random.generateCodeTransaction(5);
-				
-				if(transactionRepository.getTotalCode(code) == 0)
+
+				if (transactionRepository.getTotalCode(code) == 0)
 					break;
 			}
 			transactionDto.setCode(code);
-			
+
 			TransactionModel transactionModel = modelMapper.map(transactionDto, TransactionModel.class);
-			
+
 			TransactionModel saveModel = transactionRepository.save(transactionModel);
 			return modelMapper.map(saveModel, TransactionDto.class);
 		} catch (Exception e) {
@@ -123,40 +122,40 @@ public class TransactionServiceImpl implements TransactionService {
 		// Query
 		String sql = "select entity from TransactionModel as entity where (1=1)";
 		String whereClause = "";
-		
-		if(search.getStatus() != null) {
+
+		if (search.getStatus() != null) {
 			whereClause += " AND (entity.status = :text)";
 		}
-		
-		if(search.getUsername() != null) {
+
+		if (search.getUsername() != null) {
 			whereClause += " AND (entity.user.fullName LIKE :text2)";
 		}
-		
-		if(search.getFromDate() != null) {
+
+		if (search.getFromDate() != null) {
 			whereClause += " AND (entity.createdDate >= :text3)";
 		}
-		
-		if(search.getToDate() != null) {
+
+		if (search.getToDate() != null) {
 			whereClause += " AND (entity.createdDate <= :text4)";
 		}
-		
+
 		sql += whereClause;
-		
+
 		Query query = entityManager.createQuery(sql, TransactionModel.class);
-		
-		if(search.getStatus() != null) {
-			query.setParameter("text", search.getStatus().trim() );
+
+		if (search.getStatus() != null) {
+			query.setParameter("text", search.getStatus().trim());
 		}
-		
-		if(search.getUsername() != null) {
+
+		if (search.getUsername() != null) {
 			query.setParameter("text2", '%' + search.getUsername().trim() + '%');
 		}
-		
-		if(search.getFromDate() != null) {
+
+		if (search.getFromDate() != null) {
 			query.setParameter("text3", new Date(search.getFromDate()));
 		}
-		
-		if(search.getToDate() != null) {
+
+		if (search.getToDate() != null) {
 			query.setParameter("text4", new Date(search.getToDate()));
 		}
 
@@ -170,20 +169,21 @@ public class TransactionServiceImpl implements TransactionService {
 		for (TransactionModel t : list) {
 			PostModel post = new PostModel();
 			TransactionResponse tr = new TransactionResponse();
-			if(t.getPostId() != null) {
+			if (t.getPostId() != null) {
 				post = postRepository.getById(t.getPostId());
-				tr = new TransactionResponse(t.getId(), t.getUser().getId(),
-						t.getUser().getFullName(), t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), 
-						t.getCode(), t.getUser().getCodeTransaction(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), post.getPostType().getType(), 
-						t.getCreatedDate(), (int)(t.getAmount()/post.getPostType().getPrice()), t.getAction(), t.getNote(),
+				tr = new TransactionResponse(t.getId(), t.getUser().getId(), t.getUser().getFullName(),
+						t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), t.getCode(),
+						t.getUser().getCodeTransaction(), t.getCreatedDate(), t.getStatus(), t.getTransferType(),
+						post.getPostType().getType(), t.getCreatedDate(),
+						(int) (t.getAmount() / post.getPostType().getPrice()), t.getAction(), t.getNote(),
 						t.getLastModifiedDate(), t.getLastBalance());
-			}else {
-				tr = new TransactionResponse(t.getId(), t.getUser().getId(),
-						t.getUser().getFullName(), t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), 
-						t.getCode(), t.getUser().getCodeTransaction(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), null, null, 0, t.getAction(), 
-						t.getNote(), t.getLastModifiedDate(), t.getLastBalance());
+			} else {
+				tr = new TransactionResponse(t.getId(), t.getUser().getId(), t.getUser().getFullName(),
+						t.getUser().getUsername(), t.getAmount(), t.getActualAmount(), t.getCode(),
+						t.getUser().getCodeTransaction(), t.getCreatedDate(), t.getStatus(), t.getTransferType(), null,
+						null, 0, t.getAction(), t.getNote(), t.getLastModifiedDate(), t.getLastBalance());
 			}
-			
+
 			listObject.add(tr);
 		}
 		return listObject;
@@ -191,7 +191,6 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	public TransactionDto findByPostId(Long id) {
-		// TODO Auto-generated method stub
 		return modelMapper.map(transactionRepository.findByPostId(id), TransactionDto.class);
 	}
 
@@ -203,6 +202,53 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		List<TransactionResponse> list = convertToListDto(transactionModels);
 		return list;
+	}
+
+	@Override
+	public List<TransactionResponse> searchPostOrExtend(SearchTransactionDto search) {
+		// Query
+		String sql = "select entity from TransactionModel as entity where (entity.transferType = 'POSTING' OR entity.transferType = 'POSTING_EXTEND')";
+		String whereClause = "";
+
+		if (search.getFullName() != null) {
+			whereClause += " AND (entity.user.fullName LIKE :text)";
+		}
+
+		if (search.getUsername() != null) {
+			whereClause += " AND (entity.user.username LIKE :text2)";
+		}
+
+		if (search.getFromDate() != null) {
+			whereClause += " AND (entity.createdDate >= :text3)";
+		}
+
+		if (search.getToDate() != null) {
+			whereClause += " AND (entity.createdDate <= :text4)";
+		}
+
+		sql += whereClause;
+
+		Query query = entityManager.createQuery(sql, TransactionModel.class);
+
+		if (search.getFullName() != null) {
+			query.setParameter("text", '%' + search.getFullName().trim() + '%');
+		}
+
+		if (search.getUsername() != null) {
+			query.setParameter("text2", '%' + search.getUsername().trim() + '%');
+		}
+
+		if (search.getFromDate() != null) {
+			query.setParameter("text3", new Date(search.getFromDate()));
+		}
+
+		if (search.getToDate() != null) {
+			query.setParameter("text4", new Date(search.getToDate()));
+		}
+
+		@SuppressWarnings("unchecked")
+		List<TransactionModel> list = query.getResultList();
+		return convertToListDto(list);
 	}
 
 }

@@ -1,7 +1,5 @@
 package vn.edu.fpt.capstone.dto;
 
-import java.util.Date;
-
 import lombok.Data;
 
 @Data
