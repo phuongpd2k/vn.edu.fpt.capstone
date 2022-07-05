@@ -206,8 +206,8 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Override
 	public List<TransactionResponse> searchPostOrExtend(SearchTransactionDto search) {
-		// Query
-		String sql = "select entity from TransactionModel as entity where (entity.transferType = 'POSTING' OR entity.transferType = 'POSTING_EXTEND')";
+		// Queryentity.transferType
+		String sql = "select entity from TransactionModel as entity where (1=1)";
 		String whereClause = "";
 
 		if (search.getFullName() != null) {
@@ -224,6 +224,12 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if (search.getToDate() != null) {
 			whereClause += " AND (entity.createdDate <= :text4)";
+		}
+		
+		if(search.getType() != null) {
+			whereClause += " AND (entity.transferType = :text5)";
+		}else {
+			whereClause += " AND (entity.transferType = 'POSTING' OR entity.transferType = 'POSTING_EXTEND')";
 		}
 
 		sql += whereClause;
@@ -244,6 +250,10 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if (search.getToDate() != null) {
 			query.setParameter("text4", new Date(search.getToDate()));
+		}
+		
+		if (search.getType() != null) {
+			query.setParameter("text5", search.getType());
 		}
 
 		@SuppressWarnings("unchecked")
