@@ -32,4 +32,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	@Query("SELECT COUNT(u) FROM PostModel u WHERE u.createdBy = ?1")
 	int getTotalAmountPostHost(String createdBy);
 
+	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true AND pm.house.user.id = ?1")
+	List<PostModel> findAllPostByUserId(Long id);
+
 }
