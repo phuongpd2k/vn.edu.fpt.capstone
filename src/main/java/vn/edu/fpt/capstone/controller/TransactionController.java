@@ -447,7 +447,7 @@ public class TransactionController {
 
 			transactionDto.setTransferType("DEPOSIT");
 			transactionDto.setStatus("PENDING");
-			transactionDto.setAction("PLUS");
+			transactionDto.setAction(constant.DO_NOTHING);
 			transactionDto.setTransferContent("Nạp tiền");
 			transactionDto.setUser(userDto);
 
