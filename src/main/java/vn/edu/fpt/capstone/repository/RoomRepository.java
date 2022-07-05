@@ -36,4 +36,7 @@ public interface RoomRepository extends JpaRepository<RoomModel,Long> {
 
 	@Query("SELECT rm FROM RoomModel rm WHERE rm.enable = true AND rm.house.enable = true AND rm.house.id = ?1")
 	List<RoomModel> getAllRoomOfHouse(Long id);
+
+	@Query("SELECT COUNT(u) FROM RoomModel u WHERE u.createdBy = ?1")
+	int getTotalRoomHost(String createdBy);
 }

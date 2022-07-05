@@ -25,4 +25,11 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 
 	@Query("SELECT t FROM TransactionModel t WHERE t.user.id = ?1 order by t.createdDate desc")
 	List<TransactionModel> findAllById(Long id);
+
+	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS'")
+	float getTotalAmountMoney();
+
+	
+	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS' AND t.user.id = ?1")
+	float getTotalAmountMoneyHost(Long id);
 }
