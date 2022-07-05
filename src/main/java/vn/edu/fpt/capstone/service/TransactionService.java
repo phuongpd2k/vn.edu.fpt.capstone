@@ -28,4 +28,6 @@ public interface TransactionService {
 
 	List<TransactionResponse> findAllByToken(Long id);
 
+	List<TransactionResponse> searchPostOrExtend(SearchTransactionDto search);
+
 }

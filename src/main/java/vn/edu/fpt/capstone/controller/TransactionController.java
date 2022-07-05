@@ -598,6 +598,21 @@ public class TransactionController {
 		}
 	}
 	
+	@PostMapping(value = "/transaction/search/post-or-extend")
+	public ResponseEntity<?> searchTransactionPostOrExtend(@RequestBody SearchTransactionDto search) {
+		try {	
+			List<TransactionResponse> list = transactionService.searchPostOrExtend(search);
+			
+			LOGGER.error("searchTransaction: {}");
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.messageCode("SEARCH_TRANSACTION_SUCCESSFULL").results(list).build());
+		} catch (Exception e) {
+			LOGGER.error("searchTransaction: {}", e);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Search failed: " + e.getMessage()).messageCode("SEARCH_TRANSACTION_FAILED").build());
+		}
+	}
+	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/transaction-by-admin")
 	@Transactional(rollbackFor = { Exception.class, Throwable.class })
