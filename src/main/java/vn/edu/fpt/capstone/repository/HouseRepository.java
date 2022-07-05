@@ -19,4 +19,11 @@ public interface HouseRepository extends JpaRepository<HouseModel, Long> {
 	@Query(value = "select house.* from house where house.enable = true AND house.user_id= :userId", nativeQuery = true)
 	List<HouseModel> findByUserId(@Param("userId") Long userId);
 
+	
+	@Query("SELECT COUNT(u) FROM HouseModel u")
+	int getTotalAmountHouse();
+
+	@Query("SELECT COUNT(u) FROM HouseModel u WHERE u.user.id = ?1")
+	int getTotalAmountHouseHost(Long id);
+
 }

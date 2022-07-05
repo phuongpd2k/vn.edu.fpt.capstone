@@ -247,6 +247,7 @@ public class UserServiceImpl implements UserService {
 	public UserModel createByAdmin(SignUpDto signUpDto) {
 		signUpDto.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
 		UserModel userModel = modelMapper.map(signUpDto, UserModel.class);
+		userModel.setBalance(constant.DEFAULT_BALANCE);
 		userModel.setEnable(true);
 		userModel.setActive(true);
 		userModel.setVerify(true);

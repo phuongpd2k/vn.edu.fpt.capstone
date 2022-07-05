@@ -26,4 +26,10 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	@Query("SELECT new vn.edu.fpt.capstone.response.HouseHistoryResponse(p.postType.type, p.cost, p.startDate, p.endDate, p.status) FROM PostModel p WHERE p.createdBy = ?1 AND p.house.id = ?2")
 	List<HouseHistoryResponse> getListHouseHistory(String username, Long id);
 
+	@Query("SELECT COUNT(u) FROM PostModel u")
+	int getTotalAmountPost();
+
+	@Query("SELECT COUNT(u) FROM PostModel u WHERE u.createdBy = ?1")
+	int getTotalAmountPostHost(String createdBy);
+
 }
