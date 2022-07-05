@@ -37,7 +37,7 @@ public class TransactionController {
 
 	@Autowired
 	ModelMapper modelMapper;
-	
+
 	@Autowired
 	private Constant constant;
 
@@ -585,9 +585,9 @@ public class TransactionController {
 
 	@PostMapping(value = "/transaction/search")
 	public ResponseEntity<?> searchTransaction(@RequestBody SearchTransactionDto search) {
-		try {	
+		try {
 			List<TransactionResponse> list = transactionService.search(search);
-			
+
 			LOGGER.error("searchTransaction: {}");
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.messageCode("SEARCH_TRANSACTION_SUCCESSFULL").results(list).build());
@@ -597,12 +597,12 @@ public class TransactionController {
 					.message("Search failed: " + e.getMessage()).messageCode("SEARCH_TRANSACTION_FAILED").build());
 		}
 	}
-	
+
 	@PostMapping(value = "/transaction/search/post-or-extend")
 	public ResponseEntity<?> searchTransactionPostOrExtend(@RequestBody SearchTransactionDto search) {
-		try {	
+		try {
 			List<TransactionResponse> list = transactionService.searchPostOrExtend(search);
-			
+
 			LOGGER.error("searchTransaction: {}");
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.messageCode("SEARCH_TRANSACTION_SUCCESSFULL").results(list).build());
@@ -612,7 +612,7 @@ public class TransactionController {
 					.message("Search failed: " + e.getMessage()).messageCode("SEARCH_TRANSACTION_FAILED").build());
 		}
 	}
-	
+
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/transaction-by-admin")
 	@Transactional(rollbackFor = { Exception.class, Throwable.class })
@@ -625,33 +625,33 @@ public class TransactionController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 						.message("Create transaction failed: user null").messageCode("USER_NULL").build());
 			}
-			
+
 			if (transactionDto.getAmount() <= 0) {
 				LOGGER.error("postTransaction: {}");
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 						.message("Create transaction failed: amount must be > 0").messageCode("AMOUNT_ERROR").build());
 			}
-			
+
 			UserDto userDto = userService.getUserById(transactionDto.getUser().getId());
-			
-			if (userDto.getBalance() < transactionDto.getAmount()) {
-				LOGGER.error("postTransaction: {}");
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-						.message("Create transaction failed: user balance not enough").messageCode("USER_BALANCE_NOT_ENOUGH").build());
-			}
-			
-			if(transactionDto.getAction().equals(constant.PLUS)) {
+
+			if (transactionDto.getAction().equals(constant.PLUS)) {
 				userDto.setBalance(userDto.getBalance() + transactionDto.getAmount());
 				transactionDto.setTransferContent("Nạp tiền");
-			}else if(transactionDto.getAction().equals(constant.MINUS)) {
+			} else if (transactionDto.getAction().equals(constant.MINUS)) {
+				if (userDto.getBalance() < transactionDto.getAmount()) {
+					LOGGER.error("postTransaction: {}");
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+							.body(ResponseObject.builder().code("400")
+									.message("Create transaction failed: user balance not enough")
+									.messageCode("USER_BALANCE_NOT_ENOUGH").build());
+				}
 				userDto.setBalance(userDto.getBalance() - transactionDto.getAmount());
 				transactionDto.setTransferContent("Trừ tiền");
-			}else {
+			} else {
 				LOGGER.error("postTransaction: {}");
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 						.message("Create transaction failed: action error").messageCode("ACTION_ERROR").build());
 			}
-			
 
 			// Update balance in user
 			UserModel user = userService.updateUser(userDto);
@@ -661,12 +661,11 @@ public class TransactionController {
 						.body(ResponseObject.builder().code("500").message("Create transaction: update user fail")
 								.messageCode("CREATE_TRANSACTION_DEPOSIT_FAILED").build());
 			}
-			
-			
+
 			transactionDto.setTransferType(constant.DEPOSIT);
 			transactionDto.setStatus(constant.SUCCESS);
 			transactionDto.setLastBalance(userDto.getBalance());
-			
+
 			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
 			if (transactionDto2 != null) {
 				return ResponseEntity.status(HttpStatus.OK)
@@ -681,6 +680,5 @@ public class TransactionController {
 							.messageCode("CREATE_TRANSACTION_DEPOSIT_FAILED").build());
 		}
 	}
-
 
 }
