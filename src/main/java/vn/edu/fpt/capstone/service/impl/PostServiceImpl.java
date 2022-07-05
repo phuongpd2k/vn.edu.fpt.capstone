@@ -189,7 +189,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostResponse> findAllByToken(String jwtToken) {
 		UserModel userModel = userService.getUserInformationByToken(jwtToken);
-		List<PostModel> postModels = postRepository.findAllByUsername(userModel.getUsername());
+		List<PostModel> postModels = postRepository.findAllPostByUserId(userModel.getId());
 		if (postModels == null || postModels.isEmpty()) {
 			return null;
 		}
