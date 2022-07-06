@@ -9,8 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-
 import vn.edu.fpt.capstone.constant.Constant;
+import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
@@ -118,24 +118,24 @@ public class PostServiceImpl implements PostService {
 			postResponse.setCost(model.getCost());
 			postResponse.setNumberOfDays(model.getNumberOfDays());
 			postResponse.setStatus(model.getStatus());
-			
+
 			postResponse.setRoomType(model.getRoom().getRoomType().getName());
 			postResponse.setRoomCategory(model.getRoom().getRoomCategory().getName());
 			postResponse.setArea(model.getRoom().getArea());
 			postResponse.setRentalPrice(model.getRoom().getRentalPrice());
-			
+
 			postResponse.setStreet(model.getHouse().getAddress().getStreet());
 			postResponse.setPhuongXa(model.getHouse().getAddress().getPhuongXa().getName());
 			QuanHuyenDto dto = new QuanHuyenDto();
 			dto = quanHuyenService.findById(model.getHouse().getAddress().getPhuongXa().getMaQh());
 			postResponse.setQuanHuyen(dto.getName());
 			postResponse.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
-			
+
 			postResponse.setHostName(model.getHouse().getUser().getFullName());
 			postResponse.setHostPhone(model.getHouse().getUser().getPhoneNumber());
-			
+
 			postResponse.setImages(Arrays.asList(modelMapper.map(model.getRoom().getImages(), ImageDto[].class)));
-			
+
 			postRes.add(postResponse);
 		}
 		return postRes;
@@ -160,16 +160,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PostDto createPost(PostDto postDto) {
 		try {
-			// set end date
-//			long currentDate = postDto.getStartDate().getTime();
-//			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-//			Long expiredTime = currentDate + addDate;
-//			postDto.setEndDate(new Date(expiredTime));
-
 			PostModel postModel = modelMapper.map(postDto, PostModel.class);
-
-			//postModel.setStatus(constant.UNCENSORED);
-
 			PostModel saveModel = postRepository.save(postModel);
 			return convertEntity2Dto(saveModel);
 		} catch (Exception e) {
@@ -208,8 +199,8 @@ public class PostServiceImpl implements PostService {
 		int pageIndex = searchDto.getPageIndex();
 		int pageSize = searchDto.getPageSize();
 		String key = searchDto.getKeyword();
-		
-		if(searchDto.getKeyword() == null) {
+
+		if (searchDto.getKeyword() == null) {
 			key = "";
 		}
 
@@ -220,11 +211,10 @@ public class PostServiceImpl implements PostService {
 			pageIndex = 0;
 		}
 
-
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
 		Page<PostModel> result = postRepository.getListPage(key, pageable);
 		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
-		
+
 		PageableResponse pageableResponse = new PageableResponse();
 		pageableResponse.setCurrentPage(pageIndex + 1);
 		pageableResponse.setPageSize(pageSize);
@@ -263,29 +253,29 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PostModel extendPost(PostDto postDto) {
 		PostModel postModel = postRepository.getById(postDto.getId());
-		if(postModel != null) {
+		if (postModel != null) {
 			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
 			postModel.setCost(postDto.getNumberOfDays() * costPerDay);
-			
-			if((new Date()).before(postModel.getEndDate())) {
+
+			if ((new Date()).before(postModel.getEndDate())) {
 				postModel.setStatus(constant.CENSORED);
-			}else {
+			} else {
 				postModel.setStatus(constant.UNCENSORED);
 			}
-			
+
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-			if(postDto.getStartDate() == null) {
+			if (postDto.getStartDate() == null) {
 				long currentDate = postModel.getEndDate().getTime();
 				Long expiredTime = currentDate + addDate;
 				postModel.setEndDate(new Date(expiredTime));
-			}else {
+			} else {
 				long currentDate = postDto.getStartDate().getTime();
 				Long expiredTime = currentDate + addDate;
 				postModel.setStartDate(postDto.getStartDate());
 				postModel.setEndDate(new Date(expiredTime));
-				
-			}	
-			
+
+			}
+
 			return postRepository.save(postModel);
 		}
 		return null;
@@ -295,6 +285,40 @@ public class PostServiceImpl implements PostService {
 	public PostModel confirmPost(PostDto postDto) {
 		PostModel postModel = modelMapper.map(postDto, PostModel.class);
 		return postRepository.save(postModel);
+	}
+
+	@Override
+	public PageableResponse filterPosting(FilterRoomDto dto) {
+		// If SearchDto equal null then return
+		if (dto == null) {
+			return null;
+		}
+
+		// Get page index, page size
+		int pageIndex = dto.getPageIndex();
+		int pageSize = dto.getPageSize();
+
+		// If page index > 0 then reduction 1, else page index = 0
+		if (pageIndex > 0) {
+			pageIndex--;
+		} else {
+			pageIndex = 0;
+		}
+
+		Pageable pageable = PageRequest.of(pageIndex, pageSize);
+		
+		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), pageable);
+		
+		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
+
+		PageableResponse pageableResponse = new PageableResponse();
+		pageableResponse.setCurrentPage(pageIndex + 1);
+		pageableResponse.setPageSize(pageSize);
+		pageableResponse.setTotalPages(result.getTotalPages());
+		pageableResponse.setTotalItems(result.getTotalElements());
+		pageableResponse.setResults(listPostingResponse);
+
+		return pageableResponse;
 	}
 
 }

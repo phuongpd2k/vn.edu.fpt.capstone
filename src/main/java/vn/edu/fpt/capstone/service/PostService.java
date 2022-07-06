@@ -2,6 +2,7 @@ package vn.edu.fpt.capstone.service;
 
 import java.util.List;
 
+import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.model.PostModel;
@@ -28,5 +29,7 @@ public interface PostService {
 	PostModel extendPost(PostDto postDto);
 
 	PostModel confirmPost(PostDto postDto);
+
+	PageableResponse filterPosting(FilterRoomDto dto);
 
 }

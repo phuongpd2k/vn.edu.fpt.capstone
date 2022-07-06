@@ -509,30 +509,4 @@ public class HouseController {
 					.message("Get house history: " + e.getMessage()).messageCode("INTERNAL_SERVER_ERROR").build());
 		}
 	}
-	
-	@PostMapping(value = "/house/filter")
-	public ResponseEntity<ResponseObject> historyHouse(@RequestBody FilterRoomDto dto) {
-		try {
-//			if (houseDto.getId() == null) {
-//				LOGGER.error("postHouse: {}", "Wrong body format or ID house is not exist");
-//
-//				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
-//						.message("Id house null").messageCode("GET_HOUSE_HISTORY_FAIL").build());
-//			}
-//			
-//			
-//			List<HouseHistoryResponse> list = houseService.getListHouseHistory(userModel.getUsername(), houseDto.getId());
-			
-
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(ResponseObject.builder().code("200").messageCode("GET_HOUSE_HISTORY_SUCCESSFULL").results(null).build());
-		} catch (Exception e) {
-			LOGGER.error("postHouse: {}", e);
-			LOGGER.error(e.toString());
-
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-					.message("Get house history: " + e.getMessage()).messageCode("INTERNAL_SERVER_ERROR").build());
-		}
-	}
-
 }

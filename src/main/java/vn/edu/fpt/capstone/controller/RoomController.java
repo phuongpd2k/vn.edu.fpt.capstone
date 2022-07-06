@@ -17,8 +17,10 @@ import vn.edu.fpt.capstone.repository.RoomTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.RoomPostingResponse;
 import vn.edu.fpt.capstone.constant.Message;
+import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
+import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.RoomService;
 
 import java.util.Arrays;
@@ -44,6 +46,9 @@ public class RoomController {
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private PostService postService;
 
 	@GetMapping(value = "/room/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
@@ -259,6 +264,21 @@ public class RoomController {
 			LOGGER.error("deleteRoom: {}", "ID Room is not exist");
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Delete room fail: " + e.getMessage()).messageCode("DELETE_ROOM_FAIL").build());
+		}
+	}
+	
+	@PostMapping(value = "/room/filter")
+	public ResponseEntity<ResponseObject> historyHouse(@RequestBody FilterRoomDto dto) {
+		try {
+			PageableResponse pageableResponse = postService.filterPosting(dto);
+			LOGGER.info("get All posting: {}", pageableResponse.getResults());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Get posting successfully")
+							.messageCode("GET_POSTING_SUCCESSFULLY").results(pageableResponse).build());
+		} catch (Exception e) {
+			LOGGER.error("getAll posting: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
 		}
 	}
 
