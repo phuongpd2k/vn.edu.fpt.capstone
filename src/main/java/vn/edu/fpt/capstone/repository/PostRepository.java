@@ -37,7 +37,15 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	List<PostModel> findAllPostByUserId(Long id);
 
 	@Query("SELECT p FROM PostModel p WHERE p.enable = true AND p.isActive = true"
-			+ " AND (COALESCE(:dto) is null or p.house.typeOfRental.id IN :dto)")
-	Page<PostModel> getFilterPage(@Param("dto") List<Long> dto, Pageable pageable);
+			+ " AND (COALESCE(:houseTypeIds) is null or p.house.typeOfRental.id IN :houseTypeIds)"
+			+ " AND (p.room.rentalPrice >= :minPrice) AND (p.room.rentalPrice <= :maxPrice)"
+			+ " AND (COALESCE(:roomCategoryIds) is null or p.room.roomCategory.id IN :roomCategoryIds)"
+			+ " AND (p.room.maximumNumberOfPeople = :maximumNumberOfPeople)"
+			//+ " AND (COALESCE(:amenityIds) is null or COALESCE(:amenityIds) = COALESCE(p.room.amenities))"
+			+ " GROUP BY p.room.id")
+	Page<PostModel> getFilterPage(@Param("houseTypeIds") List<Long> houseTypeIds, @Param("minPrice") int minPrice,
+			@Param("maxPrice") int maxPrice, @Param("roomCategoryIds") List<Long> roomCategoryIds, @Param("maximumNumberOfPeople") int maximumNumberOfPeople,
+			 Pageable pageable);
+	//@Param("amenityIds") List<Long> amenityIds,
 
 }

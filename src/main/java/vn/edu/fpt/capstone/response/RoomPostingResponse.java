@@ -1,5 +1,6 @@
 package vn.edu.fpt.capstone.response;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,6 +29,7 @@ public class RoomPostingResponse{
 	private int floor;
 	private String timeType;
 	private String linkFb;
+	private Date createdDate;
 	
 	private String street;
 	private String phuongXa;
@@ -50,4 +52,7 @@ public class RoomPostingResponse{
 	private String imageLinkHost;
 	
 	private List<CategoryTypeDto> categoryTypes;
+	
+	private String longtitude;
+	private String latitude;
 }

@@ -245,6 +245,10 @@ public class PostServiceImpl implements PostService {
 			postingResponse.setMaxPrice(roomService.maxPrice(idHouse));
 			postingResponse.setMinArea(roomService.minArea(idHouse));
 			postingResponse.setMaxArea(roomService.maxArea(idHouse));
+			
+			postingResponse.setLongtitude(postModel.getHouse().getLongtitude());
+			postingResponse.setLatitude(postModel.getHouse().getLatitude());
+			
 			listPostingResponse.add(postingResponse);
 		}
 		return listPostingResponse;
@@ -307,7 +311,9 @@ public class PostServiceImpl implements PostService {
 
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
 		
-		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), pageable);
+		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), dto.getMinPrice(), dto.getMaxPrice(),
+				dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
+		//, dto.getAmenityIds()
 		
 		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
 

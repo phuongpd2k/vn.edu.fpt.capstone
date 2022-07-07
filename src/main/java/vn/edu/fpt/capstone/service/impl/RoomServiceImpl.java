@@ -155,6 +155,7 @@ public class RoomServiceImpl implements RoomService {
 		rp.setFloor(roomModel.getFloor());
 		rp.setTimeType(roomModel.getType());
 		rp.setLinkFb(roomModel.getHouse().getLinkFb());
+		rp.setCreatedDate(roomModel.getCreatedDate());
 		
 		rp.setStreet(roomModel.getHouse().getAddress().getStreet());
 		rp.setPhuongXa(roomModel.getHouse().getAddress().getPhuongXa().getName());
@@ -198,6 +199,9 @@ public class RoomServiceImpl implements RoomService {
 			listTypeCategory.add(categoryTypeDto);
 		}
 		rp.setCategoryTypes(listTypeCategory);
+		
+		rp.setLongtitude(roomModel.getHouse().getLongtitude());
+		rp.setLatitude(roomModel.getHouse().getLatitude());
 		
 		return rp;
 	}
