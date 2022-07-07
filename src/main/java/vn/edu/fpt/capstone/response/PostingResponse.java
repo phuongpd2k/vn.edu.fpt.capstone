@@ -16,4 +16,6 @@ public class PostingResponse {
 	private String phuongXa;
 	private String quanHuyen;
 	private String thanhPho;
+	private String longtitude;
+	private String latitude;
 }
