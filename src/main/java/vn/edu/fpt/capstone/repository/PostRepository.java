@@ -18,7 +18,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true AND pm.createdBy = ?1")
 	List<PostModel> findAllByUsername(String username);
 
-	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true")
+	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true ORDER BY pm.createdDate DESC")
 	List<PostModel> findAllQuery();
 	
 	@Query("select p from  PostModel p where p.enable = true AND p.isActive = true AND p.house.name LIKE %?1%")
@@ -33,7 +33,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	@Query("SELECT COUNT(u) FROM PostModel u WHERE u.createdBy = ?1")
 	int getTotalAmountPostHost(String createdBy);
 
-	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true AND pm.house.user.id = ?1")
+	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true AND pm.house.user.id = ?1 ORDER BY pm.createdDate DESC")
 	List<PostModel> findAllPostByUserId(Long id);
 
 	@Query("SELECT p FROM PostModel p WHERE p.enable = true AND p.isActive = true"
