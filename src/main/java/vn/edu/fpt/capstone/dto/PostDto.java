@@ -2,9 +2,6 @@ package vn.edu.fpt.capstone.dto;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import vn.edu.fpt.capstone.model.Auditable;
@@ -22,4 +19,5 @@ public class PostDto extends Auditable<String> {
 	private int cost;
 	private String status;
 	private String note;
+	private String verify = "UNVERIFIED";
 }
