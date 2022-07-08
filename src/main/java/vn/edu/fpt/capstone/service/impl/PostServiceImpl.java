@@ -261,11 +261,11 @@ public class PostServiceImpl implements PostService {
 			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
 			postModel.setCost(postDto.getNumberOfDays() * costPerDay);
 
-			if ((new Date()).before(postModel.getEndDate())) {
-				postModel.setStatus(constant.CENSORED);
-			} else {
-				postModel.setStatus(constant.UNCENSORED);
-			}
+//			if ((new Date()).before(postModel.getEndDate())) {
+//				postModel.setStatus(constant.CENSORED);
+//			} else {
+//				postModel.setStatus(constant.UNCENSORED);
+//			}
 
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 			if (postDto.getStartDate() == null) {

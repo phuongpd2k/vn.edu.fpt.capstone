@@ -31,6 +31,7 @@ import vn.edu.fpt.capstone.service.TransactionService;
 import vn.edu.fpt.capstone.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -201,10 +202,6 @@ public class PostController {
 						.message("Create post: update user fail").messageCode("CREATE_POST_FAILED").build());
 			}
 			
-			
-
-			
-			
 			postDto.setCost(cost);
 			// set end date
 			long currentDate = postDto.getStartDate().getTime();
@@ -258,6 +255,10 @@ public class PostController {
 						.message("Confirm post: post not exits").messageCode("CONFIRM_POST_FAILED").build());
 			}
 			postDto.setStatus(constant.CENSORED);
+			Calendar c = Calendar.getInstance();
+	        c.setTime(new Date());
+	        c.add(Calendar.DATE, postDto.getNumberOfDays());
+	        postDto.setEndDate(c.getTime());
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
