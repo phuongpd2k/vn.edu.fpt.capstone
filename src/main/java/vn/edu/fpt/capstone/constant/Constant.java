@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class Constant {
 	
+	public final String VERIFIED = "VERIFIED";
+	public final String UNVERIFIED = "UNVERIFIED";
+	public final String WAITING = "WAITING";
+	
 	public final String DO_NOTHING = "DO_NOTHING";
 	public final String DEPOSIT = "DEPOSIT";
 	public final int Sign_In_Normal = 0;

@@ -467,5 +467,80 @@ public class PostController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@PostMapping(value = "/post/verify")
+	// DungTV29
+	public ResponseEntity<?> verifyPost(@RequestParam(required = true) Long id) {
+		try {
+			LOGGER.info("rejectPost: {}");
+			PostDto postDto = postService.findById(id);
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Verify post: post not exits").messageCode("VERIFY_POST_FAILED").build());
+			}
+			postDto.setVerify(constant.WAITING);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Verify post: successfully").messageCode("VERIFY_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("Verify post: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Verify post: " + e.getMessage()).messageCode("VERIFY_POST_FAILED").build());
+		}
+	}
+	
+	@PutMapping(value = "/post/verify")
+	// DungTV29
+	public ResponseEntity<?> verifedPostOk(@RequestParam(required = true) Long id) {
+		try {
+			LOGGER.info("rejectPost: {}");
+			PostDto postDto = postService.findById(id);
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Verify post: post not exits").messageCode("VERIFY_POST_FAILED").build());
+			}
+			postDto.setVerify(constant.VERIFIED);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Verify post: successfully").messageCode("VERIFY_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("Verify post: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Verify post: " + e.getMessage()).messageCode("VERIFY_POST_FAILED").build());
+		}
+	}
+	
+	@PutMapping(value = "/post/verify/fail")
+	// DungTV29
+	public ResponseEntity<?> verifedPostFail(@RequestParam(required = true) Long id) {
+		try {
+			LOGGER.info("rejectPost: {}");
+			PostDto postDto = postService.findById(id);
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Verify post: post not exits").messageCode("VERIFY_POST_FAILED").build());
+			}
+			postDto.setVerify(constant.UNVERIFIED);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Verify post: successfully").messageCode("VERIFY_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("Verify post: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Verify post: " + e.getMessage()).messageCode("VERIFY_POST_FAILED").build());
+		}
+	}
 
 }
