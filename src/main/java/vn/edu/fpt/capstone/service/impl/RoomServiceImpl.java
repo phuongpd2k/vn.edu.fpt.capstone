@@ -203,6 +203,8 @@ public class RoomServiceImpl implements RoomService {
 		rp.setLongtitude(roomModel.getHouse().getLongtitude());
 		rp.setLatitude(roomModel.getHouse().getLatitude());
 		
+		//rp.setStartDate(roomModel.getPosts());
+		
 		return rp;
 	}
 
