@@ -135,7 +135,7 @@ public class PostServiceImpl implements PostService {
 			postResponse.setHostPhone(model.getHouse().getUser().getPhoneNumber());
 
 			postResponse.setImages(Arrays.asList(modelMapper.map(model.getRoom().getImages(), ImageDto[].class)));
-
+			postResponse.setVerify(model.getVerify());
 			postRes.add(postResponse);
 		}
 		return postRes;
