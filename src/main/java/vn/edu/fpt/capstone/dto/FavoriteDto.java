@@ -15,4 +15,19 @@ public class FavoriteDto extends Auditable<String> {
 	private Long userId;
 	@JsonProperty(index = 2)
 	private Long roomId;
+
+	public FavoriteDto() {
+	}
+	public FavoriteDto(Long userId, Long roomId) {
+		super();
+		this.userId = userId;
+		this.roomId = roomId;
+	}
+	public FavoriteDto(Long id, Long userId, Long roomId) {
+		super();
+		this.id = id;
+		this.userId = userId;
+		this.roomId = roomId;
+	}
+	
 }

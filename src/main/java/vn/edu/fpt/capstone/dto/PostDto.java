@@ -20,4 +20,30 @@ public class PostDto extends Auditable<String> {
 	private String status;
 	private String note;
 	private String verify = "UNVERIFIED";
+
+	public PostDto() {
+		super();
+	}
+
+	public PostDto(Long id) {
+		super();
+		this.id = id;
+	}
+
+	public PostDto(Long id, HouseDto house, RoomDto room, PostTypeDto postType, Date startDate, Date endDate,
+			int numberOfDays, int cost, String status, String note, String verify) {
+		super();
+		this.id = id;
+		this.house = house;
+		this.room = room;
+		this.postType = postType;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.numberOfDays = numberOfDays;
+		this.cost = cost;
+		this.status = status;
+		this.note = note;
+		this.verify = verify;
+	}
+
 }

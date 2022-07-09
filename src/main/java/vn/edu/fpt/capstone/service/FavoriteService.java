@@ -11,5 +11,6 @@ public interface FavoriteService {
     boolean removeFavorite(Long id);
     FavoriteDto createFavorite(FavoriteDto favoriteDto);
     boolean isExist(Long id);
+    FavoriteDto findByUserIdAndRoomId(Long userId, Long roomId);
 
 }
