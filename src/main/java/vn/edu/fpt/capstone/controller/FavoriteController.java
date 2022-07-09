@@ -5,11 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.FavoriteDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
+import vn.edu.fpt.capstone.dto.UserDto;
+import vn.edu.fpt.capstone.dto.request.FavoriteRequest;
+import vn.edu.fpt.capstone.dto.response.FavoriteResponse;
 import vn.edu.fpt.capstone.service.FavoriteService;
 import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.UserService;
@@ -29,7 +33,7 @@ public class FavoriteController {
 	UserService userService;
 	@Autowired
 	RoomService roomService;
-
+	
 	@GetMapping(value = "/favorite/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
 		ResponseObject responseObject = new ResponseObject();
@@ -40,74 +44,133 @@ public class FavoriteController {
 				responseObject.setResults(favoriteDto);
 				responseObject.setCode("200");
 				responseObject.setMessageCode(Message.OK);
-				LOGGER.info("getById: {}",favoriteDto);
+				LOGGER.info("getById: {}", favoriteDto);
 				return new ResponseEntity<>(responseObject, HttpStatus.OK);
 			} else {
 				responseObject.setCode("404");
 				responseObject.setMessageCode(Message.NOT_FOUND);
-				LOGGER.error("getById: {}","ID Favorite is not exist");
+				LOGGER.error("getById: {}", "ID Favorite is not exist");
 				return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 			}
 		} catch (NumberFormatException e) {
-			LOGGER.error("getById: {}",e);
+			LOGGER.error("getById: {}", e);
 			responseObject.setCode("404");
 			responseObject.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(responseObject, HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
-			LOGGER.error("getById: {}",ex);
+			LOGGER.error("getById: {}", ex);
 			responseObject.setCode("500");
 			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	@GetMapping(value = "/favorite")
+//	public ResponseEntity<ResponseObject> getAll() {
+//		ResponseObject responseObject = new ResponseObject();
+//		try {
+//			List<FavoriteDto> favoriteDtos = favoriteService.findAll();
+//			if (favoriteDtos == null || favoriteDtos.isEmpty()) {
+//				responseObject.setResults(new ArrayList<>());
+//			} else {
+//				responseObject.setResults(favoriteDtos);
+//			}
+//			LOGGER.info("getAll: {}", favoriteDtos);
+//			responseObject.setCode("200");
+//			responseObject.setMessageCode(Message.OK);
+//			return new ResponseEntity<>(responseObject, HttpStatus.OK);
+//		} catch (Exception ex) {
+//			LOGGER.error("getAll: {}", ex);
+//			responseObject.setCode("500");
+//			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+//			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 
-	@GetMapping(value = "/favorite")
-	public ResponseEntity<ResponseObject> getAll() {
-		ResponseObject responseObject = new ResponseObject();
+	@GetMapping(value = "/favorite/user")
+	public ResponseEntity<ResponseObject> getFavoriteUser(@RequestHeader(value = "Authorization") String jwtToken) {
+		ResponseObject response = new ResponseObject();
 		try {
-			List<FavoriteDto> favoriteDtos = favoriteService.findAll();
-			if (favoriteDtos == null || favoriteDtos.isEmpty()) {
-				responseObject.setResults(new ArrayList<>());
-			} else {
-				responseObject.setResults(favoriteDtos);
+			UserDto userDto = userService.getUserByToken(jwtToken);
+			if (userDto == null) {
+				response.setCode("406");
+				response.setMessage("Wrong body format or User token has expired");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				LOGGER.error("postFavorite: {}", "Wrong body format or User token has expired");
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
-			LOGGER.info("getAll: {}",favoriteDtos);
-			responseObject.setCode("200");
-			responseObject.setMessageCode(Message.OK);
-			return new ResponseEntity<>(responseObject, HttpStatus.OK);
+			FavoriteResponse favoriteResponse = new FavoriteResponse();
+			favoriteResponse.setRoomDtos(roomService.getRoomFavoriteByUserId(userDto.getId()));
+			if (favoriteResponse.getRoomDtos() == null || favoriteResponse.getRoomDtos().isEmpty()) {
+				response.setResults(new ArrayList<>());
+			} else {
+				response.setResults(favoriteResponse);
+			}
+			LOGGER.info("getAll: {}", favoriteResponse);
+			response.setCode("200");
+			response.setMessageCode(Message.OK);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception ex) {
-			LOGGER.error("getAll: {}",ex);
-			responseObject.setCode("500");
-			responseObject.setMessageCode(Message.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
+			LOGGER.error("getAll: {}", ex);
+			response.setCode("500");
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PostMapping(value = "/favorite")
-	public ResponseEntity<ResponseObject> postFavorite(@RequestBody FavoriteDto favoriteDto) {
+	public ResponseEntity<ResponseObject> postFavorite(@RequestBody FavoriteRequest favoriteRequest,
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		ResponseObject response = new ResponseObject();
 		try {
-			if (favoriteDto.getId() != null
-					|| (favoriteDto.getUserId() == null || !userService.checkIdExist(favoriteDto.getUserId()))
-					|| (favoriteDto.getRoomId() == null || !roomService.isExist(favoriteDto.getRoomId()))) {
+			UserDto userDto = userService.getUserByToken(jwtToken);
+			if (userDto == null) {
 				response.setCode("406");
+				response.setMessage("Wrong body format or User token has expired");
 				response.setMessageCode(Message.NOT_ACCEPTABLE);
-				LOGGER.error("postFavorite: {}","Wrong body format or ID User or ID Room is not exist");
+				LOGGER.error("postFavorite: {}", "Wrong body format or User token has expired");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
-			FavoriteDto favoriteDto2 = favoriteService.createFavorite(favoriteDto);
-			if (favoriteDto2 == null) {
+			if (favoriteRequest.getRoomId() == null || !roomService.isExist(favoriteRequest.getRoomId())) {
+				response.setCode("406");
+				response.setMessage("Wrong body format or ID User or ID Room is not exist");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				LOGGER.error("postFavorite: {}", "Wrong body format or ID User or ID Room is not exist");
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+			FavoriteDto fCheck = favoriteService.findByUserIdAndRoomId(userDto.getId(), favoriteRequest.getRoomId());
+			if (fCheck != null && fCheck.getId() != null) {
+				LOGGER.info("postFavorite.fCheck: {}", fCheck);
+				boolean removed = favoriteService.removeFavorite(fCheck.getId());
+				if (removed) {
+					response.setCode("200");
+					response.setMessageCode(Message.OK);
+					response.setMessage("Delete Successfully");
+					response.setResults(fCheck);
+					return new ResponseEntity<>(response, HttpStatus.OK);
+				} else {
+					response.setCode("500");
+					response.setMessage("Can't remove favorite ID: " + fCheck.getId());
+					response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+					return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+			FavoriteDto favoriteDto = favoriteService
+					.createFavorite(new FavoriteDto(userDto.getId(), favoriteRequest.getRoomId()));
+			if (favoriteDto == null) {
 				response.setCode("500");
+				response.setMessage("Something wrong when create new favorite");
 				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 				return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			response.setCode("200");
+			response.setMessage("Create Successfully");
 			response.setMessageCode(Message.OK);
-			response.setResults(favoriteDto2);
-			LOGGER.info("postFavorite: {}",favoriteDto2);
+			response.setResults(favoriteDto);
+			LOGGER.info("postFavorite: {}", favoriteDto);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error("postFavorite: {}",e);
+			LOGGER.error("postFavorite: {}", e);
 			response.setCode("500");
 			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -119,7 +182,7 @@ public class FavoriteController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (favoriteDto.getId() == null || !favoriteService.isExist(favoriteDto.getId())) {
-				LOGGER.error("putFavorite: {}","ID Favorite is not exist");
+				LOGGER.error("putFavorite: {}", "ID Favorite is not exist");
 				response.setCode("404");
 				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -128,17 +191,17 @@ public class FavoriteController {
 					|| (favoriteDto.getRoomId() == null || !roomService.isExist(favoriteDto.getRoomId()))) {
 				response.setCode("406");
 				response.setMessageCode(Message.NOT_ACCEPTABLE);
-				LOGGER.error("putFavorite: {}","ID User or ID Room is not exist");
+				LOGGER.error("putFavorite: {}", "ID User or ID Room is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			FavoriteDto favoriteDto2 = favoriteService.updateFavorite(favoriteDto);
 			response.setCode("200");
 			response.setMessageCode(Message.OK);
 			response.setResults(favoriteDto2);
-			LOGGER.info("putFavorite: {}",favoriteDto2);
+			LOGGER.info("putFavorite: {}", favoriteDto2);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			LOGGER.error("putFavorite: {}",e);
+			LOGGER.error("putFavorite: {}", e);
 			response.setCode("500");
 			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -150,7 +213,7 @@ public class FavoriteController {
 		ResponseObject response = new ResponseObject();
 		try {
 			if (id == null || id.isEmpty() || !favoriteService.isExist(Long.valueOf(id))) {
-				LOGGER.error("deleteFavorite: {}","ID Favorite is not exist");
+				LOGGER.error("deleteFavorite: {}", "ID Favorite is not exist");
 				response.setCode("404");
 				response.setMessageCode(Message.NOT_FOUND);
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -158,15 +221,15 @@ public class FavoriteController {
 			response.setCode("200");
 			response.setMessageCode(Message.OK);
 			favoriteService.removeFavorite(Long.valueOf(id));
-			LOGGER.error("deleteFavorite: {}","DELETED");
+			LOGGER.error("deleteFavorite: {}", "DELETED");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (NumberFormatException ex) {
-			LOGGER.error("deleteFavorite: {}",ex);
+			LOGGER.error("deleteFavorite: {}", ex);
 			response.setCode("404");
 			response.setMessageCode(Message.NOT_FOUND);
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			LOGGER.error("deleteFavorite: {}",e);
+			LOGGER.error("deleteFavorite: {}", e);
 			response.setCode("500");
 			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

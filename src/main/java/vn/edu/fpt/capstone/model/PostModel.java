@@ -22,50 +22,49 @@ public class PostModel extends Auditable<String> {
 	@GeneratedValue(generator = "POST_SeqGen", strategy = GenerationType.SEQUENCE)
 	@SequenceGenerator(name = "POST_SeqGen", sequenceName = "POST_Seq", allocationSize = 1)
 	private Long id;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "house_id")
 	@JsonManagedReference
 	private HouseModel house;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "room_id")
 	@JsonManagedReference
 	private RoomModel room;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_type_id")
 	@JsonManagedReference
 	private PostTypeModel postType;
-	
+
 	@Column(name = "START_DATE")
 	private Date startDate;
-	
+
 	@Column(name = "END_DATE")
 	private Date endDate;
-	
+
 	@Column(name = "NUMBER_OF_DAYS")
 	private int numberOfDays;
-	
+
 	@Column(name = "COST")
 	private int cost;
-	
+
 	@Column(name = "ENABLE", nullable = false)
 	private boolean enable = true;
-	
+
 	@Column(name = "IS_ACTIVE", nullable = false)
 	private boolean isActive = true;
-	
+
 	@Column(name = "status")
 	private String status;
-	
-	
+
 	@Column(name = "note")
 	private String note;
-	
+
 	@Column(name = "verify")
 	private String verify;
-	
+
 //	@Column(name = "TITLE")
 //	private String title;
 //	@Column(name = "DESCRIPTION", columnDefinition = "LONGTEXT NULL")
@@ -78,4 +77,5 @@ public class PostModel extends Auditable<String> {
 //	@JoinColumn(name = "room_id")
 //	@JsonManagedReference
 //	private RoomModel room;
+
 }

@@ -30,16 +30,16 @@ public class RoomServiceImpl implements RoomService {
 
 	@Autowired
 	private RoomRepository roomRepository;
-	
+
 	@Autowired
 	private ImageServiceImpl imageServiceImpl;
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	@Autowired
 	private QuanHuyenService quanHuyenService;
-	
+
 	@Autowired
 	private ThanhPhoService thanhPhoService;
 
@@ -81,13 +81,14 @@ public class RoomServiceImpl implements RoomService {
 	public RoomModel create(RoomDto roomDto) {
 		List<ImageDto> list = new ArrayList<ImageDto>();
 		for (ImageDto imageDto : roomDto.getImages()) {
-			//ImageDto imageDtoNew = imageServiceImpl.getImageByUrl(imageDto.getImageUrl());
-			if(imageDto.getId() != null) {
+			// ImageDto imageDtoNew =
+			// imageServiceImpl.getImageByUrl(imageDto.getImageUrl());
+			if (imageDto.getId() != null) {
 				list.add(imageDto);
-			}else {
+			} else {
 				ImageDto imageDtoNew = imageServiceImpl.createImage(imageDto);
-				list.add(imageDtoNew);		
-			}	
+				list.add(imageDtoNew);
+			}
 		}
 		roomDto.setImages(list);
 		RoomModel roomModel = modelMapper.map(roomDto, RoomModel.class);
@@ -105,14 +106,14 @@ public class RoomServiceImpl implements RoomService {
 	public void deleteRoom(Long id) {
 		RoomModel roomModel = roomRepository.getById(id);
 		roomModel.setEnable(false);
-		roomRepository.save(roomModel);		
+		roomRepository.save(roomModel);
 	}
 
 	@Override
 	public int maxPrice(Long idHouse) {
 		return roomRepository.getMaxPrice(idHouse);
 	}
-	
+
 	@Override
 	public int minPrice(Long idHouse) {
 		return roomRepository.getMinPrice(idHouse);
@@ -130,8 +131,8 @@ public class RoomServiceImpl implements RoomService {
 
 	@Override
 	public RoomPostingResponse getRoomPosting(Long lId) {
-		RoomModel roomModel = roomRepository.getByIdAndEnable(lId);	
-		if(roomModel != null) {
+		RoomModel roomModel = roomRepository.getByIdAndEnable(lId);
+		if (roomModel != null) {
 			return convert2RoomPostingResponse(roomModel);
 		}
 		return null;
@@ -139,9 +140,9 @@ public class RoomServiceImpl implements RoomService {
 
 	private RoomPostingResponse convert2RoomPostingResponse(RoomModel roomModel) {
 		RoomPostingResponse rp = new RoomPostingResponse();
-		
+
 		rp.setId(roomModel.getId());
-		
+
 		rp.setImages(Arrays.asList(modelMapper.map(roomModel.getImages(), ImageDto[].class)));
 		rp.setRoomName(roomModel.getName());
 		rp.setRoomType(roomModel.getRoomType().getName());
@@ -156,26 +157,25 @@ public class RoomServiceImpl implements RoomService {
 		rp.setTimeType(roomModel.getType());
 		rp.setLinkFb(roomModel.getHouse().getLinkFb());
 		rp.setCreatedDate(roomModel.getCreatedDate());
-		
+
 		rp.setStreet(roomModel.getHouse().getAddress().getStreet());
 		rp.setPhuongXa(roomModel.getHouse().getAddress().getPhuongXa().getName());
 		QuanHuyenDto dto = new QuanHuyenDto();
 		dto = quanHuyenService.findById(roomModel.getHouse().getAddress().getPhuongXa().getMaQh());
 		rp.setQuanHuyen(dto.getName());
 		rp.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
-		
-		
+
 		List<AmenityModel> listARoom = new ArrayList<AmenityModel>();
 		for (AmenityModel model : roomModel.getAmenities()) {
-			if(model.isEnable() == true) {
+			if (model.isEnable() == true) {
 				listARoom.add(model);
 			}
 		}
 		rp.setAmenitiesRoom(Arrays.asList(modelMapper.map(listARoom, AmenityDto[].class)));
-		
+
 		rp.setRoomCategoryName(roomModel.getRoomCategory().getName());
-		rp.setRoomCategoryDescription(roomModel.getRoomCategory().getDescription());	
-		
+		rp.setRoomCategoryDescription(roomModel.getRoomCategory().getDescription());
+
 		rp.setHouseName(roomModel.getHouse().getName());
 		rp.setHouseDescription(roomModel.getHouse().getDescription());
 		rp.setHostName(roomModel.getHouse().getUser().getFullName());
@@ -183,13 +183,12 @@ public class RoomServiceImpl implements RoomService {
 		rp.setImageLinkHost(roomModel.getHouse().getUser().getImageLink());
 		List<AmenityModel> listAHouse = new ArrayList<AmenityModel>();
 		for (AmenityModel model : roomModel.getHouse().getAmenities()) {
-			if(model.isEnable() == true) {
+			if (model.isEnable() == true) {
 				listAHouse.add(model);
 			}
 		}
 		rp.setAmenitiesHouse(Arrays.asList(modelMapper.map(listAHouse, AmenityDto[].class)));
-		
-		
+
 		List<RoomModel> listRooms = roomRepository.getAllRoomOfHouse(roomModel.getHouse().getId());
 		List<CategoryTypeDto> listTypeCategory = new ArrayList<CategoryTypeDto>();
 		for (RoomModel r : listRooms) {
@@ -199,20 +198,31 @@ public class RoomServiceImpl implements RoomService {
 			listTypeCategory.add(categoryTypeDto);
 		}
 		rp.setCategoryTypes(listTypeCategory);
-		
+
 		rp.setLongtitude(roomModel.getHouse().getLongtitude());
 		rp.setLatitude(roomModel.getHouse().getLatitude());
-		
+
 		return rp;
 	}
 
 	@Override
 	public boolean roomTypeAndRoomCategoryExits(Long roomType, Long roomCategory, Long houseId) {
 		RoomModel roomModel = roomRepository.getRoomByTypeAndCategory(roomType, roomCategory, houseId);
-		if(roomModel != null) {
+		if (roomModel != null) {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<RoomDto> getRoomFavoriteByUserId(Long userId) {
+		List<RoomModel> roomModels = roomRepository.getRoomFavoriteByUserId(userId);
+		if (roomModels == null || roomModels.isEmpty()) {
+			return null;
+		}
+		List<RoomDto> roomDtos = roomModels.stream().map(roomModel -> modelMapper.map(roomModel, RoomDto.class))
+				.collect(Collectors.toList());
+		return roomDtos;
 	}
 
 }

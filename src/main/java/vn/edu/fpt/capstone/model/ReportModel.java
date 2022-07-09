@@ -3,7 +3,11 @@ package vn.edu.fpt.capstone.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Data
 @Entity
@@ -17,6 +21,13 @@ public class ReportModel extends Auditable<String>{
     private Long id;
     @Column(name = "USERID")
     private Long userId;
+    
 	@Column(name = "CONTENT", columnDefinition = "LONGTEXT NULL")
     private String content;
+	
+	@OneToOne
+	@JoinColumn(name = "post_id")
+    private PostModel post;
+	
+	
 }

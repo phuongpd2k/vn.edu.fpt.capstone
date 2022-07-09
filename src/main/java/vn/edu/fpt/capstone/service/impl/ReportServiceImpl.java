@@ -17,28 +17,28 @@ import java.util.List;
 public class ReportServiceImpl implements ReportService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceImpl.class.getName());
 
-    @Autowired
-    ReportRepository reportRepository;
-    @Autowired
-    ModelMapper modelMapper;
+	@Autowired
+	ReportRepository reportRepository;
+	@Autowired
+	ModelMapper modelMapper;
 
-    @Override
-    public ReportDto findById(Long id) {
-        ReportDto reportDto = modelMapper.map(reportRepository.findById(id).get(), ReportDto.class);
-        return reportDto;
-    }
+	@Override
+	public ReportDto findById(Long id) {
+		ReportDto reportDto = modelMapper.map(reportRepository.findById(id).get(), ReportDto.class);
+		return reportDto;
+	}
 
-    @Override
-    public List<ReportDto> findAll() {
-        List<ReportModel> reportModels = reportRepository.findAll();
-        if (reportModels == null || reportModels.isEmpty()) {
-            return null;
-        }
-        List<ReportDto> reportDtos = Arrays.asList(modelMapper.map(reportModels, ReportDto[].class));
-        return reportDtos;
-    }
+	@Override
+	public List<ReportDto> findAll() {
+		List<ReportModel> reportModels = reportRepository.findAll();
+		if (reportModels == null || reportModels.isEmpty()) {
+			return null;
+		}
+		List<ReportDto> reportDtos = Arrays.asList(modelMapper.map(reportModels, ReportDto[].class));
+		return reportDtos;
+	}
 
-    @Override
+	@Override
 	public ReportDto updateReport(ReportDto reportDto) {
 		ReportModel reportModel = modelMapper.map(reportDto, ReportModel.class);
 		ReportModel saveModel = reportRepository.save(reportModel);
@@ -80,11 +80,21 @@ public class ReportServiceImpl implements ReportService {
 		}
 	}
 
-    @Override
-    public boolean isExist(Long id) {
-        if(reportRepository.existsById(id)){
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean isExist(Long id) {
+		if (reportRepository.existsById(id)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public List<ReportDto> searchReports(Long startDate, Long endDate, String fullName, String userName) {
+		List<ReportModel> reportModels = reportRepository.searchReports(startDate, endDate, fullName, userName);
+		if (reportModels == null || reportModels.isEmpty()) {
+			return null;
+		}
+		List<ReportDto> reportDtos = Arrays.asList(modelMapper.map(reportModels, ReportDto[].class));
+		return reportDtos;
+	}
 }
