@@ -36,4 +36,6 @@ public class PostResponse {
 	
 	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate","id"})
 	private List<ImageDto> images;
+	
+	private String verify;
 }
