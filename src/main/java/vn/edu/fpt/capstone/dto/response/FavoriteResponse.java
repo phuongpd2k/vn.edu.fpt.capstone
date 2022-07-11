@@ -7,12 +7,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
+import vn.edu.fpt.capstone.response.PostResponse;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class FavoriteResponse {
-	@JsonProperty("rooms")
+	@JsonProperty("posts")
 	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
-	List<RoomDto> roomDtos;
+	List<PostResponse> postDtos;
 }

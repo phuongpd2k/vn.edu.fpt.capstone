@@ -20,7 +20,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 
 	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true ORDER BY pm.createdDate DESC")
 	List<PostModel> findAllQuery();
-	
+
 	@Query("select p from  PostModel p where p.enable = true AND p.isActive = true AND p.house.name LIKE %?1%")
 	Page<PostModel> getListPage(String houseName, Pageable pageable);
 
@@ -41,11 +41,13 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " AND (p.room.rentalPrice >= :minPrice) AND (p.room.rentalPrice <= :maxPrice)"
 			+ " AND (COALESCE(:roomCategoryIds) is null or p.room.roomCategory.id IN :roomCategoryIds)"
 			+ " AND (p.room.maximumNumberOfPeople = :maximumNumberOfPeople)"
-			//+ " AND (COALESCE(:amenityIds) is null or COALESCE(:amenityIds) = COALESCE(p.room.amenities))"
+			// + " AND (COALESCE(:amenityIds) is null or COALESCE(:amenityIds) =
+			// COALESCE(p.room.amenities))"
 			+ " GROUP BY p.room.id")
 	Page<PostModel> getFilterPage(@Param("houseTypeIds") List<Long> houseTypeIds, @Param("minPrice") int minPrice,
-			@Param("maxPrice") int maxPrice, @Param("roomCategoryIds") List<Long> roomCategoryIds, @Param("maximumNumberOfPeople") int maximumNumberOfPeople,
-			 Pageable pageable);
-	//@Param("amenityIds") List<Long> amenityIds,
+			@Param("maxPrice") int maxPrice, @Param("roomCategoryIds") List<Long> roomCategoryIds,
+			@Param("maximumNumberOfPeople") int maximumNumberOfPeople, Pageable pageable);
 
+	@Query(value = "SELECT p.* FROM favorite f JOIN post p ON f.postId = p.id WHERE f.userid= :userId", nativeQuery = true)
+	List<PostModel> findAllFavoritePostByUserId(@Param("userId") Long userId);
 }

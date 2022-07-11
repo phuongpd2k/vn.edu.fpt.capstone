@@ -9,5 +9,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class FavoriteRequest {
 	@JsonProperty(index = 1)
-	private Long roomId;
+	private Long postId;
 }

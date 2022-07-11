@@ -16,6 +16,6 @@ public class FavoriteModel extends Auditable<String>{
     private Long id;
     @Column(name = "USERID")
     private Long userId;
-    @Column(name = "ROOMID")
-    private Long roomId;
+    @Column(name = "POSTID")
+    private Long postId;
 }
