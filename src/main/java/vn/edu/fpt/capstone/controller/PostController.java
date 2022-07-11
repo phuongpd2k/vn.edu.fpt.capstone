@@ -23,7 +23,7 @@ import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
-import vn.edu.fpt.capstone.response.PostingResponseV2;
+import vn.edu.fpt.capstone.response.PostingResponse;
 import vn.edu.fpt.capstone.service.HouseService;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.PostTypeService;
@@ -549,7 +549,7 @@ public class PostController {
 	public ResponseEntity<?> getPosting() {
 		try {
 			//PageableResponse pageableResponse = postService.findAllPosting(searchDto);
-			List<PostingResponseV2> list = postService.findTop8Posting();
+			List<PostingResponse> list = postService.findTop8Posting();
 			LOGGER.info("get All posting: {}", list);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseObject.builder().code("200").message("Get posting successfully")

@@ -9,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.PostDto;
@@ -23,7 +22,6 @@ import vn.edu.fpt.capstone.repository.PostTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
-import vn.edu.fpt.capstone.response.PostingResponseV2;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.RoomService;
@@ -210,9 +208,11 @@ public class PostServiceImpl implements PostService {
 		} else {
 			pageIndex = 0;
 		}
+		
+		Date dateNow = new Date();
 
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
-		Page<PostModel> result = postRepository.getListPage(key, pageable);
+		Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
 		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
 
 		PageableResponse pageableResponse = new PageableResponse();
@@ -227,29 +227,26 @@ public class PostServiceImpl implements PostService {
 
 	private List<PostingResponse> convertToPostingResponse(List<PostModel> list) {
 		List<PostingResponse> listPostingResponse = new ArrayList<PostingResponse>();
-		for (PostModel postModel : list) {
-			PostingResponse postingResponse = new PostingResponse();
-			postingResponse.setIdRoom(postModel.getRoom().getId());
-			postingResponse.setNameHouse(postModel.getHouse().getName());
-			postingResponse.setNameRoom(postModel.getRoom().getName());
-			postingResponse.setImageUrl(postModel.getHouse().getImageUrl());
-			postingResponse.setStreet(postModel.getHouse().getAddress().getStreet());
-			postingResponse.setPhuongXa(postModel.getHouse().getAddress().getPhuongXa().getName());
-
+		for (PostModel p : list) {
+			Long idHouse = p.getHouse().getId();
 			QuanHuyenDto dto = new QuanHuyenDto();
-			dto = quanHuyenService.findById(postModel.getHouse().getAddress().getPhuongXa().getMaQh());
-			postingResponse.setQuanHuyen(dto.getName());
-			postingResponse.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
-			Long idHouse = postModel.getHouse().getId();
-			postingResponse.setMinPrice(roomService.minPrice(idHouse));
-			postingResponse.setMaxPrice(roomService.maxPrice(idHouse));
-			postingResponse.setMinArea(roomService.minArea(idHouse));
-			postingResponse.setMaxArea(roomService.maxArea(idHouse));
-
-			postingResponse.setLongtitude(postModel.getHouse().getLongtitude());
-			postingResponse.setLatitude(postModel.getHouse().getLatitude());
-
-			listPostingResponse.add(postingResponse);
+			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
+			
+			PostingResponse pr = PostingResponse.builder()
+				.post(modelMapper.map(p, PostDto.class))
+				.minPrice(roomService.minPrice(idHouse))
+				.maxPrice(roomService.maxPrice(idHouse))
+				.minArea(roomService.minArea(idHouse))
+				.maxArea(roomService.maxArea(idHouse))
+				.street(p.getHouse().getAddress().getStreet())
+				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
+				.quanHuyen(dto.getName())
+				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
+				.build();
+			
+			pr.getPost().getRoom().setHouse(null);
+			
+			listPostingResponse.add(pr);
 		}
 		return listPostingResponse;
 	}
@@ -260,12 +257,6 @@ public class PostServiceImpl implements PostService {
 		if (postModel != null) {
 			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
 			postModel.setCost(postDto.getNumberOfDays() * costPerDay);
-
-//			if ((new Date()).before(postModel.getEndDate())) {
-//				postModel.setStatus(constant.CENSORED);
-//			} else {
-//				postModel.setStatus(constant.UNCENSORED);
-//			}
 
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 			if (postDto.getStartDate() == null) {
@@ -336,36 +327,12 @@ public class PostServiceImpl implements PostService {
 		List<PostResponse> postRes = convertEntity2Response(postModels);
 		return postRes;
 	}
-	public List<PostingResponseV2> findTop8Posting() {
+
+	public List<PostingResponse> findTop8Posting() {
 		Date dateNow = new Date();
 		List<PostModel> listPost = postRepository.findTop8(dateNow);
 		
-		return convertToPostingResponseV2(listPost);
-	}
-
-	private List<PostingResponseV2> convertToPostingResponseV2(List<PostModel> listPost) {
-		List<PostingResponseV2> list = new ArrayList<PostingResponseV2>();
-		for (PostModel p : listPost) {
-			Long idHouse = p.getHouse().getId();
-			QuanHuyenDto dto = new QuanHuyenDto();
-			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
-			
-			PostingResponseV2 pV2 = PostingResponseV2.builder()
-				.post(modelMapper.map(p, PostDto.class))
-				.minPrice(roomService.minPrice(idHouse))
-				.maxPrice(roomService.maxPrice(idHouse))
-				.minArea(roomService.minArea(idHouse))
-				.maxArea(roomService.maxArea(idHouse))
-				.street(p.getHouse().getAddress().getStreet())
-				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
-				.quanHuyen(dto.getName())
-				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
-				.build();
-			
-			list.add(pV2);
-		}
-		return list;
-
+		return convertToPostingResponse(listPost);
 	}
 
 }

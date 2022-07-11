@@ -127,20 +127,6 @@ public class HouseServiceImpl implements HouseService {
 	public HouseDto createHouse(HouseDto houseDto) {
 		try {
 			HouseModel houseModel = modelMapper.map(houseDto, HouseModel.class);
-//			if (boardingHouseModel.getCreatedAt() == null || boardingHouseModel.getCreatedAt().toString().isEmpty()) {
-//				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//				Date date = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh")).getTime();
-//				boardingHouseModel.setCreatedAt(formatter.parse(formatter.format(date)));
-//				boardingHouseModel.setModifiedAt(formatter.parse(formatter.format(date)));
-//			} else {
-//				boardingHouseModel.setModifiedAt(boardingHouseModel.getCreatedAt());
-//			}
-//			if (boardingHouseModel.getCreatedBy() == null || boardingHouseModel.getCreatedBy().isEmpty()) {
-//				boardingHouseModel.setCreatedBy("SYSTEM");
-//				boardingHouseModel.setModifiedBy("SYSTEM");
-//			} else {
-//				boardingHouseModel.setModifiedBy(boardingHouseModel.getCreatedBy());
-//			}
 			HouseModel saveModel = houseRepository.saveAndFlush(houseModel);
 			return convertEntity2Dto(saveModel);
 		} catch (Exception e) {
