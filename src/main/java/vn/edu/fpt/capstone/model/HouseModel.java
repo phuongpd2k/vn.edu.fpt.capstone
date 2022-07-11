@@ -65,10 +65,4 @@ public class HouseModel extends Auditable<String> {
 	
 	@Column(name = "link_fb")
 	private String linkFb;
-	
-	@Column(name = "longtitude")
-	private String longtitude;
-	
-	@Column(name = "latitude")
-	private String latitude;
 }
