@@ -15,6 +15,7 @@ import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.dto.request.FavoriteRequest;
 import vn.edu.fpt.capstone.dto.response.FavoriteResponse;
 import vn.edu.fpt.capstone.service.FavoriteService;
+import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.UserService;
 
@@ -32,8 +33,8 @@ public class FavoriteController {
 	@Autowired
 	UserService userService;
 	@Autowired
-	RoomService roomService;
-	
+	PostService postService;
+
 	@GetMapping(value = "/favorite/{id}")
 	public ResponseEntity<ResponseObject> getById(@PathVariable String id) {
 		ResponseObject responseObject = new ResponseObject();
@@ -100,8 +101,8 @@ public class FavoriteController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			FavoriteResponse favoriteResponse = new FavoriteResponse();
-			favoriteResponse.setRoomDtos(roomService.getRoomFavoriteByUserId(userDto.getId()));
-			if (favoriteResponse.getRoomDtos() == null || favoriteResponse.getRoomDtos().isEmpty()) {
+			favoriteResponse.setPostDtos(postService.findAllFavoritePostByUserId(userDto.getId()));
+			if (favoriteResponse.getPostDtos() == null || favoriteResponse.getPostDtos().isEmpty()) {
 				response.setResults(new ArrayList<>());
 			} else {
 				response.setResults(favoriteResponse);
@@ -131,14 +132,14 @@ public class FavoriteController {
 				LOGGER.error("postFavorite: {}", "Wrong body format or User token has expired");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
-			if (favoriteRequest.getRoomId() == null || !roomService.isExist(favoriteRequest.getRoomId())) {
+			if (favoriteRequest.getPostId() == null || !postService.isExist(favoriteRequest.getPostId())) {
 				response.setCode("406");
 				response.setMessage("Wrong body format or ID User or ID Room is not exist");
 				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				LOGGER.error("postFavorite: {}", "Wrong body format or ID User or ID Room is not exist");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
-			FavoriteDto fCheck = favoriteService.findByUserIdAndRoomId(userDto.getId(), favoriteRequest.getRoomId());
+			FavoriteDto fCheck = favoriteService.findByUserIdAndPostId(userDto.getId(), favoriteRequest.getPostId());
 			if (fCheck != null && fCheck.getId() != null) {
 				LOGGER.info("postFavorite.fCheck: {}", fCheck);
 				boolean removed = favoriteService.removeFavorite(fCheck.getId());
@@ -156,7 +157,7 @@ public class FavoriteController {
 				}
 			}
 			FavoriteDto favoriteDto = favoriteService
-					.createFavorite(new FavoriteDto(userDto.getId(), favoriteRequest.getRoomId()));
+					.createFavorite(new FavoriteDto(userDto.getId(), favoriteRequest.getPostId()));
 			if (favoriteDto == null) {
 				response.setCode("500");
 				response.setMessage("Something wrong when create new favorite");
@@ -188,7 +189,7 @@ public class FavoriteController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 			if ((favoriteDto.getUserId() == null || !userService.checkIdExist(favoriteDto.getUserId()))
-					|| (favoriteDto.getRoomId() == null || !roomService.isExist(favoriteDto.getRoomId()))) {
+					|| (favoriteDto.getPostId() == null || !postService.isExist(favoriteDto.getPostId()))) {
 				response.setCode("406");
 				response.setMessageCode(Message.NOT_ACCEPTABLE);
 				LOGGER.error("putFavorite: {}", "ID User or ID Room is not exist");

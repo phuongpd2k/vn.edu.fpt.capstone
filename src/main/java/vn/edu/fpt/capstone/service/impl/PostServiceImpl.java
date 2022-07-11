@@ -245,10 +245,10 @@ public class PostServiceImpl implements PostService {
 			postingResponse.setMaxPrice(roomService.maxPrice(idHouse));
 			postingResponse.setMinArea(roomService.minArea(idHouse));
 			postingResponse.setMaxArea(roomService.maxArea(idHouse));
-			
+
 			postingResponse.setLongtitude(postModel.getHouse().getLongtitude());
 			postingResponse.setLatitude(postModel.getHouse().getLatitude());
-			
+
 			listPostingResponse.add(postingResponse);
 		}
 		return listPostingResponse;
@@ -310,11 +310,11 @@ public class PostServiceImpl implements PostService {
 		}
 
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
-		
-		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), dto.getMinPrice(), dto.getMaxPrice(),
-				dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
-		//, dto.getAmenityIds()
-		
+
+		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), dto.getMinPrice(),
+				dto.getMaxPrice(), dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
+		// , dto.getAmenityIds()
+
 		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
 
 		PageableResponse pageableResponse = new PageableResponse();
@@ -328,6 +328,14 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public List<PostResponse> findAllFavoritePostByUserId(Long userId) {
+		List<PostModel> postModels = postRepository.findAllFavoritePostByUserId(userId);
+		if (postModels == null || postModels.isEmpty()) {
+			return null;
+		}
+		List<PostResponse> postRes = convertEntity2Response(postModels);
+		return postRes;
+
 	public List<PostingResponseV2> findTop8Posting() {
 		Date dateNow = new Date();
 		List<PostModel> listPost = postRepository.findTop8(dateNow);
@@ -357,6 +365,7 @@ public class PostServiceImpl implements PostService {
 			list.add(pV2);
 		}
 		return list;
+
 	}
 
 }

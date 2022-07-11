@@ -79,9 +79,10 @@ public class FavoriteServiceImpl implements FavoriteService {
 	}
 
 	@Override
-	public FavoriteDto findByUserIdAndRoomId(Long userId, Long roomId) {
-		FavoriteModel favoriteModel = favoriteRepository.findByUserIdAndRoomId(userId, roomId);
-		if(favoriteModel == null) return null;
+	public FavoriteDto findByUserIdAndPostId(Long userId, Long postId) {
+		FavoriteModel favoriteModel = favoriteRepository.findByUserIdAndPostId(userId, postId);
+		if (favoriteModel == null)
+			return null;
 		FavoriteDto favoriteDto = modelMapper.map(favoriteModel, FavoriteDto.class);
 		return favoriteDto;
 	}

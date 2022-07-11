@@ -9,6 +9,6 @@ import vn.edu.fpt.capstone.model.FavoriteModel;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<FavoriteModel,Long> {
-	@Query(value = "SELECT * FROM favorite where userid= :userId and roomid= :roomId", nativeQuery = true)
-	FavoriteModel findByUserIdAndRoomId(@Param("userId") Long userId, @Param("roomId") Long roomId);
+	@Query(value = "SELECT * FROM favorite where userid= :userId and postid= :postId", nativeQuery = true)
+	FavoriteModel findByUserIdAndPostId(@Param("userId") Long userId, @Param("postId") Long postId);
 }
