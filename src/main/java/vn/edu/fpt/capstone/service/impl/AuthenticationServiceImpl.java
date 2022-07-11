@@ -11,12 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,9 +44,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private CustomUserDetailService customUserDetailService;
@@ -353,6 +345,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		userService.updateUser(modelMapper.map(user, UserDto.class));
 		return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 				.message("Reset password: successfully!").messageCode("RESET_PASSWORD_SUCCESSFULLY").build());
+	}
+
+	@Override
+	public ResponseEntity<?> verifyByUserId(Long id) {
+		UserModel userModel = userService.getUserInformationById(id);
+
+		if (userModel != null) {
+			userModel.setActive(true);
+			userModel.setVerify(true);
+			userRepository.save(userModel);
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Verify code: verify code successfully!").messageCode("VERIFY_SUCCESSFULLY").build());
+		}
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
+				.message("Verify code: verify code fail!").messageCode("VERIFY_FAIL").build());
 	}
 
 }

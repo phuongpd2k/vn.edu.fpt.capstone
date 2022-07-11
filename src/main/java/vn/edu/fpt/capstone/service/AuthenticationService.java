@@ -24,4 +24,6 @@ public interface AuthenticationService {
 	ResponseEntity<?> signUpByEmail(SignUpDto signUpDto);
 
 	ResponseEntity<?> authenticateByEmail(SignInDto signInDto);
+
+	ResponseEntity<?> verifyByUserId(Long id);
 }
