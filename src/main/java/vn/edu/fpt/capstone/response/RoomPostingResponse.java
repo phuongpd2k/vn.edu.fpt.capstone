@@ -55,4 +55,6 @@ public class RoomPostingResponse{
 	
 	private String longtitude;
 	private String latitude;
+	
+	private Date startDate;
 }
