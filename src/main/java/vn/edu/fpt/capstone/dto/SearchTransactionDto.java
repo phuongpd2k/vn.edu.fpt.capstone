@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class SearchTransactionDto extends SearchDto{
 	private String username;
+	private String userCode;
 	private String fullName;
 	private String status;
 	private String type;

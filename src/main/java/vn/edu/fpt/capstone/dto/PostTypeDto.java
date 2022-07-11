@@ -1,5 +1,6 @@
 package vn.edu.fpt.capstone.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import vn.edu.fpt.capstone.model.Auditable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"postType","createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 public class PostTypeDto extends Auditable<String>{
 	@JsonProperty("id")
 	private Long id;
