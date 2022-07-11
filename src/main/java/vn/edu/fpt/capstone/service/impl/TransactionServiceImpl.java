@@ -231,6 +231,10 @@ public class TransactionServiceImpl implements TransactionService {
 		}else {
 			whereClause += " AND (entity.transferType = 'POSTING' OR entity.transferType = 'POSTING_EXTEND')";
 		}
+		
+		if (search.getUserCode() != null) {
+			whereClause += " AND (entity.user.codeTransaction LIKE :text6)";
+		}
 
 		sql += whereClause;
 
@@ -255,6 +259,11 @@ public class TransactionServiceImpl implements TransactionService {
 		if (search.getType() != null) {
 			query.setParameter("text5", search.getType());
 		}
+		
+		if (search.getUserCode() != null) {
+			query.setParameter("text6", search.getUserCode());
+		}
+
 
 		@SuppressWarnings("unchecked")
 		List<TransactionModel> list = query.getResultList();
