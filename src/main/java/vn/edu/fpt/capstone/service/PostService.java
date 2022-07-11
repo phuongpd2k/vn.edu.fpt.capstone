@@ -10,6 +10,7 @@ import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
+import vn.edu.fpt.capstone.response.PostingResponseV2;
 
 public interface PostService {
 	PostDto findById(Long id);
@@ -33,5 +34,10 @@ public interface PostService {
 	PostModel confirmPost(PostDto postDto);
 
 	PageableResponse filterPosting(FilterRoomDto dto);
+
 	List<PostResponse> findAllFavoritePostByUserId(Long userId);
+
+
+	List<PostingResponseV2> findTop8Posting();
+
 }

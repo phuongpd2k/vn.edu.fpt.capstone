@@ -23,6 +23,7 @@ import vn.edu.fpt.capstone.repository.PostTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
+import vn.edu.fpt.capstone.response.PostingResponseV2;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.RoomService;
@@ -52,9 +53,6 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private PostTypeRepository postTypeRepository;
-
-	@Autowired
-	private Constant constant;
 
 	@Autowired
 	private UserService userService;
@@ -136,6 +134,8 @@ public class PostServiceImpl implements PostService {
 
 			postResponse.setImages(Arrays.asList(modelMapper.map(model.getRoom().getImages(), ImageDto[].class)));
 			postResponse.setVerify(model.getVerify());
+			postResponse.setNote(model.getNote());
+			
 			postRes.add(postResponse);
 		}
 		return postRes;
@@ -335,6 +335,37 @@ public class PostServiceImpl implements PostService {
 		}
 		List<PostResponse> postRes = convertEntity2Response(postModels);
 		return postRes;
+
+	public List<PostingResponseV2> findTop8Posting() {
+		Date dateNow = new Date();
+		List<PostModel> listPost = postRepository.findTop8(dateNow);
+		
+		return convertToPostingResponseV2(listPost);
+	}
+
+	private List<PostingResponseV2> convertToPostingResponseV2(List<PostModel> listPost) {
+		List<PostingResponseV2> list = new ArrayList<PostingResponseV2>();
+		for (PostModel p : listPost) {
+			Long idHouse = p.getHouse().getId();
+			QuanHuyenDto dto = new QuanHuyenDto();
+			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
+			
+			PostingResponseV2 pV2 = PostingResponseV2.builder()
+				.post(modelMapper.map(p, PostDto.class))
+				.minPrice(roomService.minPrice(idHouse))
+				.maxPrice(roomService.maxPrice(idHouse))
+				.minArea(roomService.minArea(idHouse))
+				.maxArea(roomService.maxArea(idHouse))
+				.street(p.getHouse().getAddress().getStreet())
+				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
+				.quanHuyen(dto.getName())
+				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
+				.build();
+			
+			list.add(pV2);
+		}
+		return list;
+
 	}
 
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,6 +104,20 @@ public class AuthenticationController {
 	public ResponseEntity<?> verify(@Param("code") String code) {
 		try {
 			return authenticationService.verify(code);
+		} catch (Exception e) {
+			logger.error("Verify code new account!");
+			logger.error(e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("401")
+					.message("Verify code: verify code fail!").messageCode("VERIFY_CODE_FAIL").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping("/verify/user")
+	public ResponseEntity<?> verify(@Param("id") Long id) {
+		try {
+			return authenticationService.verifyByUserId(id);
 		} catch (Exception e) {
 			logger.error("Verify code new account!");
 			logger.error(e.getMessage());

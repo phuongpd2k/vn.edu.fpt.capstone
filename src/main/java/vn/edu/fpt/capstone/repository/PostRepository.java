@@ -1,5 +1,6 @@
 package vn.edu.fpt.capstone.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -9,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.response.HouseHistoryResponse;
 
@@ -50,4 +50,12 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 
 	@Query(value = "SELECT p.* FROM favorite f JOIN post p ON f.postId = p.id WHERE f.userid= :userId", nativeQuery = true)
 	List<PostModel> findAllFavoritePostByUserId(@Param("userId") Long userId);
+
+	@Query(value="SELECT * FROM post WHERE post.enable = true AND post.is_active = true"
+			+ " AND post.status = 'CENSORED'"
+			+ " AND post.end_date >= ?1"
+			+ " AND post.start_date <= ?1"
+			+ " ORDER BY post.post_cost DESC Limit 0, 8", nativeQuery = true)
+	List<PostModel> findTop8(Date dateNow);
+
 }
