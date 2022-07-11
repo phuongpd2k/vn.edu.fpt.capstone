@@ -5,10 +5,16 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import vn.edu.fpt.capstone.dto.ImageDto;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostResponse {
 	private Long id;
 	private Long postTypeId;
@@ -38,4 +44,5 @@ public class PostResponse {
 	private List<ImageDto> images;
 	
 	private String verify;
+	private String note;
 }

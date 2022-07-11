@@ -46,4 +46,6 @@ public class PostDto extends Auditable<String> {
 		this.verify = verify;
 	}
 
+	private String post_type;
+	private int postCost;
 }
