@@ -335,7 +335,7 @@ public class PostServiceImpl implements PostService {
 		}
 		List<PostResponse> postRes = convertEntity2Response(postModels);
 		return postRes;
-
+	}
 	public List<PostingResponseV2> findTop8Posting() {
 		Date dateNow = new Date();
 		List<PostModel> listPost = postRepository.findTop8(dateNow);
