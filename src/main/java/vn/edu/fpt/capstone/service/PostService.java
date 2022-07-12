@@ -2,15 +2,13 @@ package vn.edu.fpt.capstone.service;
 
 import java.util.List;
 
-import org.springframework.data.repository.query.Param;
-
 import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
-import vn.edu.fpt.capstone.response.PostingResponseV2;
+import vn.edu.fpt.capstone.response.PostingResponse;
 
 public interface PostService {
 	PostDto findById(Long id);
@@ -38,6 +36,6 @@ public interface PostService {
 	List<PostResponse> findAllFavoritePostByUserId(Long userId);
 
 
-	List<PostingResponseV2> findTop8Posting();
+	List<PostingResponse> findTop8Posting();
 
 }
