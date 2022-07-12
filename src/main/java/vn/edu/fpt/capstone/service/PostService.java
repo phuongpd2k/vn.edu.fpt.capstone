@@ -9,6 +9,7 @@ import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
+import vn.edu.fpt.capstone.response.PostingRoomResponse;
 
 public interface PostService {
 	PostDto findById(Long id);
@@ -37,5 +38,7 @@ public interface PostService {
 
 
 	List<PostingResponse> findTop8Posting();
+
+	PostingRoomResponse findPostingById(Long id);
 
 }

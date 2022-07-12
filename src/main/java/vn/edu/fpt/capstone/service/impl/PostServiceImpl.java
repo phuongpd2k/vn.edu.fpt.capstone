@@ -22,6 +22,7 @@ import vn.edu.fpt.capstone.repository.PostTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
+import vn.edu.fpt.capstone.response.PostingRoomResponse;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.RoomService;
@@ -362,6 +363,32 @@ public class PostServiceImpl implements PostService {
 		}
 		return list;
 
+	}
+
+	@Override
+	public PostingRoomResponse findPostingById(Long id) {
+		PostModel p = postRepository.getById(id);
+		if(p == null) {
+			return null;
+		}
+		Long idHouse = p.getHouse().getId();
+		QuanHuyenDto dto = new QuanHuyenDto();
+		dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
+		
+		PostingRoomResponse prr = PostingRoomResponse.builder()
+			.post(modelMapper.map(p, PostDto.class))
+			.rooms(Arrays.asList(modelMapper.map(p.getHouse().getRoom(), RoomDto[].class)))
+			.minPrice(roomService.minPrice(idHouse))
+			.maxPrice(roomService.maxPrice(idHouse))
+			.minArea(roomService.minArea(idHouse))
+			.maxArea(roomService.maxArea(idHouse))
+			.street(p.getHouse().getAddress().getStreet())
+			.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
+			.quanHuyen(dto.getName())
+			.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
+			.build();
+		prr.getPost().getRoom().setHouse(null);
+		return prr;
 	}
 
 }
