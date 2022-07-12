@@ -12,7 +12,7 @@ import vn.edu.fpt.capstone.dto.PostDto;
 @Builder
 public class PostingResponse {
 	@JsonIgnoreProperties({"postType","createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", 
-		"startDate", "endDate", "numberOfDays", "cost", "status", "note", "verify", "post_type", "postCost"})
+		"numberOfDays", "status", "note", "post_type", "postCost"})
 	private PostDto post;
 	
 	private int minPrice;

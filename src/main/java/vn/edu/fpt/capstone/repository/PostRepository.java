@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import vn.edu.fpt.capstone.dto.DashBoardData;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.response.HouseHistoryResponse;
 
@@ -57,5 +58,12 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " AND post.start_date <= ?1"
 			+ " ORDER BY post.post_cost DESC Limit 0, 8", nativeQuery = true)
 	List<PostModel> findTop8(Date dateNow);
+
+	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardData(MONTH(p.createdDate), COUNT(p))"
+			+ " FROM PostModel p"
+			+ " WHERE YEAR(p.createdDate) = ?1"
+			+ " GROUP BY MONTH(p.createdDate)"
+			+ " ORDER BY MONTH(p.createdDate)")
+	List<DashBoardData> getDataPostingDashBoardAdmin(int year);
 
 }

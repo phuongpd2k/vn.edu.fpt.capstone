@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import vn.edu.fpt.capstone.dto.DashBoardData;
+import vn.edu.fpt.capstone.dto.DashBoardDataFloat;
 import vn.edu.fpt.capstone.model.TransactionModel;
 
 @Repository
@@ -32,4 +34,12 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	
 	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS' AND t.user.id = ?1")
 	float getTotalAmountMoneyHost(Long id);
+
+	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.amount))"
+			+ " FROM TransactionModel t"
+			+ " WHERE YEAR(t.createdDate) = ?1"
+			+ " AND (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS'"
+			+ " GROUP BY MONTH(t.createdDate)"
+			+ " ORDER BY MONTH(t.createdDate)")
+	List<DashBoardDataFloat> getDataRevenueDashBoardAdmin(int year);
 }
