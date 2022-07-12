@@ -51,10 +51,9 @@ public class HouseDto extends Auditable<String> {
 	private TypeOfRentalDto typeOfRental;
 	@JsonProperty(index = 13)
 	private String linkFb;
+	
 	@JsonProperty(index = 14)
-	private String longtitude;
-	@JsonProperty(index = 15)
-	private String latitude;
+	private List<RoomDto> rooms;
 //	private Long userId;
 //	private Long addressId;
 //	private Long typeOfRentalId;

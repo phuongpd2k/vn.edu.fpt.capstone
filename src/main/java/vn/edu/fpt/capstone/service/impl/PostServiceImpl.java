@@ -377,7 +377,6 @@ public class PostServiceImpl implements PostService {
 		
 		PostingRoomResponse prr = PostingRoomResponse.builder()
 			.post(modelMapper.map(p, PostDto.class))
-			.rooms(Arrays.asList(modelMapper.map(p.getHouse().getRoom(), RoomDto[].class)))
 			.minPrice(roomService.minPrice(idHouse))
 			.maxPrice(roomService.maxPrice(idHouse))
 			.minArea(roomService.minArea(idHouse))
@@ -388,6 +387,7 @@ public class PostServiceImpl implements PostService {
 			.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
 			.build();
 		prr.getPost().getRoom().setHouse(null);
+		prr.getPost().getHouse().setRooms(Arrays.asList(modelMapper.map(p.getHouse().getRoom(), RoomDto[].class)));
 		return prr;
 	}
 

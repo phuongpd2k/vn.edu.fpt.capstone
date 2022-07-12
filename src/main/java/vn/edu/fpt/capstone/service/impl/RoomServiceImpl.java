@@ -198,9 +198,6 @@ public class RoomServiceImpl implements RoomService {
 			listTypeCategory.add(categoryTypeDto);
 		}
 		rp.setCategoryTypes(listTypeCategory);
-
-		rp.setLongtitude(roomModel.getHouse().getLongtitude());
-		rp.setLatitude(roomModel.getHouse().getLatitude());
 		
 		//rp.setStartDate(roomModel.getPosts());
 		
