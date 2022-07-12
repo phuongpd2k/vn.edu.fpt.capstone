@@ -138,6 +138,10 @@ public class TransactionServiceImpl implements TransactionService {
 		if (search.getToDate() != null) {
 			whereClause += " AND (entity.createdDate <= :text4)";
 		}
+		
+		if (search.getUserCode() != null) {
+			whereClause += " AND (entity.user.codeTransaction LIKE :text5)";
+		}
 
 		sql += whereClause;
 
@@ -157,6 +161,10 @@ public class TransactionServiceImpl implements TransactionService {
 
 		if (search.getToDate() != null) {
 			query.setParameter("text4", new Date(search.getToDate()));
+		}
+		
+		if (search.getUserCode() != null) {
+			query.setParameter("text5", '%' + search.getUserCode().trim() + '%');
 		}
 
 		@SuppressWarnings("unchecked")
