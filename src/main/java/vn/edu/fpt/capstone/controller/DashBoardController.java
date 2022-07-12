@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.UserDto;
+import vn.edu.fpt.capstone.response.DBAdminByYearResponse;
 import vn.edu.fpt.capstone.response.DashBoardAdminResponse;
 import vn.edu.fpt.capstone.response.DashBoardHostResponse;
 import vn.edu.fpt.capstone.service.DashBoardService;
@@ -33,6 +35,20 @@ public class DashBoardController {
 	public ResponseEntity<?> dashBoardAdmin(){
 		try {
 			DashBoardAdminResponse db = dashBoardService.getDashBoardAdmin();
+			LOGGER.error("get dash board: {}");
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.messageCode("GET_DASH_BOARD_SUCCESSFULL").results(db).build());
+		} catch (Exception e) {
+			LOGGER.error("get dash board: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get dash board: " + e.getMessage()).messageCode("GET_DASH_BOARD_FAILED").build());
+		}
+	}
+	
+	@GetMapping("/admin/data")
+	public ResponseEntity<?> dashBoardAdmin(@RequestParam("year") int year){
+		try {
+			DBAdminByYearResponse db = dashBoardService.getDashBoardAdminByYear(year);
 			LOGGER.error("get dash board: {}");
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.messageCode("GET_DASH_BOARD_SUCCESSFULL").results(db).build());

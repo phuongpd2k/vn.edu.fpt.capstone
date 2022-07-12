@@ -3,8 +3,6 @@ package vn.edu.fpt.capstone.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,6 +14,7 @@ import vn.edu.fpt.capstone.model.Auditable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = false)
+@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 public class HouseDto extends Auditable<String> {
 	@JsonProperty(index = 0)
 	private Long id;

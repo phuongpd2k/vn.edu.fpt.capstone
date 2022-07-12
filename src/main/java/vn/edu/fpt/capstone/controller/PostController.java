@@ -23,7 +23,8 @@ import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
-import vn.edu.fpt.capstone.response.PostingResponseV2;
+import vn.edu.fpt.capstone.response.PostingResponse;
+import vn.edu.fpt.capstone.response.PostingRoomResponse;
 import vn.edu.fpt.capstone.service.HouseService;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.PostTypeService;
@@ -440,6 +441,21 @@ public class PostController {
 					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
 		}
 	}
+	
+	@GetMapping(value = "/posting")
+	public ResponseEntity<?> getPosting(@RequestParam("id") Long id) {
+		try {
+			PostingRoomResponse prr = postService.findPostingById(id);
+			LOGGER.info("get All posting: {}");
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Get posting successfully")
+							.messageCode("GET_POSTING_SUCCESSFULLY").results(prr).build());
+		} catch (Exception e) {
+			LOGGER.error("getAll posting: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
+		}
+	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
 	@DeleteMapping(value = "/post/{id}")
@@ -549,7 +565,7 @@ public class PostController {
 	public ResponseEntity<?> getPosting() {
 		try {
 			//PageableResponse pageableResponse = postService.findAllPosting(searchDto);
-			List<PostingResponseV2> list = postService.findTop8Posting();
+			List<PostingResponse> list = postService.findTop8Posting();
 			LOGGER.info("get All posting: {}", list);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseObject.builder().code("200").message("Get posting successfully")

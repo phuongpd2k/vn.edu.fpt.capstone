@@ -2,6 +2,7 @@ package vn.edu.fpt.capstone.dto;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -10,6 +11,7 @@ import vn.edu.fpt.capstone.model.Auditable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 public class RoomDto extends Auditable<String> {
 	@JsonProperty("id")
 	private Long id;
