@@ -2,7 +2,6 @@ package vn.edu.fpt.capstone.service;
 
 import java.util.List;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.model.RoomModel;
@@ -24,4 +23,5 @@ public interface RoomService {
 	boolean roomTypeAndRoomCategoryExits(Long roomType, Long roomCategory, Long houseId);
 	
 	List<RoomDto> getRoomFavoriteByUserId(Long userId);
+	boolean checkExistRoomName(Long id, String name);
 }

@@ -163,6 +163,24 @@ public class RoomController {
 					.message("Create room fail: " + e.getMessage()).messageCode("CREATE_ROOM_FAIL").build());
 		}
 	}
+	
+	@PostMapping(value = "/room/check-room-name")
+	public ResponseEntity<?> checkRoomName(@RequestParam(required = false) Long idHouse, 
+			@RequestParam(required = false) String roomName) {
+		try {		
+			if (roomService.checkExistRoomName(idHouse, roomName)) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create room: room name existed!").messageCode("ROOM_NAME_EXISTED").build());
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Name room: OK!").messageCode("ROOM_NAME_OK").build());
+		} catch (Exception e) {
+			LOGGER.error("Create room fail: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Create room fail: " + e.getMessage()).messageCode("CREATE_ROOM_FAIL").build());
+		}
+	}
+	
 
 	@PostMapping(value = "/room/check-unique")
 	public ResponseEntity<?> checkRoomUnique(@RequestBody RoomDto roomDto) {

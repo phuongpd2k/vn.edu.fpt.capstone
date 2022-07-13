@@ -443,9 +443,12 @@ public class PostController {
 	}
 	
 	@GetMapping(value = "/posting")
-	public ResponseEntity<?> getPosting(@RequestParam("id") Long id) {
+	public ResponseEntity<?> getPosting(@RequestParam("id") Long idPost, @RequestParam(value = "idRoom", required=false) Long idRoom) {
 		try {
-			PostingRoomResponse prr = postService.findPostingById(id);
+			PostingRoomResponse prr = postService.findPostingById(idPost);
+			if(idRoom != null) {
+				prr.getPost().setRoom(roomService.findById(idRoom));
+			}
 			LOGGER.info("get All posting: {}");
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseObject.builder().code("200").message("Get posting successfully")
