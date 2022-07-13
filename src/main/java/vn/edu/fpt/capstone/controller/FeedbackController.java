@@ -13,6 +13,7 @@ import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.dto.request.FeedbackRequest;
 import vn.edu.fpt.capstone.dto.request.FeedbackUpdateRequest;
+import vn.edu.fpt.capstone.dto.response.FeedbackResponse;
 import vn.edu.fpt.capstone.service.FeedbackService;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.UserService;
@@ -92,11 +93,19 @@ public class FeedbackController {
 		try {
 			Long lId = Long.valueOf(id);
 			List<FeedbackDto> feedbackDtos = feedbackService.findByPostId(lId);
+			FeedbackResponse feedbackResponse = new FeedbackResponse();
 			if (feedbackDtos == null || feedbackDtos.isEmpty()) {
-				responseObject.setResults(new ArrayList<>());
+				feedbackResponse.setFeedbackDtos(new ArrayList<>());
 			} else {
-				responseObject.setResults(feedbackDtos);
+				feedbackResponse.setFeedbackDtos(feedbackDtos);
+				feedbackResponse.setCountFeedback(feedbackDtos.size());
+				float rating = 0;
+				for (FeedbackDto feedbackDto : feedbackDtos) {
+					rating += feedbackDto.getRating();
+				}
+				feedbackResponse.setAverageRating(rating / feedbackDtos.size());
 			}
+			responseObject.setResults(feedbackResponse);
 			LOGGER.info("getByPostId: {}", feedbackDtos);
 			responseObject.setCode("200");
 			responseObject.setMessageCode(Message.OK);
