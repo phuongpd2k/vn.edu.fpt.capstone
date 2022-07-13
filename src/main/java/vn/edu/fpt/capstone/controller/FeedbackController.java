@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.constant.Message;
@@ -122,7 +123,7 @@ public class FeedbackController {
 			return new ResponseEntity<>(responseObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER') ")
 	@PostMapping(value = "/feedback")
 	public ResponseEntity<ResponseObject> postFeedback(@RequestBody FeedbackRequest feedbackRequest,
 			@RequestHeader(value = "Authorization") String jwtToken) {
@@ -180,7 +181,7 @@ public class FeedbackController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER') ")
 	@PutMapping(value = "/feedback")
 	public ResponseEntity<ResponseObject> putFeedback(@RequestBody FeedbackUpdateRequest feedbackUpdateRequest,
 			@RequestHeader(value = "Authorization") String jwtToken) {
@@ -230,7 +231,7 @@ public class FeedbackController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER') ")
 	@DeleteMapping(value = "/feedback/{id}")
 	public ResponseEntity<ResponseObject> deleteFeedback(@PathVariable String id) {
 		ResponseObject response = new ResponseObject();
@@ -258,5 +259,4 @@ public class FeedbackController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
 }
