@@ -347,31 +347,6 @@ public class PostServiceImpl implements PostService {
 		return convertToPostingResponse(listPost);
 	}
 
-//	private List<PostingResponse> convertToPostingResponseV2(List<PostModel> listPost) {
-//		List<PostingResponse> list = new ArrayList<PostingResponse>();
-//		for (PostModel p : listPost) {
-//			Long idHouse = p.getHouse().getId();
-//			QuanHuyenDto dto = new QuanHuyenDto();
-//			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
-//			
-//			PostingResponse pV2 = PostingResponse.builder()
-//				.post(modelMapper.map(p, PostDto.class))
-//				.minPrice(roomService.minPrice(idHouse))
-//				.maxPrice(roomService.maxPrice(idHouse))
-//				.minArea(roomService.minArea(idHouse))
-//				.maxArea(roomService.maxArea(idHouse))
-//				.street(p.getHouse().getAddress().getStreet())
-//				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
-//				.quanHuyen(dto.getName())
-//				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
-//				.build();
-//			pV2.getPost().getRoom().setHouse(null);
-//			list.add(pV2);
-//		}
-//		return list;
-//
-//	}
-
 	@Override
 	public PostingRoomResponse findPostingById(Long id) {
 		PostModel p = postRepository.getById(id);
