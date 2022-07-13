@@ -17,6 +17,7 @@ import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.model.UserModel;
+import vn.edu.fpt.capstone.repository.FeedbackRepository;
 import vn.edu.fpt.capstone.repository.PostRepository;
 import vn.edu.fpt.capstone.repository.PostTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
@@ -43,6 +44,9 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private PostRepository postRepository;
+	
+	@Autowired
+	private FeedbackRepository feedbackRepository;
 
 	@Autowired
 	ModelMapper modelMapper;
@@ -232,6 +236,13 @@ public class PostServiceImpl implements PostService {
 			QuanHuyenDto dto = new QuanHuyenDto();
 			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
 			
+			int amountRating = feedbackRepository.getAmountByPostId(p.getId());	
+			float rating = 0;
+			
+			if(amountRating > 0) {
+				rating = feedbackRepository.getTotalRatingByPostId(p.getId())/amountRating;
+			}
+			
 			PostingResponse pr = PostingResponse.builder()
 				.post(modelMapper.map(p, PostDto.class))
 				.minPrice(roomService.minPrice(idHouse))
@@ -242,6 +253,8 @@ public class PostServiceImpl implements PostService {
 				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
 				.quanHuyen(dto.getName())
 				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
+				.amountRating(amountRating)
+				.rating(rating)
 				.build();
 			pr.getPost().getRoom().setHouse(null);
 			listPostingResponse.add(pr);
@@ -255,12 +268,6 @@ public class PostServiceImpl implements PostService {
 		if (postModel != null) {
 			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
 			postModel.setCost(postDto.getNumberOfDays() * costPerDay);
-
-//			if ((new Date()).before(postModel.getEndDate())) {
-//				postModel.setStatus(constant.CENSORED);
-//			} else {
-//				postModel.setStatus(constant.UNCENSORED);
-//			}
 
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 			if (postDto.getStartDate() == null) {
@@ -337,33 +344,33 @@ public class PostServiceImpl implements PostService {
 		Date dateNow = new Date();
 		List<PostModel> listPost = postRepository.findTop8(dateNow);
 		
-		return convertToPostingResponseV2(listPost);
+		return convertToPostingResponse(listPost);
 	}
 
-	private List<PostingResponse> convertToPostingResponseV2(List<PostModel> listPost) {
-		List<PostingResponse> list = new ArrayList<PostingResponse>();
-		for (PostModel p : listPost) {
-			Long idHouse = p.getHouse().getId();
-			QuanHuyenDto dto = new QuanHuyenDto();
-			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
-			
-			PostingResponse pV2 = PostingResponse.builder()
-				.post(modelMapper.map(p, PostDto.class))
-				.minPrice(roomService.minPrice(idHouse))
-				.maxPrice(roomService.maxPrice(idHouse))
-				.minArea(roomService.minArea(idHouse))
-				.maxArea(roomService.maxArea(idHouse))
-				.street(p.getHouse().getAddress().getStreet())
-				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
-				.quanHuyen(dto.getName())
-				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
-				.build();
-			pV2.getPost().getRoom().setHouse(null);
-			list.add(pV2);
-		}
-		return list;
-
-	}
+//	private List<PostingResponse> convertToPostingResponseV2(List<PostModel> listPost) {
+//		List<PostingResponse> list = new ArrayList<PostingResponse>();
+//		for (PostModel p : listPost) {
+//			Long idHouse = p.getHouse().getId();
+//			QuanHuyenDto dto = new QuanHuyenDto();
+//			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
+//			
+//			PostingResponse pV2 = PostingResponse.builder()
+//				.post(modelMapper.map(p, PostDto.class))
+//				.minPrice(roomService.minPrice(idHouse))
+//				.maxPrice(roomService.maxPrice(idHouse))
+//				.minArea(roomService.minArea(idHouse))
+//				.maxArea(roomService.maxArea(idHouse))
+//				.street(p.getHouse().getAddress().getStreet())
+//				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
+//				.quanHuyen(dto.getName())
+//				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
+//				.build();
+//			pV2.getPost().getRoom().setHouse(null);
+//			list.add(pV2);
+//		}
+//		return list;
+//
+//	}
 
 	@Override
 	public PostingRoomResponse findPostingById(Long id) {

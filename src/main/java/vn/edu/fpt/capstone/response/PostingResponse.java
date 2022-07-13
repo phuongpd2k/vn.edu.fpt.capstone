@@ -24,4 +24,7 @@ public class PostingResponse {
 	private String phuongXa;
 	private String quanHuyen;
 	private String thanhPho;
+	
+	private int amountRating;
+	private float rating;
 }

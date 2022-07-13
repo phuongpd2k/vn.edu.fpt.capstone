@@ -224,4 +224,9 @@ public class RoomServiceImpl implements RoomService {
 		return roomDtos;
 	}
 
+	@Override
+	public boolean checkExistRoomName(Long id, String name) {
+		return roomRepository.checkExistRoomName(id, name);
+	}
+
 }

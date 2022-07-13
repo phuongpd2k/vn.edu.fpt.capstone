@@ -44,4 +44,8 @@ public interface RoomRepository extends JpaRepository<RoomModel, Long> {
 	@Query(value = "SELECT r.* FROM room r JOIN favorite f ON r.id = f.roomid	WHERE f.userid= :userId", nativeQuery = true)
 	List<RoomModel> getRoomFavoriteByUserId(@Param("userId") Long userId);
 
+	@Query("SELECT COUNT(r) > 0"
+			+ " FROM RoomModel r WHERE r.house.id = ?1 AND r.name = ?2 AND r.enable = true")
+	boolean checkExistRoomName(Long id, String name);
+
 }
