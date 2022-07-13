@@ -33,8 +33,7 @@ public class HouseDto extends Auditable<String> {
 	@JsonProperty(index = 7)
 	private String imageUrl;
 	@JsonProperty(index = 8)
-	@JsonIgnoreProperties({ "email", "username", "imageLink", "role", "delete", "active", "dob", "gender",
-			"phoneNumber", "lastName", "firstName", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate","verify","balance" })
+	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 	private UserDto user;
 	@JsonProperty(index = 9)
 	private RoomDetails roomDetails;
@@ -43,11 +42,10 @@ public class HouseDto extends Auditable<String> {
 	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
 	private AddressDto address;
 	@JsonProperty(index = 11)
-	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "type", "icon" })
+	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 	private List<AmenityDto> amenities = new ArrayList<AmenityDto>();
 	@JsonProperty(index = 12)
-	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "description",
-			"imageUrl" })
+	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 	private TypeOfRentalDto typeOfRental;
 	@JsonProperty(index = 13)
 	private String linkFb;
