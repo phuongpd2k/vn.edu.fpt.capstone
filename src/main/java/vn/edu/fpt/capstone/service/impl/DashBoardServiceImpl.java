@@ -10,6 +10,7 @@ import vn.edu.fpt.capstone.repository.RoomRepository;
 import vn.edu.fpt.capstone.repository.TransactionRepository;
 import vn.edu.fpt.capstone.repository.UserRepository;
 import vn.edu.fpt.capstone.response.DBAdminByYearResponse;
+import vn.edu.fpt.capstone.response.DBHostByYearResponse;
 import vn.edu.fpt.capstone.response.DashBoardAdminResponse;
 import vn.edu.fpt.capstone.response.DashBoardHostResponse;
 import vn.edu.fpt.capstone.service.DashBoardService;
@@ -57,6 +58,14 @@ public class DashBoardServiceImpl implements DashBoardService{
 				.dataUser(userRepository.getDataUserDashBoardAdmin(year))
 				.dataPosting(postRepository.getDataPostingDashBoardAdmin(year))
 				.dataRevenue(transactionRepository.getDataRevenueDashBoardAdmin(year))
+				.build();
+	}
+
+	@Override
+	public DBHostByYearResponse getDashBoardHostByYear(UserDto userDto, int year) {
+		return DBHostByYearResponse.builder()
+				.dataDeposit(transactionRepository.getDataDepositDashBoardHost(userDto.getId(), year))
+				.dataPostingExtend(transactionRepository.getDataPostingExtendDashBoardHost(userDto.getId(), year))
 				.build();
 	}
 

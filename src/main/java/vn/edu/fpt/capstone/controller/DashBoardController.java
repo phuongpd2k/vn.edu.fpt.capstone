@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.response.DBAdminByYearResponse;
+import vn.edu.fpt.capstone.response.DBHostByYearResponse;
 import vn.edu.fpt.capstone.response.DashBoardAdminResponse;
 import vn.edu.fpt.capstone.response.DashBoardHostResponse;
 import vn.edu.fpt.capstone.service.DashBoardService;
@@ -64,6 +65,22 @@ public class DashBoardController {
 		try {
 			UserDto userDto = userService.getUserByToken(jwtToken);
 			DashBoardHostResponse db = dashBoardService.getDashBoardHost(userDto);
+			LOGGER.error("get dash board: {}");
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.messageCode("GET_DASH_BOARD_SUCCESSFULL").results(db).build());
+		} catch (Exception e) {
+			LOGGER.error("get dash board: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get dash board: " + e.getMessage()).messageCode("GET_DASH_BOARD_FAILED").build());
+		}
+	}
+	
+	@GetMapping("/host/data")
+	public ResponseEntity<?> dashBoardHost(@RequestHeader(value = "Authorization") String jwtToken,
+			@RequestParam("year") int year){
+		try {
+			UserDto userDto = userService.getUserByToken(jwtToken);
+			DBHostByYearResponse db = dashBoardService.getDashBoardHostByYear(userDto, year);
 			LOGGER.error("get dash board: {}");
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.messageCode("GET_DASH_BOARD_SUCCESSFULL").results(db).build());

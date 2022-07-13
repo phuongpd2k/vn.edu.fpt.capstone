@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import vn.edu.fpt.capstone.dto.DashBoardData;
 import vn.edu.fpt.capstone.dto.DashBoardDataFloat;
 import vn.edu.fpt.capstone.model.TransactionModel;
 
@@ -42,4 +40,21 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 			+ " GROUP BY MONTH(t.createdDate)"
 			+ " ORDER BY MONTH(t.createdDate)")
 	List<DashBoardDataFloat> getDataRevenueDashBoardAdmin(int year);
+
+	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.amount))"
+			+ " FROM TransactionModel t"
+			+ " WHERE t.user.id = ?1 AND YEAR(t.createdDate) = ?2"
+			+ " AND (t.transferType = 'DEPOSIT') AND t.status = 'SUCCESS'"
+			+ " AND t.action = 'PLUS'"
+			+ " GROUP BY MONTH(t.createdDate)"
+			+ " ORDER BY MONTH(t.createdDate)")
+	List<DashBoardDataFloat> getDataDepositDashBoardHost(Long id, int year);
+
+	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.amount))"
+			+ " FROM TransactionModel t"
+			+ " WHERE t.user.id = ?1 AND YEAR(t.createdDate) = ?2"
+			+ " AND (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS'"
+			+ " GROUP BY MONTH(t.createdDate)"
+			+ " ORDER BY MONTH(t.createdDate)")
+	List<DashBoardDataFloat> getDataPostingExtendDashBoardHost(Long id, int year);
 }
