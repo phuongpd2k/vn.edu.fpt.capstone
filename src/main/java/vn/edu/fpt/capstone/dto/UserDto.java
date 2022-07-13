@@ -63,4 +63,31 @@ public class UserDto extends Auditable<String> {
 	
 	@JsonProperty(index = 14)
 	private String cccd;
+	
+	public UserDto(Long id, String username, String email, String password, String fullName, String phoneNumber,
+			String imageLink, boolean gender, Date dob, boolean isActive, RoleDto role, String resetCode, float balance,
+			String codeTransaction, String cccd) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.fullName = fullName;
+		this.phoneNumber = phoneNumber;
+		this.imageLink = imageLink;
+		this.gender = gender;
+		this.dob = dob;
+		this.isActive = isActive;
+		this.role = role;
+		this.resetCode = resetCode;
+		this.balance = balance;
+		this.codeTransaction = codeTransaction;
+		this.cccd = cccd;
+	}
+	public UserDto(Long id) {
+		super();
+		this.id = id;
+	}
+	public UserDto() {
+	}
 }

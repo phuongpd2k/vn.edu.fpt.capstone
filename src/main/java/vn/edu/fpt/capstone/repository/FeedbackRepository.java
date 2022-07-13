@@ -12,7 +12,7 @@ public interface FeedbackRepository extends JpaRepository<FeedbackModel, Long> {
 	@Query(value = "SELECT * FROM feedback f where f.postid= :postId", nativeQuery = true)
 	List<FeedbackModel> findByPostId(@Param("postId") Long postId);
 
-	@Query(value = "SELECT * FROM feedback f where f.postid= :postId and f.userid= :userId", nativeQuery = true)
+	@Query(value = "SELECT * FROM feedback f where f.postid= :postId and f.user_id= :userId", nativeQuery = true)
 	List<FeedbackModel> findByPostIdAndUserId(@Param("postId") Long postId, @Param("userId") Long userId);
 
 	@Query("SELECT COUNT(f) FROM FeedbackModel f WHERE f.id = ?1")

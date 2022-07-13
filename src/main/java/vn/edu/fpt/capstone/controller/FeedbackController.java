@@ -162,7 +162,7 @@ public class FeedbackController {
 				LOGGER.error("postReport: {}", "Can't feedback more than 1");
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
-			FeedbackDto feedbackDto = feedbackService.createFeedback(new FeedbackDto(userDto.getId(),
+			FeedbackDto feedbackDto = feedbackService.createFeedback(new FeedbackDto(userDto,
 					feedbackRequest.getContent(), feedbackRequest.getRating(), feedbackRequest.getPostId()));
 			if (feedbackDto == null) {
 				response.setCode("500");
@@ -209,7 +209,7 @@ public class FeedbackController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			FeedbackDto feedbackDto = feedbackService.findById(feedbackUpdateRequest.getId());
-			if (userDto.getId() != feedbackDto.getUserId()) {
+			if (userDto.getId() != feedbackDto.getUser().getId()) {
 				response.setCode("406");
 				response.setMessage("You can't update this feedback");
 				response.setMessageCode(Message.NOT_ACCEPTABLE);
