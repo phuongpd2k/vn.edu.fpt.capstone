@@ -373,4 +373,9 @@ public class PostServiceImpl implements PostService {
 		return prr;
 	}
 
+	@Override
+	public boolean checkExistCode(String code) {
+		return postRepository.checkExistCode(code);
+	}
+
 }

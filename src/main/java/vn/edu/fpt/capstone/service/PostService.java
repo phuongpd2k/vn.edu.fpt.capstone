@@ -41,4 +41,6 @@ public interface PostService {
 
 	PostingRoomResponse findPostingById(Long id);
 
+	boolean checkExistCode(String code);
+
 }

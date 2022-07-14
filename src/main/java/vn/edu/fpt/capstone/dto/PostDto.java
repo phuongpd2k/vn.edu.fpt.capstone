@@ -51,4 +51,6 @@ public class PostDto extends Auditable<String> {
 
 	private String post_type;
 	private int postCost;
+	
+	private String post_code;
 }

@@ -20,6 +20,7 @@ import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.TransactionDto;
 import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.PostModel;
+import vn.edu.fpt.capstone.model.PostTypeModel;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
@@ -31,6 +32,7 @@ import vn.edu.fpt.capstone.service.PostTypeService;
 import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.TransactionService;
 import vn.edu.fpt.capstone.service.UserService;
+import vn.edu.fpt.capstone.random.RandomString;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +68,9 @@ public class PostController {
 
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private RandomString random;
 
 	@Autowired
 	private Constant constant;
@@ -211,6 +216,17 @@ public class PostController {
 			Long expiredTime = currentDate + addDate;
 			postDto.setEndDate(new Date(expiredTime));
 			postDto.setStatus(constant.UNCENSORED);
+			
+			PostTypeModel postType = postTypeService.getById(postDto.getPostType().getId());
+			
+			postDto.setPostCost(postType.getPrice());
+			postDto.setPost_type(postType.getType());
+			
+			String code = random.generateCode(5);
+			while (postService.checkExistCode(code)) {
+				code = random.generateCode(5);			
+			}
+			postDto.setPost_code(code);
 
 			
 
