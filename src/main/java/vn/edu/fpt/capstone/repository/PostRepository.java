@@ -66,4 +66,8 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " ORDER BY MONTH(p.createdDate)")
 	List<DashBoardData> getDataPostingDashBoardAdmin(int year);
 
+	@Query("select count(p) > 0"
+			+ " from PostModel p where p.post_code = ?1")
+	boolean checkExistCode(String code);
+
 }
