@@ -379,4 +379,10 @@ public class PostServiceImpl implements PostService {
 		return postRepository.checkExistCode(code);
 	}
 
+	@Override
+	public List<String> getAllHouseNamePosting() {
+		Date dateNow = new Date();
+		return postRepository.getAllHouseNamePosting(dateNow);
+	}
+
 }
