@@ -215,7 +215,8 @@ public class PostServiceImpl implements PostService {
 		}
 
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
-		Page<PostModel> result = postRepository.getListPage(key, pageable);
+		Date dateNow = new Date();
+		Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
 		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
 
 		PageableResponse pageableResponse = new PageableResponse();
