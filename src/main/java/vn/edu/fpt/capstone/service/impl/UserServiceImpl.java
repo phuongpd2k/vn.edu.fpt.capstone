@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDto> getAllUser() {
-		List<UserModel> listModel = userRepository.findAll();
+		List<UserModel> listModel = userRepository.findAllByOrderByCreatedDateDesc();
 		if (listModel == null || listModel.isEmpty())
 			return null;
 		return convertToListDto(listModel);
