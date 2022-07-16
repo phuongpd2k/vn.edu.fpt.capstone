@@ -74,4 +74,12 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " from PostModel p where p.post_code = ?1")
 	boolean checkExistCode(String code);
 
+	@Query("select p.house.name from PostModel p where p.enable = true AND p.isActive = true"
+			+ " AND p.status = 'CENSORED'"
+			+ " AND p.endDate >= ?1"
+			+ " AND p.startDate <= ?1"
+			+ " GROUP BY p.house.name"
+			+ " ORDER BY p.postCost")
+	List<String> getAllHouseNamePosting(Date date);
+
 }

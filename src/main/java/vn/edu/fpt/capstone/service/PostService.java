@@ -43,4 +43,6 @@ public interface PostService {
 
 	boolean checkExistCode(String code);
 
+	List<String> getAllHouseNamePosting();
+
 }

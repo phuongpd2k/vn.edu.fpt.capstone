@@ -595,5 +595,19 @@ public class PostController {
 					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
 		}
 	}
+	
+
+	@GetMapping(value = "/posting/house-name")
+	public ResponseEntity<?> getHouseName() {
+		try {
+			List<String> list = postService.getAllHouseNamePosting();
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").messageCode("GET_HOUSE_HISTORY_SUCCESSFULL").results(list).build());
+		} catch (Exception e) {
+			LOGGER.error("get house name posting: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
+		}
+	}
 
 }
