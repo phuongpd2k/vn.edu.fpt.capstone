@@ -9,7 +9,6 @@ import vn.edu.fpt.capstone.model.Auditable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 public class AmenityDto extends Auditable<String>{
 	@JsonProperty(index = 0)
     private Long id;
