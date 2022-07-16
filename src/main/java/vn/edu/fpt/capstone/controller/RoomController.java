@@ -130,12 +130,16 @@ public class RoomController {
 						.message("Create room: id house not exist!").messageCode("ID_HOUSE_NOT_EXIST").build());
 			}
 
-			if (roomService.roomTypeAndRoomCategoryExits(roomDto.getRoomType().getId(),
-					roomDto.getRoomCategory().getId(), roomDto.getHouse().getId())) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(ResponseObject.builder().code("400")
-								.message("Create room: room type and room category existed!")
-								.messageCode("TYPE_AND_CATEGORY_ROOM_EXISTED").build());
+//			if (roomService.roomTypeAndRoomCategoryExits(roomDto.getRoomType().getId(),
+//					roomDto.getRoomCategory().getId(), roomDto.getHouse().getId())) {
+//				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//						.body(ResponseObject.builder().code("400")
+//								.message("Create room: room type and room category existed!")
+//								.messageCode("TYPE_AND_CATEGORY_ROOM_EXISTED").build());
+//			}
+			if (roomService.checkExistRoomName(roomDto.getHouse().getId(), roomDto.getName())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Create room: room name existed!").messageCode("ROOM_NAME_EXISTED").build());
 			}
 
 			if ((roomDto.getRoomCategory().getId() != null)
@@ -230,20 +234,27 @@ public class RoomController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 						.message("Update room: id house not exist!").messageCode("ID_HOUSE_NOT_EXIST").build());
 			}
-
+			
 			RoomDto room = roomService.findById(roomDto.getId());
-
-			if ((room.getRoomType().getId() != roomDto.getRoomType().getId())
-					|| (room.getRoomCategory().getId() != roomDto.getRoomCategory().getId())
-					|| (room.getHouse().getId() != roomDto.getHouse().getId())) {
-				if (roomService.roomTypeAndRoomCategoryExits(roomDto.getRoomType().getId(),
-						roomDto.getRoomCategory().getId(), roomDto.getHouse().getId())) {
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-							.body(ResponseObject.builder().code("400")
-									.message("Create room: room type and room category existed!")
-									.messageCode("TYPE_AND_CATEGORY_ROOM_EXISTED").build());
+			
+			if(!room.getName().trim().equalsIgnoreCase(roomDto.getName().trim())) {
+				if (roomService.checkExistRoomName(roomDto.getHouse().getId(), roomDto.getName())) {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+							.message("Update room: room name existed!").messageCode("ROOM_NAME_EXISTED").build());
 				}
 			}
+
+//			if ((room.getRoomType().getId() != roomDto.getRoomType().getId())
+//					|| (room.getRoomCategory().getId() != roomDto.getRoomCategory().getId())
+//					|| (room.getHouse().getId() != roomDto.getHouse().getId())) {
+//				if (roomService.roomTypeAndRoomCategoryExits(roomDto.getRoomType().getId(),
+//						roomDto.getRoomCategory().getId(), roomDto.getHouse().getId())) {
+//					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//							.body(ResponseObject.builder().code("400")
+//									.message("Create room: room type and room category existed!")
+//									.messageCode("TYPE_AND_CATEGORY_ROOM_EXISTED").build());
+//				}
+//			}
 
 			RoomModel roomModel = roomService.create(roomDto);
 

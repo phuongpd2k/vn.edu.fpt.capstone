@@ -37,4 +37,6 @@ public interface UserRepository extends JpaRepository<UserModel, Long>{
 			+ " ORDER BY MONTH(u.createdDate)")
 	List<DashBoardData> getDataUserDashBoardAdmin(int year);
 	
+	List<UserModel> findAllByOrderByCreatedDateDesc();
+	
 }
