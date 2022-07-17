@@ -29,7 +29,7 @@ public class BankAccountModel extends Auditable<String>{
 	private String username;
 	
 	@Column(name = "NUMBER_ACCOUNT")
-	private Long numberAccount;
+	private String numberAccount;
 	
 	@Column(name = "BRANCH")
 	private String branch;

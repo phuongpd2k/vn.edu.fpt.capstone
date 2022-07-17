@@ -10,5 +10,5 @@ public class BankAccountDto extends Auditable<String> {
 	private String username;
 	private String branch;
 	private String imageUrl;
-	private Long numberAccount;
+	private String numberAccount;
 }
