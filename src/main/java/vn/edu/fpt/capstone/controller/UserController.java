@@ -1,6 +1,9 @@
 package vn.edu.fpt.capstone.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,6 +30,7 @@ import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.dto.UserSearchDto;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.UserListRespone;
+import vn.edu.fpt.capstone.service.MailService;
 import vn.edu.fpt.capstone.service.UserService;
 import vn.edu.fpt.capstone.service.impl.UserServiceImpl;
 import vn.edu.fpt.capstone.validate.Validation;
@@ -47,6 +51,9 @@ public class UserController {
 	
 	@Autowired
 	private Validation validation;
+	
+	@Autowired
+	private MailService mailService;
 	
 	private String regex_username = "^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
 	private String regex_password = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
@@ -199,9 +206,26 @@ public class UserController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/user/lock")
-	public ResponseEntity<?> lockUser(@RequestParam(required = true) Long id) {
+	public ResponseEntity<?> lockUser(@RequestBody UserDto dto) {
 		try {
-			userService.lockUserById(id);
+			UserDto user = userService.getUserById(dto.getId());
+			user.setNote(dto.getNote());
+			user.setActive(false);
+			userService.lockUser(user);
+			// Send mail verify
+			try {
+				mailService.sendMailLockUser(user.getEmail(), user.getUsername(), user.getNote());
+			} catch (UnsupportedEncodingException e) {
+				LOGGER.error("Send mail: " + e.getMessage());
+
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Send email: " + e.getMessage()).messageCode("ERROR_SEND_EMAIL").build());
+			} catch (MessagingException e) {
+				LOGGER.error("Send mail: " + e.getMessage());
+
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Send email: " + e.getMessage()).messageCode("ERROR_SEND_EMAIL").build());
+			}
 
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.message("Lock user successfully!").messageCode("LOCK_USER_SUCCESSFULLY").build());

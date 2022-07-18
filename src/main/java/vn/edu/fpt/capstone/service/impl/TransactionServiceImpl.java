@@ -143,6 +143,7 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.user.codeTransaction LIKE :text5)";
 		}
 
+		whereClause += " order by entity.createdDate desc";
 		sql += whereClause;
 
 		Query query = entityManager.createQuery(sql, TransactionModel.class);
@@ -240,6 +241,7 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.transferType = 'POSTING' OR entity.transferType = 'POSTING_EXTEND')";
 		}
 
+		whereClause += " order by entity.createdDate desc";
 		sql += whereClause;
 
 		Query query = entityManager.createQuery(sql, TransactionModel.class);

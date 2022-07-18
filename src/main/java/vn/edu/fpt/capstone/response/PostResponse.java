@@ -45,4 +45,7 @@ public class PostResponse {
 	
 	private String verify;
 	private String note;
+	
+	private String postCode;
+	private String username;
 }

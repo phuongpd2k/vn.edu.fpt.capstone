@@ -168,6 +168,7 @@ public class UserServiceImpl implements UserService {
 			whereClause += " AND (entity.isActive = false)";
 		}
 
+		whereClause += " order by entity.createdDate desc";
 		sql += whereClause;
 
 		Query query = entityManager.createQuery(sql, UserModel.class);
@@ -184,14 +185,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int getTotalUser() {
 		return userRepository.getTotalUser();
-	}
-
-	@Override
-	public void lockUserById(Long id) {
-		UserModel userModel = userRepository.getById(id);
-		userModel.setActive(false);
-
-		userRepository.save(userModel);
 	}
 
 	@Override
@@ -262,6 +255,12 @@ public class UserServiceImpl implements UserService {
 		userModel.setVerify(true);
 		
 		return userRepository.save(userModel);
+	}
+
+	@Override
+	public void lockUser(UserDto user) {
+		UserModel userModel = modelMapper.map(user, UserModel.class);
+		userRepository.save(userModel);
 	}
 
 }

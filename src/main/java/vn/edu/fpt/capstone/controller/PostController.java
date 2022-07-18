@@ -22,6 +22,7 @@ import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.model.PostTypeModel;
 import vn.edu.fpt.capstone.model.UserModel;
+import vn.edu.fpt.capstone.response.HouseResponse;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
@@ -557,15 +558,16 @@ public class PostController {
 	
 	@PutMapping(value = "/post/verify/fail")
 	// DungTV29
-	public ResponseEntity<?> verifedPostFail(@RequestParam(required = true) Long id) {
+	public ResponseEntity<?> verifedPostFail(@RequestBody PostDto dto) {
 		try {
 			LOGGER.info("rejectPost: {}");
-			PostDto postDto = postService.findById(id);
+			PostDto postDto = postService.findById(dto.getId());
 			if (postDto == null) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Verify post: post not exits").messageCode("VERIFY_POST_FAILED").build());
 			}
-			postDto.setVerify(constant.UNVERIFIED);
+			postDto.setVerify(constant.REJECTED);
+			postDto.setVerifyNote(dto.getVerifyNote());
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -600,7 +602,7 @@ public class PostController {
 	@GetMapping(value = "/posting/house-name")
 	public ResponseEntity<?> getHouseName() {
 		try {
-			List<String> list = postService.getAllHouseNamePosting();
+			List<HouseResponse> list = postService.getAllHouseNamePosting();
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseObject.builder().code("200").messageCode("GET_HOUSE_HISTORY_SUCCESSFULL").results(list).build());
 		} catch (Exception e) {
