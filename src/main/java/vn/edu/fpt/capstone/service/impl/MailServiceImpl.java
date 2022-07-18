@@ -43,12 +43,12 @@ public class MailServiceImpl implements MailService {
 	@Override
 	public void sendMailVerifyCode(String email, String username, String code)
 			throws MessagingException, UnsupportedEncodingException {
-		String subject = "Please verify your registration";
-		String senderName = "Hola Boarding House";
+		String subject = "Xác minh tài khoản";
+		String senderName = "Hola Houses";
 		String verifyURL = "https://holahouses.netlify.app/verify-account?code=" + code;
 
-		String mailContent = "Dear [[name]],<br><br>" + "Please click the link below to verify your registration:<br>"
-				+ "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>" + "Thank you,<br>" + "The Hola Team!";
+		String mailContent = "Dear [[name]],<br><br>" + "Click vào đường link bên dưới để xác minh tài khoản của bạn:<br>"
+				+ "<h3><a href=\"[[URL]]\" target=\"_self\">XÁC NHẬN</a></h3>" + "Cảm ơn,<br>" + "The Hola Team!";
 
 		mailContent = mailContent.replace("[[name]]", username);
 		mailContent = mailContent.replace("[[URL]]", verifyURL);
@@ -71,8 +71,8 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendMailResetPassword(String email) throws UnsupportedEncodingException {
-		String subject = "Forgot Password";
-		String senderName = "Hola Boarding House";
+		String subject = "Đặt lại mật khẩu";
+		String senderName = "Hola Houses";
 		String newPass = random.generatePassword(8);
 		String newPassword = passwordEncoder.encode(newPass);
 		UserModel userModel = userService.findByEmail(email);
@@ -83,8 +83,8 @@ public class MailServiceImpl implements MailService {
 		MimeMessage message = javaMailSender.createMimeMessage();
 		boolean multipart = true;
 
-		String mailContent = "Dear [[name]],<br><br>" + "Your new password is:<br>" + "<h3>[NEW_PASS]</h3>"
-				+ "Thank you,<br>" + "The Hola Team!";
+		String mailContent = "Dear [[name]],<br><br>" + "Mật khẩu mới của bạn là:<br>" + "<h3>[NEW_PASS]</h3>"
+				+ "Cảm ơn,<br>" + "The Hola Team!";
 
 		mailContent = mailContent.replace("[[name]]", userName);
 		mailContent = mailContent.replace("[NEW_PASS]", newPass);
