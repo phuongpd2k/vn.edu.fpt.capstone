@@ -23,6 +23,12 @@ public class PostDto extends Auditable<String> {
 	private String status;
 	private String note;
 	private String verify = "UNVERIFIED";
+	
+	private String post_type;
+	private int postCost;
+	
+	private String post_code;
+	private String verifyNote;
 
 	public PostDto() {
 		super();
@@ -49,8 +55,5 @@ public class PostDto extends Auditable<String> {
 		this.verify = verify;
 	}
 
-	private String post_type;
-	private int postCost;
 	
-	private String post_code;
 }

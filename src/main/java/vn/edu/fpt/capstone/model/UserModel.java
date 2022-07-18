@@ -95,4 +95,7 @@ public class UserModel extends Auditable<String> {
 	
 	@Column(name = "CCCD")
 	private String cccd;
+	
+	@Column(name = "note")
+	private String note;
 }

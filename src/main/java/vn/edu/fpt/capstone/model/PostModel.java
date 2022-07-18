@@ -73,6 +73,9 @@ public class PostModel extends Auditable<String> {
 	
 	@Column(name = "post_code")
 	private String post_code;
+	
+	@Column(name = "verifyNote")
+	private String verifyNote;
 
 //	@Column(name = "TITLE")
 //	private String title;

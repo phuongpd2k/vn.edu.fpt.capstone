@@ -12,4 +12,6 @@ public interface MailService {
 	
 	void sendMailResetPassword(String email) throws UnsupportedEncodingException;
 
+	void sendMailLockUser(String email, String username, String note) throws MessagingException, UnsupportedEncodingException;
+
 }

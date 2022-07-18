@@ -41,8 +41,6 @@ public interface UserService {
 
 	int getTotalUser();
 
-	void lockUserById(Long id);
-
 	void unLockUserById(Long id);
 
 	UserModel findByUserName(String username);
@@ -50,4 +48,6 @@ public interface UserService {
 	boolean existsByEmail(String email);
 
 	UserModel createByAdmin(SignUpDto signUpDto);
+
+	void lockUser(UserDto user);
 }

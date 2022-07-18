@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import vn.edu.fpt.capstone.dto.DashBoardData;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.response.HouseHistoryResponse;
+import vn.edu.fpt.capstone.response.HouseResponse;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostModel, Long> {
@@ -74,12 +75,12 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " from PostModel p where p.post_code = ?1")
 	boolean checkExistCode(String code);
 
-	@Query("select p.house.name from PostModel p where p.enable = true AND p.isActive = true"
+	@Query("select new vn.edu.fpt.capstone.response.HouseResponse(p.house.name, p.house.typeOfRental.name) from PostModel p where p.enable = true AND p.isActive = true"
 			+ " AND p.status = 'CENSORED'"
 			+ " AND p.endDate >= ?1"
 			+ " AND p.startDate <= ?1"
 			+ " GROUP BY p.house.name"
 			+ " ORDER BY p.postCost")
-	List<String> getAllHouseNamePosting(Date date);
+	List<HouseResponse> getAllHouseNamePosting(Date date);
 
 }

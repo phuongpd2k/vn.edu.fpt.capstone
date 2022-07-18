@@ -20,6 +20,7 @@ import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.repository.FeedbackRepository;
 import vn.edu.fpt.capstone.repository.PostRepository;
 import vn.edu.fpt.capstone.repository.PostTypeRepository;
+import vn.edu.fpt.capstone.response.HouseResponse;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
@@ -138,6 +139,9 @@ public class PostServiceImpl implements PostService {
 			postResponse.setImages(Arrays.asList(modelMapper.map(model.getRoom().getImages(), ImageDto[].class)));
 			postResponse.setVerify(model.getVerify());
 			postResponse.setNote(model.getNote());
+			
+			postResponse.setPostCode(model.getPost_code());
+			postResponse.setUsername(model.getHouse().getUser().getUsername());
 			
 			postRes.add(postResponse);
 		}
@@ -380,7 +384,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<String> getAllHouseNamePosting() {
+	public List<HouseResponse> getAllHouseNamePosting() {
 		Date dateNow = new Date();
 		return postRepository.getAllHouseNamePosting(dateNow);
 	}

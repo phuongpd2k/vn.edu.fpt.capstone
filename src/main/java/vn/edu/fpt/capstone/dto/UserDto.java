@@ -64,6 +64,9 @@ public class UserDto extends Auditable<String> {
 	@JsonProperty(index = 14)
 	private String cccd;
 	
+	@JsonProperty(index = 15)
+	private String note;
+	
 	public UserDto(Long id, String username, String email, String password, String fullName, String phoneNumber,
 			String imageLink, boolean gender, Date dob, boolean isActive, RoleDto role, String resetCode, float balance,
 			String codeTransaction, String cccd) {

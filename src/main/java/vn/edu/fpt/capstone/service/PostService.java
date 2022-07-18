@@ -6,6 +6,7 @@ import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.model.PostModel;
+import vn.edu.fpt.capstone.response.HouseResponse;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
@@ -36,13 +37,12 @@ public interface PostService {
 
 	List<PostResponse> findAllFavoritePostByUserId(Long userId);
 
-
 	List<PostingResponse> findTop8Posting();
 
 	PostingRoomResponse findPostingById(Long id);
 
 	boolean checkExistCode(String code);
 
-	List<String> getAllHouseNamePosting();
+	List<HouseResponse> getAllHouseNamePosting();
 
 }

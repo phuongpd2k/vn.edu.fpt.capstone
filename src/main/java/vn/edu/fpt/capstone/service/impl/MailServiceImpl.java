@@ -104,4 +104,32 @@ public class MailServiceImpl implements MailService {
 
 	}
 
+	@Override
+	public void sendMailLockUser(String email, String username, String note)
+			throws MessagingException, UnsupportedEncodingException {
+		String subject = "Thông báo tài khoản bị khóa";
+		String senderName = "Hola Houses";
+
+		String mailContent = "Dear [[name]],<br><br>" + "Nội dung:<br>"
+				+ "<h3>[[note]]</h3>" + "Cảm ơn,<br>" + "The Hola Team!";
+
+		mailContent = mailContent.replace("[[name]]", username);
+		mailContent = mailContent.replace("[[note]]", note);
+
+		MimeMessage message = javaMailSender.createMimeMessage();
+		try {
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			helper.setFrom(sendFrom, senderName);
+			helper.setTo(email);
+			helper.setSubject(subject);
+			helper.setText(mailContent, true);
+			javaMailSender.send(message);
+
+			logger.info("email sent to email: " + email);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 }
