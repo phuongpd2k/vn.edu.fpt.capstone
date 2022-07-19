@@ -45,4 +45,6 @@ public interface PostService {
 
 	List<HouseResponse> getAllHouseNamePosting();
 
+	List<PostingResponse> findAllPostingMap(SearchDto searchDto);
+
 }

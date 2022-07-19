@@ -71,5 +71,5 @@ public class RoomDto extends Auditable<String> {
 	private String type;
 	
 	@JsonProperty("roomMate")
-	private int roomMate;
+	private String roomMate;
 }
