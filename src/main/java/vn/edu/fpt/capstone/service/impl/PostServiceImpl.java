@@ -142,6 +142,7 @@ public class PostServiceImpl implements PostService {
 			
 			postResponse.setPostCode(model.getPost_code());
 			postResponse.setUsername(model.getHouse().getUser().getUsername());
+			postResponse.setVerifyNote(model.getVerifyNote());
 			
 			postRes.add(postResponse);
 		}
