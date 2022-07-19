@@ -87,7 +87,8 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " AND p.status = 'CENSORED'"
 			+ " AND p.endDate >= ?2"
 			+ " AND p.startDate <= ?2"
-			+ " ORDER BY p.postCost")
+			+ " GROUP BY p.house.id"
+			+ " ORDER BY p.postCost")	
 	List<PostModel> getAllPostModelContainKey(String key, Date dateNow);
 
 }

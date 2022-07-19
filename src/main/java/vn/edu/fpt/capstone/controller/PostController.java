@@ -485,6 +485,21 @@ public class PostController {
 		}
 	}
 	
+	@PostMapping(value = "/posting-map")
+	public ResponseEntity<?> getAllPostingMap(@RequestBody SearchDto searchDto) {
+		try {
+			List<PostingResponse> list = postService.findAllPostingMap(searchDto);
+			LOGGER.info("get All posting: {}", list);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Get posting successfully")
+							.messageCode("GET_POSTING_SUCCESSFULLY").results(list).build());
+		} catch (Exception e) {
+			LOGGER.error("getAll posting: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
+		}
+	}
+	
 	@GetMapping(value = "/posting")
 	public ResponseEntity<?> getPosting(@RequestParam("id") Long idPost, @RequestParam(value = "idRoom", required=false) Long idRoom) {
 		try {

@@ -97,7 +97,6 @@ public class RoomModel extends Auditable<String> implements Serializable {
 	@JsonBackReference
 	private List<PostModel> posts;
 	
-	//0: male and female, 1: male, 2: female
 	@Column(name = "roomMate")
-	private int roomMate;
+	private String roomMate;
 }

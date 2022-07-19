@@ -45,7 +45,7 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private PostRepository postRepository;
-	
+
 	@Autowired
 	private FeedbackRepository feedbackRepository;
 
@@ -139,11 +139,11 @@ public class PostServiceImpl implements PostService {
 			postResponse.setImages(Arrays.asList(modelMapper.map(model.getRoom().getImages(), ImageDto[].class)));
 			postResponse.setVerify(model.getVerify());
 			postResponse.setNote(model.getNote());
-			
+
 			postResponse.setPostCode(model.getPost_code());
 			postResponse.setUsername(model.getHouse().getUser().getUsername());
 			postResponse.setVerifyNote(model.getVerifyNote());
-			
+
 			postRes.add(postResponse);
 		}
 		return postRes;
@@ -218,32 +218,21 @@ public class PostServiceImpl implements PostService {
 		} else {
 			pageIndex = 0;
 		}
-		
+
 		List<PostingResponse> listPostingResponse = null;
 		Date dateNow = new Date();
 		PageableResponse pageableResponse = new PageableResponse();
-		
-		if(pageSize < 0) {
-			List<PostModel> result = postRepository.getAllPostModelContainKey(key, dateNow);
-			listPostingResponse = convertToPostingResponse(result);
-			
-			pageableResponse.setCurrentPage(pageIndex + 1);
-			pageableResponse.setPageSize(pageSize);
-			pageableResponse.setTotalPages(1);
-			pageableResponse.setTotalItems(Long.valueOf(result.size()));
-			pageableResponse.setResults(listPostingResponse);
-		}else {
-			Pageable pageable = PageRequest.of(pageIndex, pageSize);
-			
-			Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
-			listPostingResponse = convertToPostingResponse(result.getContent());
-			
-			pageableResponse.setCurrentPage(pageIndex + 1);
-			pageableResponse.setPageSize(pageSize);
-			pageableResponse.setTotalPages(result.getTotalPages());
-			pageableResponse.setTotalItems(result.getTotalElements());
-			pageableResponse.setResults(listPostingResponse);
-		}
+
+		Pageable pageable = PageRequest.of(pageIndex, pageSize);
+
+		Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
+		listPostingResponse = convertToPostingResponse(result.getContent());
+
+		pageableResponse.setCurrentPage(pageIndex + 1);
+		pageableResponse.setPageSize(pageSize);
+		pageableResponse.setTotalPages(result.getTotalPages());
+		pageableResponse.setTotalItems(result.getTotalElements());
+		pageableResponse.setResults(listPostingResponse);
 
 		return pageableResponse;
 	}
@@ -251,31 +240,25 @@ public class PostServiceImpl implements PostService {
 	private List<PostingResponse> convertToPostingResponse(List<PostModel> list) {
 		List<PostingResponse> listPostingResponse = new ArrayList<PostingResponse>();
 		for (PostModel p : list) {
-			
+
 			Long idHouse = p.getHouse().getId();
 			QuanHuyenDto dto = new QuanHuyenDto();
 			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
-			
-			int amountRating = feedbackRepository.getAmountByPostId(p.getId());	
+
+			int amountRating = feedbackRepository.getAmountByPostId(p.getId());
 			float rating = 0;
-			
-			if(amountRating > 0) {
-				rating = feedbackRepository.getTotalRatingByPostId(p.getId())/amountRating;
+
+			if (amountRating > 0) {
+				rating = feedbackRepository.getTotalRatingByPostId(p.getId()) / amountRating;
 			}
-			
-			PostingResponse pr = PostingResponse.builder()
-				.post(modelMapper.map(p, PostDto.class))
-				.minPrice(roomService.minPrice(idHouse))
-				.maxPrice(roomService.maxPrice(idHouse))
-				.minArea(roomService.minArea(idHouse))
-				.maxArea(roomService.maxArea(idHouse))
-				.street(p.getHouse().getAddress().getStreet())
-				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
-				.quanHuyen(dto.getName())
-				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
-				.amountRating(amountRating)
-				.rating(rating)
-				.build();
+
+			PostingResponse pr = PostingResponse.builder().post(modelMapper.map(p, PostDto.class))
+					.minPrice(roomService.minPrice(idHouse)).maxPrice(roomService.maxPrice(idHouse))
+					.minArea(roomService.minArea(idHouse)).maxArea(roomService.maxArea(idHouse))
+					.street(p.getHouse().getAddress().getStreet())
+					.phuongXa(p.getHouse().getAddress().getPhuongXa().getName()).quanHuyen(dto.getName())
+					.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName()).amountRating(amountRating)
+					.rating(rating).build();
 			pr.getPost().getRoom().setHouse(null);
 			listPostingResponse.add(pr);
 		}
@@ -289,7 +272,7 @@ public class PostServiceImpl implements PostService {
 			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
 			postModel.setCost(postModel.getCost() + postDto.getNumberOfDays() * costPerDay);
 			postModel.setNumberOfDays(postModel.getNumberOfDays() + postDto.getNumberOfDays());
-			
+
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 			if (postDto.getStartDate() == null) {
 				long currentDate = postModel.getEndDate().getTime();
@@ -301,7 +284,6 @@ public class PostServiceImpl implements PostService {
 				postModel.setStartDate(postDto.getStartDate());
 				postModel.setEndDate(new Date(expiredTime));
 			}
-			
 
 			return postRepository.save(postModel);
 		}
@@ -359,36 +341,31 @@ public class PostServiceImpl implements PostService {
 		List<PostResponse> postRes = convertEntity2Response(postModels);
 		return postRes;
 	}
-	
+
 	@Override
 	public List<PostingResponse> findTop8Posting() {
 		Date dateNow = new Date();
 		List<PostModel> listPost = postRepository.findTop8(dateNow);
-		
+
 		return convertToPostingResponse(listPost);
 	}
 
 	@Override
 	public PostingRoomResponse findPostingById(Long id) {
 		PostModel p = postRepository.getById(id);
-		if(p == null) {
+		if (p == null) {
 			return null;
 		}
 		Long idHouse = p.getHouse().getId();
 		QuanHuyenDto dto = new QuanHuyenDto();
 		dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
-		
-		PostingRoomResponse prr = PostingRoomResponse.builder()
-			.post(modelMapper.map(p, PostDto.class))
-			.minPrice(roomService.minPrice(idHouse))
-			.maxPrice(roomService.maxPrice(idHouse))
-			.minArea(roomService.minArea(idHouse))
-			.maxArea(roomService.maxArea(idHouse))
-			.street(p.getHouse().getAddress().getStreet())
-			.phuongXa(p.getHouse().getAddress().getPhuongXa().getName())
-			.quanHuyen(dto.getName())
-			.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
-			.build();
+
+		PostingRoomResponse prr = PostingRoomResponse.builder().post(modelMapper.map(p, PostDto.class))
+				.minPrice(roomService.minPrice(idHouse)).maxPrice(roomService.maxPrice(idHouse))
+				.minArea(roomService.minArea(idHouse)).maxArea(roomService.maxArea(idHouse))
+				.street(p.getHouse().getAddress().getStreet())
+				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName()).quanHuyen(dto.getName())
+				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName()).build();
 		prr.getPost().getRoom().setHouse(null);
 		prr.getPost().getHouse().setRooms(Arrays.asList(modelMapper.map(p.getHouse().getRoom(), RoomDto[].class)));
 		return prr;
@@ -403,6 +380,27 @@ public class PostServiceImpl implements PostService {
 	public List<HouseResponse> getAllHouseNamePosting() {
 		Date dateNow = new Date();
 		return postRepository.getAllHouseNamePosting(dateNow);
+	}
+
+	@Override
+	public List<PostingResponse> findAllPostingMap(SearchDto searchDto) {
+		if (searchDto == null) {
+			return null;
+		}
+
+		String key = searchDto.getKeyword();
+		
+		if (searchDto.getKeyword() == null) {
+			key = "";
+		}
+
+		List<PostingResponse> listPostingResponse = null;
+		Date dateNow = new Date();
+
+		List<PostModel> result = postRepository.getAllPostModelContainKey(key, dateNow);
+		listPostingResponse = convertToPostingResponse(result);
+
+		return listPostingResponse;
 	}
 
 }
