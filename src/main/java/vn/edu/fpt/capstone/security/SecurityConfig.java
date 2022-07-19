@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						"/api/roomCategory", "/api/roomCategory/*", "/api/house/*", "/api/house"
 						,"/api/roomType/*","/api/roomType","/api/amenity","/api/amenity/*",
 						"/api/posting", "/api/phuongxa/*", "/api/phuongxa", "/api/quanhuyen/*", "/api/quanhuyen", "/api/thanhpho/*",
-						"/api/thanhpho", "/api/posting/**","/api/feedback/**")
+						"/api/thanhpho", "/api/posting/**","/api/feedback/**","/api/posting-map")
 				.permitAll().
 				// all other requests need to be authenticated
 				anyRequest().authenticated().and().
