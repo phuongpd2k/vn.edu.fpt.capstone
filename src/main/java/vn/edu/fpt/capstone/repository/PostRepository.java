@@ -83,4 +83,11 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " ORDER BY p.postCost")
 	List<HouseResponse> getAllHouseNamePosting(Date date);
 
+	@Query("select p from PostModel p where p.enable = true AND p.isActive = true AND p.house.name LIKE %?1%"
+			+ " AND p.status = 'CENSORED'"
+			+ " AND p.endDate >= ?2"
+			+ " AND p.startDate <= ?2"
+			+ " ORDER BY p.postCost")
+	List<PostModel> getAllPostModelContainKey(String key, Date dateNow);
+
 }

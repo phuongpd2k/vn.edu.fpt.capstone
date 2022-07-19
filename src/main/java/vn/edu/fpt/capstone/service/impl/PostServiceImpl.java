@@ -218,18 +218,32 @@ public class PostServiceImpl implements PostService {
 		} else {
 			pageIndex = 0;
 		}
-
-		Pageable pageable = PageRequest.of(pageIndex, pageSize);
+		
+		List<PostingResponse> listPostingResponse = null;
 		Date dateNow = new Date();
-		Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
-		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
-
 		PageableResponse pageableResponse = new PageableResponse();
-		pageableResponse.setCurrentPage(pageIndex + 1);
-		pageableResponse.setPageSize(pageSize);
-		pageableResponse.setTotalPages(result.getTotalPages());
-		pageableResponse.setTotalItems(result.getTotalElements());
-		pageableResponse.setResults(listPostingResponse);
+		
+		if(pageSize < 0) {
+			List<PostModel> result = postRepository.getAllPostModelContainKey(key, dateNow);
+			listPostingResponse = convertToPostingResponse(result);
+			
+			pageableResponse.setCurrentPage(pageIndex + 1);
+			pageableResponse.setPageSize(pageSize);
+			pageableResponse.setTotalPages(1);
+			pageableResponse.setTotalItems(Long.valueOf(result.size()));
+			pageableResponse.setResults(listPostingResponse);
+		}else {
+			Pageable pageable = PageRequest.of(pageIndex, pageSize);
+			
+			Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
+			listPostingResponse = convertToPostingResponse(result.getContent());
+			
+			pageableResponse.setCurrentPage(pageIndex + 1);
+			pageableResponse.setPageSize(pageSize);
+			pageableResponse.setTotalPages(result.getTotalPages());
+			pageableResponse.setTotalItems(result.getTotalElements());
+			pageableResponse.setResults(listPostingResponse);
+		}
 
 		return pageableResponse;
 	}
