@@ -286,7 +286,7 @@ public class PostController {
 			}
 			throw new Exception();
 		} catch (Exception e) {
-			LOGGER.error("confirmExtend: {}", e);
+			LOGGER.error("confirmPost: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Confirm post: " + e.getMessage()).messageCode("CONFIRM_POST_FAILED").build());
 		}
@@ -367,6 +367,32 @@ public class PostController {
 			LOGGER.error("deleteExtend: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Delete post: " + e.getMessage()).messageCode("DELETED_POST_FAILED").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping(value = "/post/restore")
+	// DungTV29
+	public ResponseEntity<?> restorePost(@RequestParam(required = true) Long id) {
+		try {
+			LOGGER.info("restorePost: {}");
+			PostDto postDto = postService.findById(id);
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Restore post: post not exits").messageCode("RESTORE_POST_FAILED").build());
+			}
+			postDto.setStatus(constant.CENSORED);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Restore post: successfully").messageCode("RESTORE_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("restorePost: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Restore post: " + e.getMessage()).messageCode("RESTORE_POST_FAILED").build());
 		}
 	}
 
@@ -507,8 +533,10 @@ public class PostController {
 	}
 	
 	@PostMapping(value = "/post/verify")
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
 	// DungTV29
-	public ResponseEntity<?> verifyPost(@RequestParam(required = true) Long id) {
+	public ResponseEntity<?> verifyPost(@RequestParam(required = true) Long id, 
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
 			LOGGER.info("rejectPost: {}");
 			PostDto postDto = postService.findById(id);
@@ -517,7 +545,44 @@ public class PostController {
 						.message("Verify post: post not exits").messageCode("VERIFY_POST_FAILED").build());
 			}
 			postDto.setVerify(constant.WAITING);
+			
+			UserModel userModel = userService.getUserInformationByToken(jwtToken);
+			if (userModel == null) {
+				throw new Exception();
+			}
+			int cost = 100000;
+			if (cost > userModel.getBalance()) {
+				LOGGER.error("verifyPost: {}", "Not enough money for verify post");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("Verify post: not enough money!").messageCode("MONEY_NOT_ENOUGH").build());
+			} else {
+				userModel.setBalance(userModel.getBalance() - cost);
+			}
 
+			// Update balance in user
+			UserModel user2 = userService.updateUser(modelMapper.map(userModel, UserDto.class));
+			if (user2 == null) {
+				LOGGER.error("verifyPost: {}", "update user fail");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+						.message("Verify post: update user fail").messageCode("VERIFY_POST_FAILED").build());
+			}
+			
+			TransactionDto transactionDto = new TransactionDto();
+			transactionDto.setAction("MINUS");
+			transactionDto.setAmount(cost);
+			transactionDto.setLastBalance(userModel.getBalance());
+			transactionDto.setStatus(constant.SUCCESS);
+			transactionDto.setTransferType("VERIFY");
+			transactionDto.setTransferContent("Xác thực");
+			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
+			
+			transactionDto.setPostId(postDto.getId());
+			
+			TransactionDto model2 = transactionService.createTransaction(transactionDto);
+			if (model2 == null) {
+				throw new Exception();
+			}
+			
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
 				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")

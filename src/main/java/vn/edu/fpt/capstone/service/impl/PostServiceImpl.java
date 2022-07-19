@@ -142,6 +142,7 @@ public class PostServiceImpl implements PostService {
 			
 			postResponse.setPostCode(model.getPost_code());
 			postResponse.setUsername(model.getHouse().getUser().getUsername());
+			postResponse.setVerifyNote(model.getVerifyNote());
 			
 			postRes.add(postResponse);
 		}
@@ -217,18 +218,32 @@ public class PostServiceImpl implements PostService {
 		} else {
 			pageIndex = 0;
 		}
-
-		Pageable pageable = PageRequest.of(pageIndex, pageSize);
+		
+		List<PostingResponse> listPostingResponse = null;
 		Date dateNow = new Date();
-		Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
-		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
-
 		PageableResponse pageableResponse = new PageableResponse();
-		pageableResponse.setCurrentPage(pageIndex + 1);
-		pageableResponse.setPageSize(pageSize);
-		pageableResponse.setTotalPages(result.getTotalPages());
-		pageableResponse.setTotalItems(result.getTotalElements());
-		pageableResponse.setResults(listPostingResponse);
+		
+		if(pageSize < 0) {
+			List<PostModel> result = postRepository.getAllPostModelContainKey(key, dateNow);
+			listPostingResponse = convertToPostingResponse(result);
+			
+			pageableResponse.setCurrentPage(pageIndex + 1);
+			pageableResponse.setPageSize(pageSize);
+			pageableResponse.setTotalPages(1);
+			pageableResponse.setTotalItems(Long.valueOf(result.size()));
+			pageableResponse.setResults(listPostingResponse);
+		}else {
+			Pageable pageable = PageRequest.of(pageIndex, pageSize);
+			
+			Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
+			listPostingResponse = convertToPostingResponse(result.getContent());
+			
+			pageableResponse.setCurrentPage(pageIndex + 1);
+			pageableResponse.setPageSize(pageSize);
+			pageableResponse.setTotalPages(result.getTotalPages());
+			pageableResponse.setTotalItems(result.getTotalElements());
+			pageableResponse.setResults(listPostingResponse);
+		}
 
 		return pageableResponse;
 	}
@@ -272,8 +287,9 @@ public class PostServiceImpl implements PostService {
 		PostModel postModel = postRepository.getById(postDto.getId());
 		if (postModel != null) {
 			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
-			postModel.setCost(postDto.getNumberOfDays() * costPerDay);
-
+			postModel.setCost(postModel.getCost() + postDto.getNumberOfDays() * costPerDay);
+			postModel.setNumberOfDays(postModel.getNumberOfDays() + postDto.getNumberOfDays());
+			
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 			if (postDto.getStartDate() == null) {
 				long currentDate = postModel.getEndDate().getTime();
@@ -284,8 +300,8 @@ public class PostServiceImpl implements PostService {
 				Long expiredTime = currentDate + addDate;
 				postModel.setStartDate(postDto.getStartDate());
 				postModel.setEndDate(new Date(expiredTime));
-
 			}
+			
 
 			return postRepository.save(postModel);
 		}

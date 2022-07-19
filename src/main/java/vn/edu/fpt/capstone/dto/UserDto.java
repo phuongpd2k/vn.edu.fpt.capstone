@@ -38,7 +38,7 @@ public class UserDto extends Auditable<String> {
 	private String imageLink;
 
 	@JsonProperty(index = 7)
-	private boolean gender;
+	private boolean gender = true;
 
 	@JsonProperty(index = 8)
 	private Date dob;

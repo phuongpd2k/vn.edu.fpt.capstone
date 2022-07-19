@@ -2,7 +2,6 @@ package vn.edu.fpt.capstone.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString.Exclude;
 
 import java.util.ArrayList;
 import java.util.Collection;

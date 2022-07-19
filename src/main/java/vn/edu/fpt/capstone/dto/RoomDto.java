@@ -44,7 +44,7 @@ public class RoomDto extends Auditable<String> {
 	private boolean status_rental;
 	
 	@JsonProperty("enable")
-	private boolean enable;
+	private boolean enable = true;
 	
 	@JsonProperty("electricityPriceByNumber")
 	private int electricityPriceByNumber;
@@ -69,4 +69,7 @@ public class RoomDto extends Auditable<String> {
 	
 	@JsonProperty("type")
 	private String type;
+	
+	@JsonProperty("roomMate")
+	private int roomMate;
 }
