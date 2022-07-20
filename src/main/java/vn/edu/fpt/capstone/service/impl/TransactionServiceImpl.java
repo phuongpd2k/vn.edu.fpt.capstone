@@ -271,4 +271,10 @@ public class TransactionServiceImpl implements TransactionService {
 		return convertToListDto(list);
 	}
 
+	@Override
+	public TransactionDto findByPostIdAndTransferTypePosting(Long id) {
+		TransactionModel tr = transactionRepository.findByPostIdAndTransferTypePosting(id);
+		return modelMapper.map(tr, TransactionDto.class);
+	}
+
 }

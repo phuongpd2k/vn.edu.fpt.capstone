@@ -29,6 +29,8 @@ public class PostDto extends Auditable<String> {
 	
 	private String post_code;
 	private String verifyNote;
+	
+	private Date deletedDate;
 
 	public PostDto() {
 		super();

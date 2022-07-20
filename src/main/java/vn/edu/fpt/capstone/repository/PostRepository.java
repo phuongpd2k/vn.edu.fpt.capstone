@@ -75,7 +75,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " from PostModel p where p.post_code = ?1")
 	boolean checkExistCode(String code);
 
-	@Query("select new vn.edu.fpt.capstone.response.HouseResponse(p.house.name, p.house.typeOfRental.name) from PostModel p where p.enable = true AND p.isActive = true"
+	@Query("select new vn.edu.fpt.capstone.response.HouseResponse(p.house.name, p.house.typeOfRental.name, p.verify) from PostModel p where p.enable = true AND p.isActive = true"
 			+ " AND p.status = 'CENSORED'"
 			+ " AND p.endDate >= ?1"
 			+ " AND p.startDate <= ?1"

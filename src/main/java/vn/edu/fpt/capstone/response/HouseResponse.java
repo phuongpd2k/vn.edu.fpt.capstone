@@ -10,4 +10,5 @@ import lombok.Data;
 public class HouseResponse {
 	private String name;
 	private String typeOfrental;
+	private String verify;
 }

@@ -14,4 +14,6 @@ public interface MailService {
 
 	void sendMailLockUser(String email, String username, String note) throws MessagingException, UnsupportedEncodingException;
 
+	void sendMailVerifyFail(String email, String username, String verifyNote) throws MessagingException, UnsupportedEncodingException;
+
 }

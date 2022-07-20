@@ -28,6 +28,7 @@ import vn.edu.fpt.capstone.response.PostResponse;
 import vn.edu.fpt.capstone.response.PostingResponse;
 import vn.edu.fpt.capstone.response.PostingRoomResponse;
 import vn.edu.fpt.capstone.service.HouseService;
+import vn.edu.fpt.capstone.service.MailService;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.PostTypeService;
 import vn.edu.fpt.capstone.service.RoomService;
@@ -35,6 +36,9 @@ import vn.edu.fpt.capstone.service.TransactionService;
 import vn.edu.fpt.capstone.service.UserService;
 import vn.edu.fpt.capstone.random.RandomString;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -75,6 +79,9 @@ public class PostController {
 
 	@Autowired
 	private Constant constant;
+	
+	@Autowired
+	private MailService mailService;
 
 	public static int TIMESTAMP_DAY = 86400000;
 
@@ -245,6 +252,7 @@ public class PostController {
 			transactionDto.setTransferType("POSTING");
 			transactionDto.setTransferContent("Đăng tin");
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
+			transactionDto.setNote("Chờ kiểm duyệt bài đăng");
 			
 			transactionDto.setPostId(model.getId());
 			
@@ -274,10 +282,22 @@ public class PostController {
 						.message("Confirm post: post not exits").messageCode("CONFIRM_POST_FAILED").build());
 			}
 			postDto.setStatus(constant.CENSORED);
-			Calendar c = Calendar.getInstance();
-	        c.setTime(new Date());
-	        c.add(Calendar.DATE, postDto.getNumberOfDays());
-	        postDto.setEndDate(c.getTime());
+
+	        long currentDate = (new Date()).getTime();
+	        long startDate = postDto.getStartDate().getTime();
+	        long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
+	        if(currentDate > startDate) {	
+				Long expiredTime = currentDate + addDate;
+				postDto.setEndDate(new Date(expiredTime));
+	        }else {
+	        	Long expiredTime = startDate + addDate;
+				postDto.setEndDate(new Date(expiredTime));
+	        }
+	            
+	        TransactionDto tr = transactionService.findByPostIdAndTransferTypePosting(id);
+	        tr.setNote("Đăng tin thành công");
+	        
+	        transactionService.updateTransaction(tr);
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -327,6 +347,7 @@ public class PostController {
 			transactionDto.setUser(modelMapper.map(user, UserDto.class));
 			transactionDto.setNote(post.getNote());	
 			transactionDto.setPostId(postDto.getId());
+			transactionDto.setNote("Đăng tin thất bại " + post.getNote());
 			
 			transactionService.createTransaction(transactionDto);		
 
@@ -356,6 +377,7 @@ public class PostController {
 			}
 			postDto.setStatus(constant.DELETED);
 			postDto.setNote(post.getNote());
+			postDto.setDeletedDate(new Date());
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -382,6 +404,16 @@ public class PostController {
 						.message("Restore post: post not exits").messageCode("RESTORE_POST_FAILED").build());
 			}
 			postDto.setStatus(constant.CENSORED);
+			
+			long deletedDate = postDto.getDeletedDate().getTime();
+	        long endDate = postDto.getEndDate().getTime();
+	        long expDate = endDate - deletedDate;
+	        long currentDate = (new Date()).getTime();
+	        
+	        if(expDate >= 0) {
+	        	long endDateNew = currentDate + expDate;
+	        	postDto.setEndDate(new Date(endDateNew));
+	        }
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -448,6 +480,7 @@ public class PostController {
 			transactionDto.setTransferContent("Gia hạn");
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
 			transactionDto.setPostId(pd.getId());
+			transactionDto.setNote("Gia hạn bài đăng thành công");
 
 			// Create transaction
 			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
@@ -621,7 +654,7 @@ public class PostController {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Verify post: post not exits").messageCode("VERIFY_POST_FAILED").build());
 			}
-			postDto.setVerify(constant.VERIFIED);
+			postDto.setVerify(constant.VERIFIED);	
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -648,6 +681,9 @@ public class PostController {
 			}
 			postDto.setVerify(constant.REJECTED);
 			postDto.setVerifyNote(dto.getVerifyNote());
+			
+			mailService.sendMailVerifyFail(postDto.getHouse().getUser().getEmail(), postDto.getHouse().getUser().getUsername(),
+					postDto.getVerifyNote());
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
