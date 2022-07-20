@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.AddressDto;
 import vn.edu.fpt.capstone.dto.AmenityDto;
-import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.HouseDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.model.UserModel;

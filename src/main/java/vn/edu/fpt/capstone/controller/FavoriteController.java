@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.constant.Message;
@@ -16,11 +15,9 @@ import vn.edu.fpt.capstone.dto.request.FavoriteRequest;
 import vn.edu.fpt.capstone.dto.response.FavoriteResponse;
 import vn.edu.fpt.capstone.service.FavoriteService;
 import vn.edu.fpt.capstone.service.PostService;
-import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.UserService;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")

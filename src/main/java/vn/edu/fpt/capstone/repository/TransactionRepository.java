@@ -57,4 +57,7 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 			+ " GROUP BY MONTH(t.createdDate)"
 			+ " ORDER BY MONTH(t.createdDate)")
 	List<DashBoardDataFloat> getDataPostingExtendDashBoardHost(Long id, int year);
+
+	@Query("SELECT t FROM TransactionModel t WHERE t.postId = ?1 AND t.transferType = 'POSTING'")
+	TransactionModel findByPostIdAndTransferTypePosting(Long id);
 }
