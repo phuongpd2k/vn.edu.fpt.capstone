@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Constant {
 	
+	public final int COST_VERIFY = 200000;
 	public final String VERIFIED = "VERIFIED";
 	public final String UNVERIFIED = "UNVERIFIED";
 	public final String WAITING = "WAITING";
