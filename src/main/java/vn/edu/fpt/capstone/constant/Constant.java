@@ -24,5 +24,6 @@ public class Constant {
 	public final String SUCCESS = "SUCCESS";
 	public final String PLUS = "PLUS";
 	public final String MINUS = "MINUS";
+	public String VERIFIED_AGAIN = "VERIFIED_AGAIN";
 	
 }
