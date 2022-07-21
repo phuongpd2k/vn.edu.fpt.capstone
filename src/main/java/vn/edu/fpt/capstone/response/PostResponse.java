@@ -27,6 +27,7 @@ public class PostResponse {
 	private int numberOfDays;
 	private String status;
 	
+	private Long roomId;
 	private String roomType;
 	private String roomCategory;
 	private double area;
@@ -50,4 +51,5 @@ public class PostResponse {
 	private String username;
 	
 	private String verifyNote;
+	
 }

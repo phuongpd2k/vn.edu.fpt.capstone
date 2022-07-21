@@ -36,11 +36,7 @@ import vn.edu.fpt.capstone.service.TransactionService;
 import vn.edu.fpt.capstone.service.UserService;
 import vn.edu.fpt.capstone.random.RandomString;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -364,7 +360,7 @@ public class PostController {
 		}
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD')")
 	@PutMapping(value = "/post/delete")
 	// DungTV29
 	public ResponseEntity<?> deletedPost(@RequestBody PostDto post) {
@@ -395,15 +391,16 @@ public class PostController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/post/restore")
 	// DungTV29
-	public ResponseEntity<?> restorePost(@RequestParam(required = true) Long id) {
+	public ResponseEntity<?> restorePost(@RequestBody PostDto post) {
 		try {
 			LOGGER.info("restorePost: {}");
-			PostDto postDto = postService.findById(id);
+			PostDto postDto = postService.findById(post.getId());
 			if (postDto == null) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Restore post: post not exits").messageCode("RESTORE_POST_FAILED").build());
 			}
 			postDto.setStatus(constant.CENSORED);
+			postDto.setNote(post.getNote());
 			
 			long deletedDate = postDto.getDeletedDate().getTime();
 	        long endDate = postDto.getEndDate().getTime();
@@ -630,6 +627,31 @@ public class PostController {
 			if (model2 == null) {
 				throw new Exception();
 			}
+			
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Verify post: successfully").messageCode("VERIFY_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("Verify post: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Verify post: " + e.getMessage()).messageCode("VERIFY_POST_FAILED").build());
+		}
+	}
+	
+	@PostMapping(value = "/post/verify-again")
+	public ResponseEntity<?> verifyAgainPost(@RequestParam(required = true) Long id, 
+			@RequestHeader(value = "Authorization") String jwtToken) {
+		try {
+			LOGGER.info("rejectPost: {}");
+			PostDto postDto = postService.findById(id);
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Verify post: post not exits").messageCode("VERIFY_POST_FAILED").build());
+			}
+			postDto.setVerify(constant.VERIFIED_AGAIN);
 			
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {

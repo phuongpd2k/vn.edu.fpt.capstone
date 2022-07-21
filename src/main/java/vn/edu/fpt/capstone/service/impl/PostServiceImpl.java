@@ -123,7 +123,7 @@ public class PostServiceImpl implements PostService {
 
 			postResponse.setRoomType(model.getRoom().getRoomType().getName());
 			postResponse.setRoomCategory(model.getRoom().getRoomCategory().getName());
-			postResponse.setArea(model.getRoom().getArea());
+			postResponse.setArea(model.getHouse().getArea());
 			postResponse.setRentalPrice(model.getRoom().getRentalPrice());
 
 			postResponse.setStreet(model.getHouse().getAddress().getStreet());
@@ -143,6 +143,7 @@ public class PostServiceImpl implements PostService {
 			postResponse.setPostCode(model.getPost_code());
 			postResponse.setUsername(model.getHouse().getUser().getUsername());
 			postResponse.setVerifyNote(model.getVerifyNote());
+			postResponse.setRoomId(model.getRoom().getId());
 
 			postRes.add(postResponse);
 		}
