@@ -595,7 +595,7 @@ public class PostController {
 			if (userModel == null) {
 				throw new Exception();
 			}
-			int cost = 100000;
+			int cost = constant.COST_VERIFY;
 			if (cost > userModel.getBalance()) {
 				LOGGER.error("verifyPost: {}", "Not enough money for verify post");
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
@@ -668,15 +668,18 @@ public class PostController {
 	
 	@PutMapping(value = "/post/verify")
 	// DungTV29
-	public ResponseEntity<?> verifedPostOk(@RequestParam(required = true) Long id) {
+	public ResponseEntity<?> verifedPostOk(@RequestBody PostDto dto) {
 		try {
 			LOGGER.info("rejectPost: {}");
-			PostDto postDto = postService.findById(id);
+			PostDto postDto = postService.findById(dto.getId());
 			if (postDto == null) {
 				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
 						.message("Verify post: post not exits").messageCode("VERIFY_POST_FAILED").build());
 			}
 			postDto.setVerify(constant.VERIFIED);	
+			if(dto.getVerifyNote() != null) {
+				postDto.setVerifyNote(dto.getVerifyNote());
+			}
 
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
