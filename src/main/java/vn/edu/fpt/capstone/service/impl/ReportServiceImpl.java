@@ -5,11 +5,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import vn.edu.fpt.capstone.dto.ImageDto;
+import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.ReportDto;
+import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.model.ReportModel;
 import vn.edu.fpt.capstone.repository.ReportRepository;
+import vn.edu.fpt.capstone.response.PostResponse;
+import vn.edu.fpt.capstone.service.QuanHuyenService;
 import vn.edu.fpt.capstone.service.ReportService;
+import vn.edu.fpt.capstone.service.ThanhPhoService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +29,12 @@ public class ReportServiceImpl implements ReportService {
 	ReportRepository reportRepository;
 	@Autowired
 	ModelMapper modelMapper;
+	
+	@Autowired
+	private QuanHuyenService quanHuyenService;
+
+	@Autowired
+	private ThanhPhoService thanhPhoService;
 
 	@Override
 	public ReportDto findById(Long id) {
@@ -34,8 +48,58 @@ public class ReportServiceImpl implements ReportService {
 		if (reportModels == null || reportModels.isEmpty()) {
 			return null;
 		}
-		List<ReportDto> reportDtos = Arrays.asList(modelMapper.map(reportModels, ReportDto[].class));
+		//List<ReportDto> reportDtos = Arrays.asList(modelMapper.map(reportModels, ReportDto[].class));
+		List<ReportDto> reportDtos = convertToListDto(reportModels);
 		return reportDtos;
+	}
+
+	private List<ReportDto> convertToListDto(List<ReportModel> reportModels) {
+		List<ReportDto> list = new ArrayList<ReportDto>();
+		for (ReportModel r : reportModels) {
+			ReportDto dto = new ReportDto(r.getUserId(), r.getContent(), convertToPostResponse(r.getPost()));
+			list.add(dto);
+		}
+		return list;
+	}
+
+	private PostResponse convertToPostResponse(PostModel model) {
+		PostResponse postResponse = new PostResponse();
+		postResponse.setId(model.getId());
+		postResponse.setPostTypeId(model.getPostType().getId());
+		postResponse.setPostType(model.getPostType().getType());
+		postResponse.setRoomName(model.getRoom().getName());
+		postResponse.setHouseName(model.getHouse().getName());
+		postResponse.setStartDate(model.getStartDate());
+		postResponse.setEndDate(model.getEndDate());
+		postResponse.setCost(model.getCost());
+		postResponse.setNumberOfDays(model.getNumberOfDays());
+		postResponse.setStatus(model.getStatus());
+
+		postResponse.setRoomType(model.getRoom().getRoomType().getName());
+		postResponse.setRoomCategory(model.getRoom().getRoomCategory().getName());
+		postResponse.setArea(model.getHouse().getArea());
+		postResponse.setRentalPrice(model.getRoom().getRentalPrice());
+
+		postResponse.setStreet(model.getHouse().getAddress().getStreet());
+		postResponse.setPhuongXa(model.getHouse().getAddress().getPhuongXa().getName());
+		QuanHuyenDto dto = new QuanHuyenDto();
+		dto = quanHuyenService.findById(model.getHouse().getAddress().getPhuongXa().getMaQh());
+		postResponse.setQuanHuyen(dto.getName());
+		postResponse.setThanhPho(thanhPhoService.findById(dto.getMaTp()).getName());
+
+		postResponse.setHostName(model.getHouse().getUser().getFullName());
+		postResponse.setHostPhone(model.getHouse().getUser().getPhoneNumber());
+
+		postResponse.setImages(Arrays.asList(modelMapper.map(model.getRoom().getImages(), ImageDto[].class)));
+		postResponse.setVerify(model.getVerify());
+		postResponse.setNote(model.getNote());
+
+		postResponse.setPostCode(model.getPost_code());
+		postResponse.setUsername(model.getHouse().getUser().getUsername());
+		postResponse.setVerifyNote(model.getVerifyNote());
+		postResponse.setRoomId(model.getRoom().getId());
+		
+		return postResponse;
 	}
 
 	@Override
