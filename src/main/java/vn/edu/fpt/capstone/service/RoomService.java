@@ -24,4 +24,5 @@ public interface RoomService {
 	
 	List<RoomDto> getRoomFavoriteByUserId(Long userId);
 	boolean checkExistRoomName(Long id, String name);
+	void update(RoomDto roomDto);
 }

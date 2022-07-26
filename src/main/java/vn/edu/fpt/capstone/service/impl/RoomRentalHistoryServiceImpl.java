@@ -10,12 +10,8 @@ import vn.edu.fpt.capstone.model.RoomRentalHistoryModel;
 import vn.edu.fpt.capstone.repository.RoomRentalHistoryRepository;
 import vn.edu.fpt.capstone.service.RoomRentalHistoryService;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @Service
 public class RoomRentalHistoryServiceImpl implements RoomRentalHistoryService {

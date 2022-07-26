@@ -1,6 +1,7 @@
 package vn.edu.fpt.capstone.service.impl;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -152,12 +153,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDto> getAllUserSearch(UserSearchDto userSearch) {
+	public List<UserDto> getAllUserSearch(UserSearchDto userSearch) {	
 		String sql = "select entity from UserModel as entity where (1=1) ";
 		String whereClause = "";
 
-		if (!userSearch.getKeyword().isEmpty()) {
+		if (!userSearch.getFullname().isEmpty()) {
 			whereClause += " AND ( entity.fullName LIKE :text)";
+		}
+		
+		if (!userSearch.getUsername().isEmpty()) {
+			whereClause += " AND ( entity.username LIKE :text2)";
+		}
+		
+		if (userSearch.getFromDate() != null) {
+			whereClause += " AND (entity.createdDate >= :text3)";
+		}
+
+		if (userSearch.getToDate() != null) {
+			whereClause += " AND (entity.createdDate <= :text4)";
 		}
 
 		if (userSearch.getIsActive() == 1) {
@@ -173,8 +186,23 @@ public class UserServiceImpl implements UserService {
 
 		Query query = entityManager.createQuery(sql, UserModel.class);
 
-		if (!userSearch.getKeyword().isEmpty()) {
-			query.setParameter("text", '%' + userSearch.getKeyword().trim() + '%');
+		if (!userSearch.getFullname().isEmpty()) {
+			query.setParameter("text", '%' + userSearch.getFullname().trim() + '%');
+		}
+		
+		if (!userSearch.getUsername().isEmpty()) {
+			query.setParameter("text2", '%' + userSearch.getUsername().trim() + '%');
+		}
+
+		long millisInDay = 60 * 60 * 24 * 1000;
+
+		long dateFrom = (userSearch.getFromDate() / millisInDay) * millisInDay;
+		if (userSearch.getFromDate() != null) {
+			query.setParameter("text3", new Date(dateFrom));
+		}
+
+		if (userSearch.getToDate() != null) {
+			query.setParameter("text4", new Date(userSearch.getToDate()));
 		}
 
 		@SuppressWarnings("unchecked")

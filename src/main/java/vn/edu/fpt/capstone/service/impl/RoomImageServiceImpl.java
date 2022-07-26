@@ -10,12 +10,8 @@ import vn.edu.fpt.capstone.model.RoomImageModel;
 import vn.edu.fpt.capstone.repository.RoomImageRepository;
 import vn.edu.fpt.capstone.service.RoomImageService;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @Service
 public class RoomImageServiceImpl implements RoomImageService {

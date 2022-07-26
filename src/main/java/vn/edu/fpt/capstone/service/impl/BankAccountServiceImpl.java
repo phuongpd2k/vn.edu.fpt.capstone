@@ -7,11 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import vn.edu.fpt.capstone.controller.BankAccountController;
 import vn.edu.fpt.capstone.dto.BankAccountDto;
 import vn.edu.fpt.capstone.dto.ListIdDto;
-import vn.edu.fpt.capstone.model.AmenityModel;
 import vn.edu.fpt.capstone.model.BankAccountModel;
 import vn.edu.fpt.capstone.repository.BankAccountRepository;
 import vn.edu.fpt.capstone.service.BankAccountService;

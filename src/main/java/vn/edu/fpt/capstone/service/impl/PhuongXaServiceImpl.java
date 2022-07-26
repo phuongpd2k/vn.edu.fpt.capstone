@@ -1,8 +1,6 @@
 package vn.edu.fpt.capstone.service.impl;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,6 @@ import java.util.List;
 
 @Service
 public class PhuongXaServiceImpl implements PhuongXaService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PhuongXaServiceImpl.class);
     ModelMapper mapperDTO2Entity = new ModelMapper();
     @Autowired
     PhuongXaRepository phuongXaRepository;

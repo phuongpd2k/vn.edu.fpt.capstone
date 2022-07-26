@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.ImageDto;
 import vn.edu.fpt.capstone.dto.PostDto;
+import vn.edu.fpt.capstone.dto.PostSearchDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -402,6 +404,65 @@ public class PostServiceImpl implements PostService {
 		listPostingResponse = convertToPostingResponse(result);
 
 		return listPostingResponse;
+	}
+
+	@Override
+	public List<PostResponse> findAllPostSearch(PostSearchDto dto) {
+		String sql = "select entity from PostModel as entity where (1=1) ";
+		String whereClause = "";
+
+		if (!dto.getFullname().isEmpty()) {
+			whereClause += " AND ( entity.house.user.fullName LIKE :text)";
+		}
+		
+		if (!dto.getUsername().isEmpty()) {
+			whereClause += " AND ( entity.house.user.fullName.username LIKE :text2)";
+		}
+		
+		if (dto.getFromDate() != null) {
+			whereClause += " AND (entity.createdDate >= :text3)";
+		}
+
+		if (dto.getToDate() != null) {
+			whereClause += " AND (entity.createdDate <= :text4)";
+		}
+		
+		if (!dto.getPostCode().isEmpty()) {
+			whereClause += " AND ( entity.post_code LIKE :text5)";
+		}
+
+		whereClause += " order by entity.createdDate desc";
+		sql += whereClause;
+
+		Query query = entityManager.createQuery(sql, UserModel.class);
+
+		if (!dto.getFullname().isEmpty()) {
+			query.setParameter("text", '%' + dto.getFullname().trim() + '%');
+		}
+		
+		if (!dto.getUsername().isEmpty()) {
+			query.setParameter("text2", '%' + dto.getUsername().trim() + '%');
+		}
+
+		long millisInDay = 60 * 60 * 24 * 1000;
+
+		long dateFrom = (dto.getFromDate() / millisInDay) * millisInDay;
+		if (dto.getFromDate() != null) {
+			query.setParameter("text3", new Date(dateFrom));
+		}
+
+		if (dto.getToDate() != null) {
+			query.setParameter("text4", new Date(dto.getToDate()));
+		}
+		
+		if (!dto.getPostCode().isEmpty()) {
+			query.setParameter("text5", '%' + dto.getPostCode().trim() + '%');
+		}
+
+
+		@SuppressWarnings("unchecked")
+		List<PostModel> list = query.getResultList();
+		return convertEntity2Response(list);
 	}
 
 }
