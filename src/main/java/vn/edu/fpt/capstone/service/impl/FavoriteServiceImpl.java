@@ -10,12 +10,8 @@ import vn.edu.fpt.capstone.model.FavoriteModel;
 import vn.edu.fpt.capstone.repository.FavoriteRepository;
 import vn.edu.fpt.capstone.service.FavoriteService;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @Service
 public class FavoriteServiceImpl implements FavoriteService {

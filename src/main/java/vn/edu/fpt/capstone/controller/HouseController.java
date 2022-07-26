@@ -16,6 +16,7 @@ import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.AddressDto;
 import vn.edu.fpt.capstone.dto.AmenityDto;
 import vn.edu.fpt.capstone.dto.HouseDto;
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.HouseHistoryResponse;
@@ -506,6 +507,34 @@ public class HouseController {
 
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Get house history: " + e.getMessage()).messageCode("INTERNAL_SERVER_ERROR").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_LANDLORD') || hasRole('ROLE_ADMIN')")
+	@DeleteMapping(value = "/house/delete-by-list")
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
+	public ResponseEntity<ResponseObject> deleteHouseByListId(@RequestBody ListIdDto dto) {
+		try {
+			if (dto.getList().size() == 0) {
+				LOGGER.error("deleteHouseByListId: {}", "Wrong body format or list id null");
+
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("List id house null").messageCode("DELETE_HOUSE_BY_LIST_ID_FAIL").build());
+			}
+			for (Long id : dto.getList()) {
+				HouseDto houseDto = houseService.findById(id);
+				houseDto.setEnable(false);
+				houseService.updateHouse(houseDto);
+			}
+
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").messageCode("DELETE_HOUSE_BY_LIST_ID_SUCCESSFULL").build());
+		} catch (Exception e) {
+			LOGGER.error("deleteHouseByListId: {}", e);
+			LOGGER.error(e.toString());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("deleteHouseByListId: " + e.getMessage()).messageCode("INTERNAL_SERVER_ERROR").build());
 		}
 	}
 }

@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import vn.edu.fpt.capstone.constant.Constant;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.PostDto;
+import vn.edu.fpt.capstone.dto.PostSearchDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.dto.TransactionDto;
@@ -750,6 +751,21 @@ public class PostController {
 			LOGGER.error("get house name posting: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
+		}
+	}
+	
+	@PostMapping(value = "/post/search")
+	public ResponseEntity<ResponseObject> postSearch(@RequestBody PostSearchDto dto) {
+		try {
+			List<PostResponse> list = postService.findAllPostSearch(dto);
+			
+			LOGGER.info("getAllPostSearch: {}");
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").messageCode("GET_POST_SEARCH_SUCCESSFULL").results(list).build());
+		} catch (Exception ex) {
+			LOGGER.error("getAllPostSearch: {}", ex);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get posting: " + ex.getMessage()).messageCode("GET_POST_SEARCH_FAILED").build());
 		}
 	}
 

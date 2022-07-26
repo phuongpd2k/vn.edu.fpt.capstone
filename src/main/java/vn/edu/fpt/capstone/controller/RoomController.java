@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.capstone.dto.RoomDto;
@@ -19,6 +21,7 @@ import vn.edu.fpt.capstone.response.RoomPostingResponse;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.HouseDto;
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.PostService;
 import vn.edu.fpt.capstone.service.RoomService;
@@ -308,6 +311,34 @@ public class RoomController {
 			LOGGER.error("getAll posting: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
 					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
+		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_LANDLORD') || hasRole('ROLE_ADMIN')")
+	@DeleteMapping(value = "/room/delete-by-list")
+	@Transactional(rollbackFor = { Exception.class, Throwable.class })
+	public ResponseEntity<ResponseObject> deleteRoomBylistId(@RequestBody ListIdDto dto) {
+		try {
+			if (dto.getList().size() == 0) {
+				LOGGER.error("deleteRoomByListId: {}", "Wrong body format or list id null");
+
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+						.message("List id house null").messageCode("DELETE_ROOM_BY_LIST_ID_FAIL").build());
+			}
+			for (Long id : dto.getList()) {
+				RoomDto roomDto = roomService.findById(id);
+				roomDto.setEnable(false);
+				roomService.update(roomDto);
+			}
+
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").messageCode("DELETE_ROOM_BY_LIST_ID_SUCCESSFULL").build());
+		} catch (Exception e) {
+			LOGGER.error("delete room: {}", e);
+			LOGGER.error(e.toString());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("delete room: " + e.getMessage()).messageCode("INTERNAL_SERVER_ERROR").build());
 		}
 	}
 

@@ -36,7 +36,7 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.amount))"
 			+ " FROM TransactionModel t"
 			+ " WHERE YEAR(t.createdDate) = ?1"
-			+ " AND (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS'"
+			+ " AND (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND' OR t.transferType = 'VERIFY') AND t.status = 'SUCCESS'"
 			+ " GROUP BY MONTH(t.createdDate)"
 			+ " ORDER BY MONTH(t.createdDate)")
 	List<DashBoardDataFloat> getDataRevenueDashBoardAdmin(int year);

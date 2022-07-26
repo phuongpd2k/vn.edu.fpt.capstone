@@ -9,16 +9,11 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.RoomCategoryDto;
 import vn.edu.fpt.capstone.model.RoomCategoryModel;
-import vn.edu.fpt.capstone.model.TypeOfRentalModel;
 import vn.edu.fpt.capstone.repository.RoomCategoryRepository;
 import vn.edu.fpt.capstone.service.RoomCategoryService;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 @Service
 public class RoomCategoryServiceImpl implements RoomCategoryService {

@@ -229,4 +229,11 @@ public class RoomServiceImpl implements RoomService {
 		return roomRepository.checkExistRoomName(id, name);
 	}
 
+	@Override
+	public void update(RoomDto roomDto) {
+		RoomModel roomModel = modelMapper.map(roomDto, RoomModel.class);
+		roomRepository.save(roomModel);
+		
+	}
+
 }

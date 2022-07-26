@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.capstone.dto.AmenityDto;
 import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.model.AmenityModel;
-import vn.edu.fpt.capstone.model.TypeOfRentalModel;
 import vn.edu.fpt.capstone.repository.AmenityRepository;
 import vn.edu.fpt.capstone.service.AmenityService;
 
