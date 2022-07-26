@@ -156,8 +156,11 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text2", '%' + search.getUsername().trim() + '%');
 		}
 
+		long millisInDay = 60 * 60 * 24 * 1000;
+
+		long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
 		if (search.getFromDate() != null) {
-			query.setParameter("text3", new Date(search.getFromDate()));
+			query.setParameter("text3", new Date(dateFrom));
 		}
 
 		if (search.getToDate() != null) {

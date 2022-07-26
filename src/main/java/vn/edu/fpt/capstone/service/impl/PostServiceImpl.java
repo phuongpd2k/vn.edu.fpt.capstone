@@ -348,7 +348,9 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostingResponse> findTop8Posting() {
 		Date dateNow = new Date();
-		List<PostModel> listPost = postRepository.findTop8(dateNow);
+		Pageable pageable = PageRequest.of(0, 8);
+		Page<PostModel> result = postRepository.getFilterPageTop8(dateNow, pageable);
+		List<PostModel> listPost = result.getContent();
 
 		return convertToPostingResponse(listPost);
 	}
