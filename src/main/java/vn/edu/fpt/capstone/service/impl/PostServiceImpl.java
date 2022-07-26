@@ -447,9 +447,9 @@ public class PostServiceImpl implements PostService {
 		}
 
 		long millisInDay = 60 * 60 * 24 * 1000;
-
-		long dateFrom = (dto.getFromDate() / millisInDay) * millisInDay;
+	
 		if (dto.getFromDate() != null) {
+			long dateFrom = (dto.getFromDate() / millisInDay) * millisInDay;
 			query.setParameter("text3", new Date(dateFrom));
 		}
 

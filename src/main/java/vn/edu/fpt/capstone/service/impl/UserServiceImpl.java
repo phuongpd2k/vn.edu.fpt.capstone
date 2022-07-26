@@ -195,9 +195,9 @@ public class UserServiceImpl implements UserService {
 		}
 
 		long millisInDay = 60 * 60 * 24 * 1000;
-
-		long dateFrom = (userSearch.getFromDate() / millisInDay) * millisInDay;
+		
 		if (userSearch.getFromDate() != null) {
+			long dateFrom = (userSearch.getFromDate() / millisInDay) * millisInDay;
 			query.setParameter("text3", new Date(dateFrom));
 		}
 

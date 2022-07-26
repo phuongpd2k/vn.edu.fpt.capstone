@@ -162,8 +162,8 @@ public class TransactionServiceImpl implements TransactionService {
 
 		long millisInDay = 60 * 60 * 24 * 1000;
 
-		long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
 		if (search.getFromDate() != null) {
+			long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
 			query.setParameter("text3", new Date(dateFrom));
 		}
 
@@ -266,9 +266,9 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		
 		long millisInDay = 60 * 60 * 24 * 1000;
-
-		long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
+		
 		if (search.getFromDate() != null) {
+			long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
 			query.setParameter("text3", new Date(dateFrom));
 		}
 
