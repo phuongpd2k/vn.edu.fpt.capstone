@@ -127,7 +127,7 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.status = :text)";
 		}
 
-		if (search.getUsername() != null) {
+		if (search.getFullName() != null) {
 			whereClause += " AND (entity.user.fullName LIKE :text2)";
 		}
 
@@ -142,6 +142,10 @@ public class TransactionServiceImpl implements TransactionService {
 		if (search.getUserCode() != null) {
 			whereClause += " AND (entity.user.codeTransaction LIKE :text5)";
 		}
+		
+		if (search.getUsername() != null) {
+			whereClause += " AND (entity.user.username LIKE :text6)";
+		}
 
 		whereClause += " order by entity.createdDate desc";
 		sql += whereClause;
@@ -152,8 +156,8 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text", search.getStatus().trim());
 		}
 
-		if (search.getUsername() != null) {
-			query.setParameter("text2", '%' + search.getUsername().trim() + '%');
+		if (search.getFullName() != null) {
+			query.setParameter("text2", '%' + search.getFullName().trim() + '%');
 		}
 
 		long millisInDay = 60 * 60 * 24 * 1000;
@@ -169,6 +173,10 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		if (search.getUserCode() != null) {
 			query.setParameter("text5", '%' + search.getUserCode().trim() + '%');
+		}
+		
+		if (search.getUsername() != null) {
+			query.setParameter("text6", '%' + search.getUsername().trim() + '%');
 		}
 
 		@SuppressWarnings("unchecked")
