@@ -29,7 +29,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " AND p.status = 'CENSORED'"
 			+ " AND p.endDate >= ?2"
 			+ " AND p.startDate <= ?2"
-			+ " ORDER BY p.postCost")
+			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
 	Page<PostModel> getListPage(String houseName, Date dateNow, Pageable pageable);
 
 	@Query("SELECT new vn.edu.fpt.capstone.response.HouseHistoryResponse(p.postType.type, p.cost, p.startDate, p.endDate, p.status) FROM PostModel p WHERE p.createdBy = ?1 AND p.house.id = ?2")
@@ -98,12 +98,30 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	List<PostModel> getAllPostModelContainKey(String key, Date dateNow);
 
 	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
-			+ " AND p.house.user.isActive = true"
-			+ " AND p.house.enable = true"
-			+ " AND p.status = 'CENSORED'"
-			+ " AND p.endDate >= ?1"
-			+ " AND p.startDate <= ?1"
-			+ " ORDER BY p.postCost")
+	+ " AND p.house.user.isActive = true"
+	+ " AND p.house.enable = true"
+	+ " AND p.status = 'CENSORED'"
+	+ " AND p.endDate >= ?1"
+	+ " AND p.startDate <= ?1"
+	+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
 	Page<PostModel> getFilterPageTop8(Date date, Pageable pageable);
+	
+//	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
+//			+ " AND p.house.user.isActive = true"
+//			+ " AND p.house.enable = true"
+//			+ " AND p.status = 'CENSORED'"
+//			+ " AND p.endDate >= ?1"
+//			+ " AND p.startDate <= ?1"
+//			+ " ORDER BY p.postCost")
 
+	
+//	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
+//			+ " AND p.house.user.isActive = true"
+//			+ " AND p.house.enable = true"
+//			+ " AND p.status = 'CENSORED'"
+//			+ " AND p.endDate >= ?1"
+//			+ " AND p.startDate <= ?1"
+//			+ " ORDER BY (CASE p.verify"
+//			+ "   WHEN 'VERIFIED' THEN 1"
+//			+ "   ELSE 2 END) ASC, p.postCost DESC")
 }
