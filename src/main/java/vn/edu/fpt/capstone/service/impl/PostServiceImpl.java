@@ -418,7 +418,7 @@ public class PostServiceImpl implements PostService {
 		}
 		
 		if (!dto.getUsername().isEmpty()) {
-			whereClause += " AND ( entity.house.user.fullName.username LIKE :text2)";
+			whereClause += " AND ( entity.house.user.username LIKE :text2)";
 		}
 		
 		if (dto.getFromDate() != null) {
@@ -436,7 +436,7 @@ public class PostServiceImpl implements PostService {
 		whereClause += " order by entity.createdDate desc";
 		sql += whereClause;
 
-		Query query = entityManager.createQuery(sql, UserModel.class);
+		Query query = entityManager.createQuery(sql, PostModel.class);
 
 		if (!dto.getFullname().isEmpty()) {
 			query.setParameter("text", '%' + dto.getFullname().trim() + '%');
@@ -458,7 +458,7 @@ public class PostServiceImpl implements PostService {
 		}
 		
 		if (!dto.getPostCode().isEmpty()) {
-			query.setParameter("text5", '%' + dto.getPostCode().trim() + '%');
+			query.setParameter("text5", '%' + dto.getPostCode().trim().toLowerCase() + '%');
 		}
 
 
