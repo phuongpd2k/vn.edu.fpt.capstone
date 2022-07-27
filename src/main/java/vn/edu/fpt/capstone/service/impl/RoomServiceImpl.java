@@ -97,9 +97,9 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public Page<RoomModel> getPage(int pageSize, int pageIndex, Long houseId) {
+	public Page<RoomModel> getPage(int pageSize, int pageIndex, String name, Long houseId) {
 		Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-		return roomRepository.getListPage(houseId, pageable);
+		return roomRepository.getListPage(houseId, name, pageable);
 	}
 
 	@Override

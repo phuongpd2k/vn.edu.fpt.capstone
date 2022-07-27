@@ -13,7 +13,7 @@ public interface RoomService {
     boolean removeRoom(Long id);
     boolean isExist(Long id);
     RoomModel create(RoomDto roomDto);
-    Page<RoomModel> getPage(int pageSize, int pageIndex, Long houseId);
+    Page<RoomModel> getPage(int pageSize, int pageIndex, String name, Long houseId);
 	void deleteRoom(Long id);
 	int maxPrice(Long idHouse);
 	int minPrice(Long id);
