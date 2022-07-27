@@ -103,9 +103,13 @@ public class RoomController {
 
 	@PostMapping(value = "/room/page")
 	public ResponseEntity<?> getAllRoomByHouseId(@RequestParam(required = true) int pageIndex,
-			@RequestParam(required = true) int pageSize, @RequestBody HouseDto houseDto) {
+			@RequestParam(required = true) int pageSize,
+			@RequestParam(required = false) String name, @RequestBody HouseDto houseDto) {
 		try {
-			Page<RoomModel> page = roomService.getPage(pageSize, pageIndex, houseDto.getId());
+			if(name == null || name.isEmpty()) {
+				name = "";
+			}
+			Page<RoomModel> page = roomService.getPage(pageSize, pageIndex, name, houseDto.getId());
 			List<RoomDto> list = Arrays.asList(modelMapper.map(page.getContent(), RoomDto[].class));
 
 			PageableResponse pageableResponse = new PageableResponse();
