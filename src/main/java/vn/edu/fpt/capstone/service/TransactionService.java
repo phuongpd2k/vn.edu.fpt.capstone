@@ -32,4 +32,6 @@ public interface TransactionService {
 
 	TransactionDto findByPostIdAndTransferTypePosting(Long id);
 
+	List<TransactionResponse> searchV2(SearchTransactionDto search);
+
 }

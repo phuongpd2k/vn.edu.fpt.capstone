@@ -291,4 +291,62 @@ public class TransactionServiceImpl implements TransactionService {
 		return modelMapper.map(tr, TransactionDto.class);
 	}
 
+	@Override
+	public List<TransactionResponse> searchV2(SearchTransactionDto search) {
+		String sql = "select entity from TransactionModel as entity where (1=1)";
+		String whereClause = "";
+
+		if (search.getTransactionCode() != null) {
+			whereClause += " AND (entity.code LIKE :text)";
+		}
+
+		if (search.getTransactionType() != null) {
+			whereClause += " AND (entity.transferType = :text2)";
+		}
+
+		if (search.getFromDate() != null) {
+			whereClause += " AND (entity.createdDate >= :text3)";
+		}
+
+		if (search.getToDate() != null) {
+			whereClause += " AND (entity.createdDate <= :text4)";
+		}
+		
+		if(search.getStatus() != null) {
+			whereClause += " AND (entity.status = :text5)";
+		}
+
+		whereClause += " order by entity.createdDate desc";
+		sql += whereClause;
+
+		Query query = entityManager.createQuery(sql, TransactionModel.class);
+
+		if (search.getTransactionCode() != null) {
+			query.setParameter("text", '%' + search.getTransactionCode().trim().toLowerCase() + '%');
+		}
+
+		if (search.getTransactionType() != null) {
+			query.setParameter("text2", search.getTransactionType().trim());
+		}
+		
+		long millisInDay = 60 * 60 * 24 * 1000;
+		
+		if (search.getFromDate() != null) {
+			long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
+			query.setParameter("text3", new Date(dateFrom));
+		}
+
+		if (search.getToDate() != null) {
+			query.setParameter("text4", new Date(search.getToDate()));
+		}
+		
+		if (search.getStatus() != null) {
+			query.setParameter("text5", search.getStatus());
+		}
+
+		@SuppressWarnings("unchecked")
+		List<TransactionModel> list = query.getResultList();
+		return convertToListDto(list);
+	}
+
 }

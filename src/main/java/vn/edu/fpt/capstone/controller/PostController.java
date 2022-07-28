@@ -157,7 +157,7 @@ public class PostController {
 		}
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD')")
 	@PostMapping(value = "/post")
 	// DungTV29
 	@Transactional(rollbackFor = { Exception.class, Throwable.class })
@@ -266,6 +266,33 @@ public class PostController {
 					.message("Create post: " + e.getMessage()).messageCode("CREATE_POST_FAILED").build());
 		}
 	}
+	
+	@PreAuthorize("hasRole('ROLE_LANDLORD')")
+	@DeleteMapping(value = "/post")
+	// DungTV29
+	public ResponseEntity<?> deletedPostByHost(@RequestParam(required = true) Long id) {
+		try {
+			LOGGER.info("deletePost: {}");
+			PostDto postDto = postService.findById(id);
+			if (postDto == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseObject.builder().code("406")
+						.message("Delete post: post not exits").messageCode("DELETED_POST_FAILED").build());
+			}
+			postDto.setDeletedDate(new Date());
+			postDto.setEnable(false);
+
+			PostModel model = postService.confirmPost(postDto);
+			if (model != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+						.message("Delete post: successfully").messageCode("DELETED_POST_SUCCESSFULLY").build());
+			}
+			throw new Exception();
+		} catch (Exception e) {
+			LOGGER.error("deleteExtend: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Delete post: " + e.getMessage()).messageCode("DELETED_POST_FAILED").build());
+		}
+	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/post/confirm")
@@ -293,6 +320,7 @@ public class PostController {
 	            
 	        TransactionDto tr = transactionService.findByPostIdAndTransferTypePosting(id);
 	        tr.setNote("Đăng tin thành công");
+	        tr.setDateVerify(new Date());
 	        
 	        transactionService.updateTransaction(tr);
 
@@ -361,7 +389,7 @@ public class PostController {
 		}
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping(value = "/post/delete")
 	// DungTV29
 	public ResponseEntity<?> deletedPost(@RequestBody PostDto post) {
@@ -375,7 +403,8 @@ public class PostController {
 			postDto.setStatus(constant.DELETED);
 			postDto.setNote(post.getNote());
 			postDto.setDeletedDate(new Date());
-
+			postDto.setEnable(false);
+			
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
 				return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
@@ -402,6 +431,7 @@ public class PostController {
 			}
 			postDto.setStatus(constant.CENSORED);
 			postDto.setNote(post.getNote());
+			postDto.setEnable(true);
 			
 			long deletedDate = postDto.getDeletedDate().getTime();
 	        long endDate = postDto.getEndDate().getTime();

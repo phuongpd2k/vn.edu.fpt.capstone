@@ -3,6 +3,8 @@ package vn.edu.fpt.capstone.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
+
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -55,5 +57,8 @@ public class TransactionModel extends Auditable<String> {
 	
 	@Column(name = "post_id")
     private Long postId;
+	
+	@Column(name = "date_verify")
+	private Date dateVerify = null;
 
 }

@@ -597,6 +597,21 @@ public class TransactionController {
 					.message("Search failed: " + e.getMessage()).messageCode("SEARCH_TRANSACTION_FAILED").build());
 		}
 	}
+	
+	@PostMapping(value = "/transaction/search/v2")
+	public ResponseEntity<?> searchTransactionV2(@RequestBody SearchTransactionDto search) {
+		try {
+			List<TransactionResponse> list = transactionService.searchV2(search);
+
+			LOGGER.error("searchTransaction: {}");
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.messageCode("SEARCH_TRANSACTION_SUCCESSFULL").results(list).build());
+		} catch (Exception e) {
+			LOGGER.error("searchTransaction: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Search failed: " + e.getMessage()).messageCode("SEARCH_TRANSACTION_FAILED").build());
+		}
+	}
 
 	@PostMapping(value = "/transaction/search/post-or-extend")
 	public ResponseEntity<?> searchTransactionPostOrExtend(@RequestBody SearchTransactionDto search) {

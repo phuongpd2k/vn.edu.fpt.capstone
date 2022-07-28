@@ -1,5 +1,7 @@
 package vn.edu.fpt.capstone.dto;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,5 +45,8 @@ public class TransactionDto extends Auditable<String> {
 	
 	@JsonProperty(index = 11)
 	private Long postId;
+	
+	@JsonProperty(index = 12)
+	private Date dateVerify = null;
 	
 }
