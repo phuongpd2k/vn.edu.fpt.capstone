@@ -57,6 +57,8 @@ public class ReportServiceImpl implements ReportService {
 		List<ReportDto> list = new ArrayList<ReportDto>();
 		for (ReportModel r : reportModels) {
 			ReportDto dto = new ReportDto(r.getUserId(), r.getContent(), convertToPostResponse(r.getPost()));
+			dto.setCreatedDate(r.getCreatedDate());
+			dto.setCreatedBy(r.getCreatedBy());
 			list.add(dto);
 		}
 		return list;

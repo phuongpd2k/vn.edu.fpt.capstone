@@ -29,4 +29,5 @@ public class TransactionResponse {
 	private String note;
 	private Date lastModifiedDate;
 	private float lastBalance;
+	private Date dateVerify;
 }
