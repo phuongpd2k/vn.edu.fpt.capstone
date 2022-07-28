@@ -22,6 +22,7 @@ import vn.edu.fpt.capstone.service.UserService;
 import vn.edu.fpt.capstone.constant.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -527,6 +528,7 @@ public class TransactionController {
 			dto.setActualAmount(transactionDto.getActualAmount());
 			dto.setLastBalance(userDto.getBalance());
 			dto.setNote(transactionDto.getNote());
+			dto.setDateVerify(new Date());
 
 			TransactionDto transactionDto2 = transactionService.createTransaction(dto);
 			if (transactionDto2 == null) {
