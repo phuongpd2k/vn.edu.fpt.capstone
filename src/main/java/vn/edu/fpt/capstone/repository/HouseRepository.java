@@ -23,7 +23,7 @@ public interface HouseRepository extends JpaRepository<HouseModel, Long> {
 	@Query("SELECT COUNT(u) FROM HouseModel u")
 	int getTotalAmountHouse();
 
-	@Query("SELECT COUNT(u) FROM HouseModel u WHERE u.user.id = ?1")
+	@Query("SELECT COUNT(u) FROM HouseModel u WHERE u.user.id = ?1 AND u.enable = true")
 	int getTotalAmountHouseHost(Long id);
 
 }
