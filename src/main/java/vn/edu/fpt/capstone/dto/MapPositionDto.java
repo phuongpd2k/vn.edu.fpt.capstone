@@ -14,7 +14,7 @@ public class MapPositionDto extends Auditable<String>{
     private String name;
     
 	@JsonProperty(index = 2)
-    private String longtitude;
+    private String longitude;
     
 	@JsonProperty(index = 3)
     private String latitude;

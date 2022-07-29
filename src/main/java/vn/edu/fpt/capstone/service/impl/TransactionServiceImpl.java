@@ -300,20 +300,24 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.code LIKE :text)";
 		}
 
-		if (search.getTransactionType() != null) {
-			whereClause += " AND (entity.transferType = :text2)";
+		if (!search.getTransactionType().getTransferType().trim().isEmpty()) {
+			whereClause += " AND (entity.transferType LIKE :text2)";
+		}
+		
+		if (!search.getTransactionType().getAction().trim().isEmpty()) {
+			whereClause += " AND (entity.action LIKE :text3)";
 		}
 
 		if (search.getFromDate() != null) {
-			whereClause += " AND (entity.createdDate >= :text3)";
+			whereClause += " AND (entity.createdDate >= :text4)";
 		}
 
 		if (search.getToDate() != null) {
-			whereClause += " AND (entity.createdDate <= :text4)";
+			whereClause += " AND (entity.createdDate <= :text5)";
 		}
 		
-		if(search.getStatus() != null) {
-			whereClause += " AND (entity.status = :text5)";
+		if(!search.getStatus().trim().isEmpty()) {
+			whereClause += " AND (entity.status LIKE :text6)";
 		}
 
 		whereClause += " order by entity.createdDate desc";
@@ -325,23 +329,27 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text", '%' + search.getTransactionCode().trim().toLowerCase() + '%');
 		}
 
-		if (search.getTransactionType() != null) {
-			query.setParameter("text2", search.getTransactionType().trim());
+		if (!search.getTransactionType().getTransferType().trim().isEmpty()) {
+			query.setParameter("text2", search.getTransactionType().getTransferType().trim());
+		}
+		
+		if (!search.getTransactionType().getAction().trim().isBlank()) {
+			query.setParameter("text3", search.getTransactionType().getAction().trim());
 		}
 		
 		long millisInDay = 60 * 60 * 24 * 1000;
 		
 		if (search.getFromDate() != null) {
 			long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
-			query.setParameter("text3", new Date(dateFrom));
+			query.setParameter("text4", new Date(dateFrom));
 		}
 
 		if (search.getToDate() != null) {
-			query.setParameter("text4", new Date(search.getToDate()));
+			query.setParameter("text5", new Date(search.getToDate()));
 		}
 		
-		if (search.getStatus() != null) {
-			query.setParameter("text5", search.getStatus());
+		if (!search.getStatus().trim().isEmpty()) {
+			query.setParameter("text6", search.getStatus().trim());
 		}
 
 		@SuppressWarnings("unchecked")
