@@ -2,18 +2,20 @@ package vn.edu.fpt.capstone.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Data;
 import vn.edu.fpt.capstone.model.Auditable;
 
+@Data
 public class MapPositionDto extends Auditable<String>{
-	@JsonProperty("id")
+	@JsonProperty(index = 0)
     private Long id;
 	
-	@JsonProperty("name")
+	@JsonProperty(index = 1)
     private String name;
     
-	@JsonProperty("longiude")
-    private String longiude;
+	@JsonProperty(index = 2)
+    private String longtitude;
     
-	@JsonProperty("latitude")
+	@JsonProperty(index = 3)
     private String latitude;
 }
