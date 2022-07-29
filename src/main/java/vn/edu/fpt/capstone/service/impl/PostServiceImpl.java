@@ -17,6 +17,7 @@ import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
 import vn.edu.fpt.capstone.model.PostModel;
+import vn.edu.fpt.capstone.model.RoomModel;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.repository.FeedbackRepository;
 import vn.edu.fpt.capstone.repository.PostRepository;
@@ -364,6 +365,12 @@ public class PostServiceImpl implements PostService {
 		Long idHouse = p.getHouse().getId();
 		QuanHuyenDto dto = new QuanHuyenDto();
 		dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
+		
+		List<RoomModel> listRoomModel = new ArrayList<RoomModel>();
+		for (RoomModel r : p.getHouse().getRoom()) {
+			if(r.isEnable() == true)
+				listRoomModel.add(r);
+		}
 
 		PostingRoomResponse prr = PostingRoomResponse.builder().post(modelMapper.map(p, PostDto.class))
 				.minPrice(roomService.minPrice(idHouse)).maxPrice(roomService.maxPrice(idHouse))
@@ -372,7 +379,7 @@ public class PostServiceImpl implements PostService {
 				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName()).quanHuyen(dto.getName())
 				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName()).build();
 		prr.getPost().getRoom().setHouse(null);
-		prr.getPost().getHouse().setRooms(Arrays.asList(modelMapper.map(p.getHouse().getRoom(), RoomDto[].class)));
+		prr.getPost().getHouse().setRooms(Arrays.asList(modelMapper.map(listRoomModel, RoomDto[].class)));
 		return prr;
 	}
 
