@@ -27,13 +27,14 @@ public class MapPositionServiceImpl implements MapPositionService{
 
 	@Override
 	public void createOrUpdate(MapPositionDto mapPositionDto) {
-		mapPositionRepo.save(modelMapper.map(mapPositionDto, MapPositionModel.class));
+		MapPositionModel mapPositionModel = modelMapper.map(mapPositionDto, MapPositionModel.class);
+		mapPositionRepo.save(mapPositionModel);
 		
 	}
 
 	@Override
 	public void delete(MapPositionDto mapPositionDto) {
-		mapPositionRepo.delete(modelMapper.map(mapPositionDto, MapPositionModel.class));
+		mapPositionRepo.deleteById(mapPositionDto.getId());;
 		
 	}
 
