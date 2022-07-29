@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.MapPositionDto;
 
 @Service
@@ -14,5 +15,7 @@ public interface MapPositionService {
 	void createOrUpdate(MapPositionDto mapPositionDto);
 
 	void delete(MapPositionDto mapPositionDto);
+
+	void deleteByListId(ListIdDto list);
 
 }
