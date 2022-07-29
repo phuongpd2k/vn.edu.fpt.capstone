@@ -333,7 +333,7 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text2", search.getTransactionType().getTransferType().trim());
 		}
 		
-		if (!search.getTransactionType().getAction().trim().isBlank()) {
+		if (!search.getTransactionType().getAction().trim().isEmpty()) {
 			query.setParameter("text3", search.getTransactionType().getAction().trim());
 		}
 		
