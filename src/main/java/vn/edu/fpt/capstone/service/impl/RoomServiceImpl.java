@@ -45,7 +45,11 @@ public class RoomServiceImpl implements RoomService {
 
 	@Override
 	public RoomDto findById(Long id) {
-		RoomDto roomDto = modelMapper.map(roomRepository.findById(id).get(), RoomDto.class);
+		RoomModel r = roomRepository.findById(id).get();
+		RoomDto roomDto = modelMapper.map(r, RoomDto.class);
+		if(r.getPosts().size() > 0) {
+			roomDto.setCheck(true);
+		}
 		return roomDto;
 	}
 
