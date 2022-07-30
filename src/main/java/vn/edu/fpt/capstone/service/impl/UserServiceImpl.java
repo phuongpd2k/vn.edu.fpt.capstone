@@ -1,6 +1,7 @@
 package vn.edu.fpt.capstone.service.impl;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -194,15 +195,23 @@ public class UserServiceImpl implements UserService {
 			query.setParameter("text2", '%' + userSearch.getUsername().trim() + '%');
 		}
 
-		long millisInDay = 60 * 60 * 24 * 1000;
+		Calendar cal = Calendar.getInstance();
 		
 		if (userSearch.getFromDate() != null) {
-			long dateFrom = (userSearch.getFromDate() / millisInDay) * millisInDay;
-			query.setParameter("text3", new Date(dateFrom));
+			cal.setTimeInMillis(userSearch.getFromDate());
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
+			Date dateWithoutTime = cal.getTime();
+			
+			query.setParameter("text3", dateWithoutTime);
 		}
 
 		if (userSearch.getToDate() != null) {
-			query.setParameter("text4", new Date(userSearch.getToDate()));
+			cal.setTimeInMillis(userSearch.getToDate());
+			query.setParameter("text4", cal.getTime());
 		}
 
 		@SuppressWarnings("unchecked")
