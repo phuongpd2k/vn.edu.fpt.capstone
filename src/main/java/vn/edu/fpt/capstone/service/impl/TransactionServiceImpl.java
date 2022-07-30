@@ -18,6 +18,7 @@ import vn.edu.fpt.capstone.service.TransactionService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -160,15 +161,24 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text2", '%' + search.getFullName().trim() + '%');
 		}
 
-		long millisInDay = 60 * 60 * 24 * 1000;
+		Calendar cal = Calendar.getInstance();
 
 		if (search.getFromDate() != null) {
-			long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
-			query.setParameter("text3", new Date(dateFrom));
+			cal.setTimeInMillis(search.getFromDate());
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
+			Date dateWithoutTime = cal.getTime();
+			
+			query.setParameter("text3", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			query.setParameter("text4", new Date(search.getToDate()));
+			cal.setTimeInMillis(search.getToDate());
+			
+			query.setParameter("text4", cal.getTime());
 		}
 		
 		if (search.getUserCode() != null) {
@@ -265,15 +275,25 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text2", '%' + search.getUsername().trim() + '%');
 		}
 		
-		long millisInDay = 60 * 60 * 24 * 1000;
+		
+		Calendar cal = Calendar.getInstance();
 		
 		if (search.getFromDate() != null) {
-			long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
-			query.setParameter("text3", new Date(dateFrom));
+			cal.setTimeInMillis(search.getFromDate());
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
+			Date dateWithoutTime = cal.getTime();
+			
+			query.setParameter("text3", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			query.setParameter("text4", new Date(search.getToDate()));
+			cal.setTimeInMillis(search.getToDate());
+			
+			query.setParameter("text4", cal.getTime());
 		}
 		
 		if (search.getType() != null) {
@@ -338,15 +358,22 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text3", search.getTransactionType().getAction().trim());
 		}
 		
-		long millisInDay = 60 * 60 * 24 * 1000;
+		Calendar cal = Calendar.getInstance();
 		
 		if (search.getFromDate() != null) {
-			long dateFrom = (search.getFromDate() / millisInDay) * millisInDay;
-			query.setParameter("text4", new Date(dateFrom));
+			cal.setTimeInMillis(search.getFromDate());
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
+			Date dateWithoutTime = cal.getTime();
+			query.setParameter("text4", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			query.setParameter("text5", new Date(search.getToDate()));
+			cal.setTimeInMillis(search.getToDate());
+			query.setParameter("text5", cal.getTime());
 		}
 		
 		if (!search.getStatus().trim().isEmpty()) {

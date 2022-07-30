@@ -27,7 +27,7 @@ public class SignUpDto {
 	private String imageLink;
 	
 	@JsonProperty("gender")
-	private boolean gender;
+	private boolean gender = true;
 	
 	@JsonProperty("dob")
 	private Date dob;

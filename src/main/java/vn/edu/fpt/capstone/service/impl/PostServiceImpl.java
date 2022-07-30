@@ -33,8 +33,11 @@ import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.ThanhPhoService;
 import vn.edu.fpt.capstone.service.UserService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -429,11 +432,11 @@ public class PostServiceImpl implements PostService {
 		}
 		
 		if (dto.getFromDate() != null) {
-			whereClause += " AND (entity.createdDate >= :text3)";
+			whereClause += " AND (entity.startDate >= :text3)";
 		}
 
 		if (dto.getToDate() != null) {
-			whereClause += " AND (entity.createdDate <= :text4)";
+			whereClause += " AND (entity.endDate < :text4)";
 		}
 		
 		if (!dto.getPostCode().isEmpty()) {
@@ -453,15 +456,29 @@ public class PostServiceImpl implements PostService {
 			query.setParameter("text2", '%' + dto.getUsername().trim() + '%');
 		}
 
-		long millisInDay = 60 * 60 * 24 * 1000;
-	
+		Calendar cal = Calendar.getInstance();
+		
 		if (dto.getFromDate() != null) {
-			long dateFrom = (dto.getFromDate() / millisInDay) * millisInDay;
-			query.setParameter("text3", new Date(dateFrom));
+			cal.setTimeInMillis(dto.getFromDate());
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
+			Date dateWithoutTime = cal.getTime();
+			
+			query.setParameter("text3", dateWithoutTime);
+			
 		}
 
 		if (dto.getToDate() != null) {
-			query.setParameter("text4", new Date(dto.getToDate()));
+			cal.setTimeInMillis(dto.getToDate() + TIMESTAMP_DAY);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
+			query.setParameter("text4", cal.getTime());
 		}
 		
 		if (!dto.getPostCode().isEmpty()) {
