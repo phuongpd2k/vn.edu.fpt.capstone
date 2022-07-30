@@ -99,4 +99,7 @@ public class RoomModel extends Auditable<String> implements Serializable {
 	
 	@Column(name = "roomMate")
 	private String roomMate;
+	
+	@Transient
+	private boolean check;
 }
