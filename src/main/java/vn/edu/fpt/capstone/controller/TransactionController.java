@@ -600,10 +600,13 @@ public class TransactionController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ROLE_LANDLORD')")
 	@PostMapping(value = "/transaction/search/v2")
-	public ResponseEntity<?> searchTransactionV2(@RequestBody SearchTransactionDto search) {
+	public ResponseEntity<?> searchTransactionV2(@RequestBody SearchTransactionDto search,
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
-			List<TransactionResponse> list = transactionService.searchV2(search);
+			UserModel user = userService.getUserInformationByToken(jwtToken);
+			List<TransactionResponse> list = transactionService.searchV2(search, user.getId());
 
 			LOGGER.error("searchTransaction: {}");
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")

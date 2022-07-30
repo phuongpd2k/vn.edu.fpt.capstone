@@ -292,7 +292,7 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	@Override
-	public List<TransactionResponse> searchV2(SearchTransactionDto search) {
+	public List<TransactionResponse> searchV2(SearchTransactionDto search, Long userId) {
 		String sql = "select entity from TransactionModel as entity where (1=1)";
 		String whereClause = "";
 
@@ -320,6 +320,7 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.status LIKE :text6)";
 		}
 
+		whereClause += " AND (entity.user.id = " + userId + ")";
 		whereClause += " order by entity.createdDate desc";
 		sql += whereClause;
 
