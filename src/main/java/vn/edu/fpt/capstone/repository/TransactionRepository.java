@@ -60,4 +60,10 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 
 	@Query("SELECT t FROM TransactionModel t WHERE t.postId = ?1 AND t.transferType = 'POSTING'")
 	TransactionModel findByPostIdAndTransferTypePosting(Long id);
+
+	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'REFUND') AND t.status = 'SUCCESS' AND t.user.id = ?1")
+	float getTotalAmountMoneyRefundHost(Long id);
+
+	@Query("SELECT t FROM TransactionModel t WHERE t.postId = ?1 AND t.transferType = ?2")
+	TransactionModel findByPostIdAndTransferType(Long id, String type);
 }

@@ -250,8 +250,8 @@ public class PostController {
 			transactionDto.setTransferContent("Đăng tin");
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
 			transactionDto.setNote("Chờ kiểm duyệt bài đăng");
-			
 			transactionDto.setPostId(model.getId());
+			transactionDto.setDateVerify(new Date());
 			
 			TransactionDto model2 = transactionService.createTransaction(transactionDto);
 			if (model2 == null) {
@@ -352,7 +352,7 @@ public class PostController {
 			postDto.setStatus(constant.REJECTED);
 			postDto.setNote(post.getNote());
 			
-			TransactionDto dto = transactionService.findByPostId(postDto.getId());
+			TransactionDto dto = transactionService.findByPostIdAndTransferType(postDto.getId(), "POSTING");
 			if(dto == null) {
 				throw new Exception();
 			}
@@ -373,6 +373,7 @@ public class PostController {
 			transactionDto.setNote(post.getNote());	
 			transactionDto.setPostId(postDto.getId());
 			transactionDto.setNote("Đăng tin thất bại " + post.getNote());
+			transactionDto.setDateVerify(new Date());
 			
 			transactionService.createTransaction(transactionDto);		
 
@@ -509,6 +510,7 @@ public class PostController {
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
 			transactionDto.setPostId(pd.getId());
 			transactionDto.setNote("Gia hạn bài đăng thành công");
+			transactionDto.setDateVerify(new Date());
 
 			// Create transaction
 			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
@@ -651,6 +653,7 @@ public class PostController {
 			transactionDto.setTransferType("VERIFY");
 			transactionDto.setTransferContent("Xác thực");
 			transactionDto.setUser(modelMapper.map(user2, UserDto.class));
+			transactionDto.setDateVerify(new Date());
 			
 			transactionDto.setPostId(postDto.getId());
 			
@@ -785,9 +788,12 @@ public class PostController {
 	}
 	
 	@PostMapping(value = "/post/search")
-	public ResponseEntity<ResponseObject> postSearch(@RequestBody PostSearchDto dto) {
+	public ResponseEntity<ResponseObject> postSearch(@RequestBody PostSearchDto dto,
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
-			List<PostResponse> list = postService.findAllPostSearch(dto);
+			UserDto user = userService.getUserByToken(jwtToken);
+			
+			List<PostResponse> list = postService.findAllPostSearch(dto, user);
 			
 			LOGGER.info("getAllPostSearch: {}");
 			return ResponseEntity.status(HttpStatus.OK)
