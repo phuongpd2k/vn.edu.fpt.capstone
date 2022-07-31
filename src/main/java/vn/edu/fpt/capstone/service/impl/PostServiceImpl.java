@@ -16,6 +16,7 @@ import vn.edu.fpt.capstone.dto.PostSearchDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
+import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.PostModel;
 import vn.edu.fpt.capstone.model.RoomModel;
 import vn.edu.fpt.capstone.model.UserModel;
@@ -233,7 +234,7 @@ public class PostServiceImpl implements PostService {
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
 
 		Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
-		listPostingResponse = convertToPostingResponseHideRoom(result.getContent());
+		listPostingResponse = convertToPostingResponse(result.getContent());
 
 		pageableResponse.setCurrentPage(pageIndex + 1);
 		pageableResponse.setPageSize(pageSize);
@@ -242,34 +243,6 @@ public class PostServiceImpl implements PostService {
 		pageableResponse.setResults(listPostingResponse);
 
 		return pageableResponse;
-	}
-
-	private List<PostingResponse> convertToPostingResponseHideRoom(List<PostModel> list) {
-		List<PostingResponse> listPostingResponse = new ArrayList<PostingResponse>();
-		for (PostModel p : list) {
-
-			Long idHouse = p.getHouse().getId();
-			QuanHuyenDto dto = new QuanHuyenDto();
-			dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
-
-			int amountRating = feedbackRepository.getAmountByPostId(p.getId());
-			float rating = 0;
-
-			if (amountRating > 0) {
-				rating = feedbackRepository.getTotalRatingByPostId(p.getId()) / amountRating;
-			}
-
-			PostingResponse pr = PostingResponse.builder().post(modelMapper.map(p, PostDto.class))
-					.minPrice(roomService.minPrice(idHouse)).maxPrice(roomService.maxPrice(idHouse))
-					.minArea(roomService.minArea(idHouse)).maxArea(roomService.maxArea(idHouse))
-					.street(p.getHouse().getAddress().getStreet())
-					.phuongXa(p.getHouse().getAddress().getPhuongXa().getName()).quanHuyen(dto.getName())
-					.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName()).amountRating(amountRating)
-					.rating(rating).build();
-			pr.getPost().getRoom().setHouse(null);
-			listPostingResponse.add(pr);
-		}
-		return listPostingResponse;
 	}
 
 	private List<PostingResponse> convertToPostingResponse(List<PostModel> list) {
@@ -447,7 +420,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostResponse> findAllPostSearch(PostSearchDto dto) {
+	public List<PostResponse> findAllPostSearch(PostSearchDto dto, UserDto user) {
 		String sql = "select entity from PostModel as entity where (1=1) ";
 		String whereClause = "";
 
@@ -469,6 +442,9 @@ public class PostServiceImpl implements PostService {
 		
 		if (!dto.getPostCode().isEmpty()) {
 			whereClause += " AND ( entity.post_code LIKE :text5)";
+		}
+		if(user.getRole().getRole().equalsIgnoreCase("ROLE_LANDLORD")) {
+			whereClause += " AND ( entity.createdBy LIKE :text6)";
 		}
 
 		whereClause += " order by entity.createdDate desc";
@@ -511,6 +487,10 @@ public class PostServiceImpl implements PostService {
 		
 		if (!dto.getPostCode().isEmpty()) {
 			query.setParameter("text5", '%' + dto.getPostCode().trim().toLowerCase() + '%');
+		}
+		
+		if(user.getRole().getRole().equalsIgnoreCase("ROLE_LANDLORD")) {
+			query.setParameter("text6", '%' + user.getEmail() + '%');
 		}
 
 
