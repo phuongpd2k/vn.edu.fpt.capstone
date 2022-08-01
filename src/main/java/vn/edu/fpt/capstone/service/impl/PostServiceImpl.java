@@ -324,18 +324,18 @@ public class PostServiceImpl implements PostService {
 
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
 
-		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), dto.getMinPrice(),
-				dto.getMaxPrice(), dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
+//		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), dto.getMinPrice(),
+//				dto.getMaxPrice(), dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
 		// , dto.getAmenityIds()
 
-		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
+		//List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
 
 		PageableResponse pageableResponse = new PageableResponse();
 		pageableResponse.setCurrentPage(pageIndex + 1);
 		pageableResponse.setPageSize(pageSize);
-		pageableResponse.setTotalPages(result.getTotalPages());
-		pageableResponse.setTotalItems(result.getTotalElements());
-		pageableResponse.setResults(listPostingResponse);
+		//pageableResponse.setTotalPages(result.getTotalPages());
+//		pageableResponse.setTotalItems(result.getTotalElements());
+//		pageableResponse.setResults(listPostingResponse);
 
 		return pageableResponse;
 	}

@@ -27,11 +27,11 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	List<TransactionModel> findAllById(Long id);
 
 	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS'")
-	float getTotalAmountMoney();
+	Float getTotalAmountMoney();
 
 	
 	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS' AND t.user.id = ?1")
-	float getTotalAmountMoneyHost(Long id);
+	Float getTotalAmountMoneyHost(Long id);
 
 	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.amount))"
 			+ " FROM TransactionModel t"
@@ -62,7 +62,7 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	TransactionModel findByPostIdAndTransferTypePosting(Long id);
 
 	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'REFUND') AND t.status = 'SUCCESS' AND t.user.id = ?1")
-	float getTotalAmountMoneyRefundHost(Long id);
+	Float getTotalAmountMoneyRefundHost(Long id);
 
 	@Query("SELECT t FROM TransactionModel t WHERE t.postId = ?1 AND t.transferType = ?2")
 	TransactionModel findByPostIdAndTransferType(Long id, String type);
