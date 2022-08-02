@@ -457,7 +457,7 @@ public class PostController {
 		}
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_LANDLORD')")
 	@PutMapping(value = "/post-extend")
 	// DungTV29
 	public ResponseEntity<?> extendPost(@RequestBody PostDto postDto,
@@ -760,7 +760,6 @@ public class PostController {
 	@GetMapping(value = "/posting/top-8")
 	public ResponseEntity<?> getPosting() {
 		try {
-			//PageableResponse pageableResponse = postService.findAllPosting(searchDto);
 			List<PostingResponse> list = postService.findTop8Posting();
 			LOGGER.info("get All posting: {}", list);
 			return ResponseEntity.status(HttpStatus.OK)

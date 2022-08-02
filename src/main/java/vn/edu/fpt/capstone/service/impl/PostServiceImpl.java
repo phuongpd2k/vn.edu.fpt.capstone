@@ -282,15 +282,13 @@ public class PostServiceImpl implements PostService {
 			postModel.setNumberOfDays(postModel.getNumberOfDays() + postDto.getNumberOfDays());
 
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-			if (postDto.getStartDate() == null) {
-				long currentDate = postModel.getEndDate().getTime();
-				Long expiredTime = currentDate + addDate;
-				postModel.setEndDate(new Date(expiredTime));
-			} else {
-				long currentDate = postDto.getStartDate().getTime();
-				Long expiredTime = currentDate + addDate;
-				postModel.setStartDate(postDto.getStartDate());
-				postModel.setEndDate(new Date(expiredTime));
+			Date dateNow = new Date();
+			Date endDate = postModel.getEndDate();
+			if(endDate.getTime() > dateNow.getTime()) {
+				postModel.setEndDate(new Date(endDate.getTime() + addDate));
+			}else {
+				postModel.setStartDate(dateNow);
+				postModel.setEndDate(new Date(dateNow.getTime() + addDate));
 			}
 
 			return postRepository.save(postModel);
@@ -459,30 +457,16 @@ public class PostServiceImpl implements PostService {
 		if (!dto.getUsername().isEmpty()) {
 			query.setParameter("text2", '%' + dto.getUsername().trim() + '%');
 		}
-
-		Calendar cal = Calendar.getInstance();
 		
 		if (dto.getFromDate() != null) {
-			cal.setTimeInMillis(dto.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			Date dateWithoutTime = cal.getTime();
-			
+			Date dateWithoutTime = new Date((dto.getFromDate()/1000) * 1000);
 			query.setParameter("text3", dateWithoutTime);
 			
 		}
 
 		if (dto.getToDate() != null) {
-			cal.setTimeInMillis(dto.getToDate() + TIMESTAMP_DAY);
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			query.setParameter("text4", cal.getTime());
+			Date dateWithoutTime = new Date((dto.getToDate()/1000) * 1000 + TIMESTAMP_DAY);
+			query.setParameter("text4", dateWithoutTime);
 		}
 		
 		if (!dto.getPostCode().isEmpty()) {

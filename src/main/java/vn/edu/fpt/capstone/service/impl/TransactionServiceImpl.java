@@ -161,24 +161,14 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text2", '%' + search.getFullName().trim() + '%');
 		}
 
-		Calendar cal = Calendar.getInstance();
-
 		if (search.getFromDate() != null) {
-			cal.setTimeInMillis(search.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			Date dateWithoutTime = cal.getTime();
-			
+			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
 			query.setParameter("text3", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			cal.setTimeInMillis(search.getToDate());
 			
-			query.setParameter("text4", cal.getTime());
+			query.setParameter("text4", search.getToDate());
 		}
 		
 		if (search.getUserCode() != null) {
@@ -240,11 +230,11 @@ public class TransactionServiceImpl implements TransactionService {
 		String sql = "select entity from TransactionModel as entity where (1=1)";
 		String whereClause = "";
 
-		if (search.getFullName() != null) {
+		if (!search.getFullName().trim().isEmpty()) {
 			whereClause += " AND (entity.user.fullName LIKE :text)";
 		}
 
-		if (search.getUsername() != null) {
+		if (!search.getUsername().trim().isEmpty()) {
 			whereClause += " AND (entity.user.username LIKE :text2)";
 		}
 
@@ -256,7 +246,7 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.createdDate <= :text4)";
 		}
 		
-		if(search.getType() != null) {
+		if(!search.getType().trim().isEmpty()) {
 			whereClause += " AND (entity.transferType = :text5)";
 		}else {
 			whereClause += " AND (entity.transferType = 'POSTING' OR entity.transferType = 'POSTING_EXTEND')";
@@ -267,36 +257,26 @@ public class TransactionServiceImpl implements TransactionService {
 
 		Query query = entityManager.createQuery(sql, TransactionModel.class);
 
-		if (search.getFullName() != null) {
+		if (!search.getFullName().trim().isEmpty()) {
 			query.setParameter("text", '%' + search.getFullName().trim() + '%');
 		}
 
-		if (search.getUsername() != null) {
+		if (!search.getUsername().trim().isEmpty()) {
 			query.setParameter("text2", '%' + search.getUsername().trim() + '%');
 		}
 		
 		
-		Calendar cal = Calendar.getInstance();
-		
-		if (search.getFromDate() != null) {
-			cal.setTimeInMillis(search.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			Date dateWithoutTime = cal.getTime();
-			
+		if (search.getFromDate() != null) {	
+			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
 			query.setParameter("text3", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			cal.setTimeInMillis(search.getToDate());
 			
-			query.setParameter("text4", cal.getTime());
+			query.setParameter("text4", search.getToDate());
 		}
 		
-		if (search.getType() != null) {
+		if (!search.getType().trim().isEmpty()) {
 			query.setParameter("text5", search.getType());
 		}
 
@@ -358,22 +338,14 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text3", search.getTransactionType().getAction().trim());
 		}
 		
-		Calendar cal = Calendar.getInstance();
-		
 		if (search.getFromDate() != null) {
-			cal.setTimeInMillis(search.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
 			
-			Date dateWithoutTime = cal.getTime();
+			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
 			query.setParameter("text4", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			cal.setTimeInMillis(search.getToDate());
-			query.setParameter("text5", cal.getTime());
+			query.setParameter("text5", search.getToDate());
 		}
 		
 		if (!search.getStatus().trim().isEmpty()) {

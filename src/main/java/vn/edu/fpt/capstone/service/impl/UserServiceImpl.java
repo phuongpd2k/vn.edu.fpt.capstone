@@ -194,24 +194,14 @@ public class UserServiceImpl implements UserService {
 		if (!userSearch.getUsername().isEmpty()) {
 			query.setParameter("text2", '%' + userSearch.getUsername().trim() + '%');
 		}
-
-		Calendar cal = Calendar.getInstance();
 		
 		if (userSearch.getFromDate() != null) {
-			cal.setTimeInMillis(userSearch.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			Date dateWithoutTime = cal.getTime();
-			
+			Date dateWithoutTime = new Date((userSearch.getFromDate()/1000) * 1000);
 			query.setParameter("text3", dateWithoutTime);
 		}
 
 		if (userSearch.getToDate() != null) {
-			cal.setTimeInMillis(userSearch.getToDate());
-			query.setParameter("text4", cal.getTime());
+			query.setParameter("text4", userSearch.getToDate());
 		}
 
 		@SuppressWarnings("unchecked")
