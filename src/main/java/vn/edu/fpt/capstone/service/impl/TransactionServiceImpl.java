@@ -161,24 +161,14 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text2", '%' + search.getFullName().trim() + '%');
 		}
 
-		Calendar cal = Calendar.getInstance();
-
 		if (search.getFromDate() != null) {
-			cal.setTimeInMillis(search.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			Date dateWithoutTime = cal.getTime();
-			
+			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
 			query.setParameter("text3", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			cal.setTimeInMillis(search.getToDate());
 			
-			query.setParameter("text4", cal.getTime());
+			query.setParameter("text4", search.getToDate());
 		}
 		
 		if (search.getUserCode() != null) {
@@ -276,24 +266,14 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		
 		
-		Calendar cal = Calendar.getInstance();
-		
-		if (search.getFromDate() != null) {
-			cal.setTimeInMillis(search.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			Date dateWithoutTime = cal.getTime();
-			
+		if (search.getFromDate() != null) {	
+			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
 			query.setParameter("text3", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			cal.setTimeInMillis(search.getToDate());
 			
-			query.setParameter("text4", cal.getTime());
+			query.setParameter("text4", search.getToDate());
 		}
 		
 		if (!search.getType().trim().isEmpty()) {
@@ -358,22 +338,14 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text3", search.getTransactionType().getAction().trim());
 		}
 		
-		Calendar cal = Calendar.getInstance();
-		
 		if (search.getFromDate() != null) {
-			cal.setTimeInMillis(search.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
 			
-			Date dateWithoutTime = cal.getTime();
+			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
 			query.setParameter("text4", dateWithoutTime);
 		}
 
 		if (search.getToDate() != null) {
-			cal.setTimeInMillis(search.getToDate());
-			query.setParameter("text5", cal.getTime());
+			query.setParameter("text5", search.getToDate());
 		}
 		
 		if (!search.getStatus().trim().isEmpty()) {

@@ -457,30 +457,16 @@ public class PostServiceImpl implements PostService {
 		if (!dto.getUsername().isEmpty()) {
 			query.setParameter("text2", '%' + dto.getUsername().trim() + '%');
 		}
-
-		Calendar cal = Calendar.getInstance();
 		
 		if (dto.getFromDate() != null) {
-			cal.setTimeInMillis(dto.getFromDate());
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			Date dateWithoutTime = cal.getTime();
-			
+			Date dateWithoutTime = new Date((dto.getFromDate()/1000) * 1000);
 			query.setParameter("text3", dateWithoutTime);
 			
 		}
 
 		if (dto.getToDate() != null) {
-			cal.setTimeInMillis(dto.getToDate() + TIMESTAMP_DAY);
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			query.setParameter("text4", cal.getTime());
+			Date dateWithoutTime = new Date((dto.getToDate()/1000) * 1000 + TIMESTAMP_DAY);
+			query.setParameter("text4", dateWithoutTime);
 		}
 		
 		if (!dto.getPostCode().isEmpty()) {
