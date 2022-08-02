@@ -457,7 +457,7 @@ public class PostController {
 		}
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_LANDLORD') || hasRole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_LANDLORD')")
 	@PutMapping(value = "/post-extend")
 	// DungTV29
 	public ResponseEntity<?> extendPost(@RequestBody PostDto postDto,

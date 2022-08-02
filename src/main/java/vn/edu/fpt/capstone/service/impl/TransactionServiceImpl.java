@@ -240,11 +240,11 @@ public class TransactionServiceImpl implements TransactionService {
 		String sql = "select entity from TransactionModel as entity where (1=1)";
 		String whereClause = "";
 
-		if (search.getFullName() != null) {
+		if (!search.getFullName().trim().isEmpty()) {
 			whereClause += " AND (entity.user.fullName LIKE :text)";
 		}
 
-		if (search.getUsername() != null) {
+		if (!search.getUsername().trim().isEmpty()) {
 			whereClause += " AND (entity.user.username LIKE :text2)";
 		}
 
@@ -256,7 +256,7 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.createdDate <= :text4)";
 		}
 		
-		if(search.getType() != null) {
+		if(!search.getType().trim().isEmpty()) {
 			whereClause += " AND (entity.transferType = :text5)";
 		}else {
 			whereClause += " AND (entity.transferType = 'POSTING' OR entity.transferType = 'POSTING_EXTEND')";
@@ -267,11 +267,11 @@ public class TransactionServiceImpl implements TransactionService {
 
 		Query query = entityManager.createQuery(sql, TransactionModel.class);
 
-		if (search.getFullName() != null) {
+		if (!search.getFullName().trim().isEmpty()) {
 			query.setParameter("text", '%' + search.getFullName().trim() + '%');
 		}
 
-		if (search.getUsername() != null) {
+		if (!search.getUsername().trim().isEmpty()) {
 			query.setParameter("text2", '%' + search.getUsername().trim() + '%');
 		}
 		
@@ -296,7 +296,7 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text4", cal.getTime());
 		}
 		
-		if (search.getType() != null) {
+		if (!search.getType().trim().isEmpty()) {
 			query.setParameter("text5", search.getType());
 		}
 
