@@ -282,15 +282,13 @@ public class PostServiceImpl implements PostService {
 			postModel.setNumberOfDays(postModel.getNumberOfDays() + postDto.getNumberOfDays());
 
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-			if (postDto.getStartDate() == null) {
-				long currentDate = postModel.getEndDate().getTime();
-				Long expiredTime = currentDate + addDate;
-				postModel.setEndDate(new Date(expiredTime));
-			} else {
-				long currentDate = postDto.getStartDate().getTime();
-				Long expiredTime = currentDate + addDate;
-				postModel.setStartDate(postDto.getStartDate());
-				postModel.setEndDate(new Date(expiredTime));
+			Date dateNow = new Date();
+			Date endDate = postModel.getEndDate();
+			if(endDate.getTime() > dateNow.getTime()) {
+				postModel.setEndDate(new Date(endDate.getTime() + addDate));
+			}else {
+				postModel.setStartDate(dateNow);
+				postModel.setEndDate(new Date(dateNow.getTime() + addDate));
 			}
 
 			return postRepository.save(postModel);

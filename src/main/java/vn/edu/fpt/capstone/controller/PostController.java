@@ -760,7 +760,6 @@ public class PostController {
 	@GetMapping(value = "/posting/top-8")
 	public ResponseEntity<?> getPosting() {
 		try {
-			//PageableResponse pageableResponse = postService.findAllPosting(searchDto);
 			List<PostingResponse> list = postService.findTop8Posting();
 			LOGGER.info("get All posting: {}", list);
 			return ResponseEntity.status(HttpStatus.OK)
