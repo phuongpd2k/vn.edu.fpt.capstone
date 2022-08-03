@@ -1,6 +1,7 @@
 package vn.edu.fpt.capstone.service.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 
 import javax.mail.MessagingException;
 
@@ -86,8 +87,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //		Authentication authentication = authenticationManager.authenticate(
 //				new UsernamePasswordAuthenticationToken(signInDto.getUsername(), signInDto.getPassword()));
 
-		UserModel user = userRepository.findByUsername(signInDto.getUsername()).get();
-
+		Optional<UserModel> userOption = userRepository.findByUsername(signInDto.getUsername());
+		UserModel user = null;
+		if(userOption.isPresent()) {
+			user=userOption.get();
+		}
 		if (user == null || !passwordEncoder.matches(signInDto.getPassword(), user.getPassword()) 
 				|| !user.getUsername().equals(signInDto.getUsername())) {
 			logger.error("username or pasword wrong!");
