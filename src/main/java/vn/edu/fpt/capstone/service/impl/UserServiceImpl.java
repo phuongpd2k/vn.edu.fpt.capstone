@@ -1,5 +1,7 @@
 package vn.edu.fpt.capstone.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -166,11 +168,11 @@ public class UserServiceImpl implements UserService {
 			whereClause += " AND ( entity.username LIKE :text2)";
 		}
 		
-		if (userSearch.getFromDate() != null) {
+		if (!userSearch.getFromDateStr().isEmpty()) {
 			whereClause += " AND (entity.createdDate >= :text3)";
 		}
 
-		if (userSearch.getToDate() != null) {
+		if (!userSearch.getToDateStr().isEmpty()) {
 			whereClause += " AND (entity.createdDate <= :text4)";
 		}
 
@@ -195,13 +197,22 @@ public class UserServiceImpl implements UserService {
 			query.setParameter("text2", '%' + userSearch.getUsername().trim() + '%');
 		}
 		
-		if (userSearch.getFromDate() != null) {
-			Date dateWithoutTime = new Date((userSearch.getFromDate()/1000) * 1000);
-			query.setParameter("text3", dateWithoutTime);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		if (!userSearch.getFromDateStr().isEmpty()) {
+			try {
+				query.setParameter("text3", formatter.parse(userSearch.getFromDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 
-		if (userSearch.getToDate() != null) {
-			query.setParameter("text4", userSearch.getToDate());
+		if (!userSearch.getToDateStr().isEmpty()) {
+			try {
+				query.setParameter("text4", formatter.parse(userSearch.getToDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 
 		@SuppressWarnings("unchecked")

@@ -16,6 +16,8 @@ import vn.edu.fpt.capstone.repository.TransactionRepository;
 import vn.edu.fpt.capstone.response.TransactionResponse;
 import vn.edu.fpt.capstone.service.TransactionService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -132,11 +134,11 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.user.fullName LIKE :text2)";
 		}
 
-		if (search.getFromDate() != null) {
+		if (!search.getFromDateStr().isEmpty()) {
 			whereClause += " AND (entity.createdDate >= :text3)";
 		}
 
-		if (search.getToDate() != null) {
+		if (!search.getToDateStr().isEmpty()) {
 			whereClause += " AND (entity.createdDate <= :text4)";
 		}
 		
@@ -161,14 +163,22 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text2", '%' + search.getFullName().trim() + '%');
 		}
 
-		if (search.getFromDate() != null) {
-			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
-			query.setParameter("text3", dateWithoutTime);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		if (!search.getFromDateStr().isEmpty()) {
+			try {
+				query.setParameter("text3", formatter.parse(search.getFromDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 
-		if (search.getToDate() != null) {
-			
-			query.setParameter("text4", search.getToDate());
+		if (!search.getToDateStr().isEmpty()) {
+			try {
+				query.setParameter("text4", formatter.parse(search.getToDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 		
 		if (search.getUserCode() != null) {
@@ -238,11 +248,11 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.user.username LIKE :text2)";
 		}
 
-		if (search.getFromDate() != null) {
+		if (!search.getFromDateStr().isEmpty()) {
 			whereClause += " AND (entity.createdDate >= :text3)";
 		}
 
-		if (search.getToDate() != null) {
+		if (!search.getToDateStr().isEmpty()) {
 			whereClause += " AND (entity.createdDate <= :text4)";
 		}
 		
@@ -265,15 +275,22 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text2", '%' + search.getUsername().trim() + '%');
 		}
 		
-		
-		if (search.getFromDate() != null) {	
-			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
-			query.setParameter("text3", dateWithoutTime);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		if (!search.getFromDateStr().isEmpty()) {
+			try {
+				query.setParameter("text3", formatter.parse(search.getFromDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 
-		if (search.getToDate() != null) {
-			
-			query.setParameter("text4", search.getToDate());
+		if (!search.getToDateStr().isEmpty()) {
+			try {
+				query.setParameter("text4", formatter.parse(search.getToDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 		
 		if (!search.getType().trim().isEmpty()) {
@@ -308,11 +325,11 @@ public class TransactionServiceImpl implements TransactionService {
 			whereClause += " AND (entity.action LIKE :text3)";
 		}
 
-		if (search.getFromDate() != null) {
+		if (!search.getFromDateStr().isEmpty()) {
 			whereClause += " AND (entity.createdDate >= :text4)";
 		}
 
-		if (search.getToDate() != null) {
+		if (!search.getToDateStr().isEmpty()) {
 			whereClause += " AND (entity.createdDate <= :text5)";
 		}
 		
@@ -338,14 +355,22 @@ public class TransactionServiceImpl implements TransactionService {
 			query.setParameter("text3", search.getTransactionType().getAction().trim());
 		}
 		
-		if (search.getFromDate() != null) {
-			
-			Date dateWithoutTime = new Date((search.getFromDate()/1000) * 1000);
-			query.setParameter("text4", dateWithoutTime);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		if (!search.getFromDateStr().isEmpty()) {
+			try {
+				query.setParameter("text4", formatter.parse(search.getFromDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 
-		if (search.getToDate() != null) {
-			query.setParameter("text5", search.getToDate());
+		if (!search.getToDateStr().isEmpty()) {
+			try {
+				query.setParameter("text5", formatter.parse(search.getToDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 		
 		if (!search.getStatus().trim().isEmpty()) {
