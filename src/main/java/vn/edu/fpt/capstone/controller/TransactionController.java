@@ -451,6 +451,7 @@ public class TransactionController {
 			transactionDto.setAction(constant.DO_NOTHING);
 			transactionDto.setTransferContent("Nạp tiền");
 			transactionDto.setUser(userDto);
+			transactionDto.setDateVerify(new Date());
 
 			transactionDto.setLastBalance(userDto.getBalance());
 
@@ -530,7 +531,7 @@ public class TransactionController {
 			dto.setNote(transactionDto.getNote());
 			dto.setDateVerify(new Date());
 
-			TransactionDto transactionDto2 = transactionService.createTransaction(dto);
+			TransactionDto transactionDto2 = transactionService.updateTransaction(dto);
 			if (transactionDto2 == null) {
 				response.setCode("500");
 				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
@@ -566,8 +567,9 @@ public class TransactionController {
 			dto.setStatus("FAILED");
 			dto.setAction("DO_NOTHING");
 			dto.setNote(transactionDto.getNote());
+			dto.setDateVerify(new Date());
 
-			TransactionDto transactionDto2 = transactionService.createTransaction(dto);
+			TransactionDto transactionDto2 = transactionService.updateTransaction(dto);
 			if (transactionDto2 == null) {
 				response.setCode("500");
 				response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
@@ -600,10 +602,13 @@ public class TransactionController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ROLE_LANDLORD')")
 	@PostMapping(value = "/transaction/search/v2")
-	public ResponseEntity<?> searchTransactionV2(@RequestBody SearchTransactionDto search) {
+	public ResponseEntity<?> searchTransactionV2(@RequestBody SearchTransactionDto search,
+			@RequestHeader(value = "Authorization") String jwtToken) {
 		try {
-			List<TransactionResponse> list = transactionService.searchV2(search);
+			UserModel user = userService.getUserInformationByToken(jwtToken);
+			List<TransactionResponse> list = transactionService.searchV2(search, user.getId());
 
 			LOGGER.error("searchTransaction: {}");
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
@@ -682,6 +687,7 @@ public class TransactionController {
 			transactionDto.setTransferType(constant.DEPOSIT);
 			transactionDto.setStatus(constant.SUCCESS);
 			transactionDto.setLastBalance(userDto.getBalance());
+			transactionDto.setDateVerify(new Date());
 
 			TransactionDto transactionDto2 = transactionService.createTransaction(transactionDto);
 			if (transactionDto2 != null) {

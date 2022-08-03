@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class DashBoardAdminResponse {
-	private float totalAmount;
+	private Float totalAmount;
 	private int totalPost;
 	private int totalHouse;
 	private int totalUser;

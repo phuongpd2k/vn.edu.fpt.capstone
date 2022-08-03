@@ -6,7 +6,9 @@ import vn.edu.fpt.capstone.dto.FilterRoomDto;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.PostSearchDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
+import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.PostModel;
+import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.response.HouseResponse;
 import vn.edu.fpt.capstone.response.PageableResponse;
 import vn.edu.fpt.capstone.response.PostResponse;
@@ -48,6 +50,6 @@ public interface PostService {
 
 	List<PostingResponse> findAllPostingMap(SearchDto searchDto);
 
-	List<PostResponse> findAllPostSearch(PostSearchDto dto);
+	List<PostResponse> findAllPostSearch(PostSearchDto dto, UserDto user);
 
 }

@@ -44,8 +44,19 @@ public class DashBoardServiceImpl implements DashBoardService{
 
 	@Override
 	public DashBoardHostResponse getDashBoardHost(UserDto userDto) {
+		Float totalAmount = transactionRepository.getTotalAmountMoneyHost(userDto.getId());
+		Float totalRefund = transactionRepository.getTotalAmountMoneyRefundHost(userDto.getId());
+		Float result = new Float("0.0");
+		if(totalRefund == null) {
+			totalRefund = (float) 0;
+		}
+		if(totalAmount == null) {
+			totalAmount = (float) 0;
+		}
+		result = totalAmount - totalRefund;
+		
 		return DashBoardHostResponse.builder()
-				.totalAmount(transactionRepository.getTotalAmountMoneyHost(userDto.getId()))
+				.totalAmount(result)
 				.totalPost(postRepository.getTotalAmountPostHost(userDto.getEmail()))
 				.totalHouse(houseRepository.getTotalAmountHouseHost(userDto.getId()))
 				.totalRoom(roomRepository.getTotalRoomHost(userDto.getEmail()))

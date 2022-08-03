@@ -72,4 +72,6 @@ public class RoomDto extends Auditable<String> {
 	
 	@JsonProperty("roomMate")
 	private String roomMate;
+	
+	private boolean check = false;
 }

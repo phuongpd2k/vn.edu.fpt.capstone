@@ -16,7 +16,9 @@ import vn.edu.fpt.capstone.dto.PostSearchDto;
 import vn.edu.fpt.capstone.dto.QuanHuyenDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.dto.SearchDto;
+import vn.edu.fpt.capstone.dto.UserDto;
 import vn.edu.fpt.capstone.model.PostModel;
+import vn.edu.fpt.capstone.model.RoomModel;
 import vn.edu.fpt.capstone.model.UserModel;
 import vn.edu.fpt.capstone.repository.FeedbackRepository;
 import vn.edu.fpt.capstone.repository.PostRepository;
@@ -32,8 +34,11 @@ import vn.edu.fpt.capstone.service.RoomService;
 import vn.edu.fpt.capstone.service.ThanhPhoService;
 import vn.edu.fpt.capstone.service.UserService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -277,15 +282,13 @@ public class PostServiceImpl implements PostService {
 			postModel.setNumberOfDays(postModel.getNumberOfDays() + postDto.getNumberOfDays());
 
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-			if (postDto.getStartDate() == null) {
-				long currentDate = postModel.getEndDate().getTime();
-				Long expiredTime = currentDate + addDate;
-				postModel.setEndDate(new Date(expiredTime));
+			Date dateNow = new Date();
+			Date endDate = postModel.getEndDate();
+			if (endDate.getTime() > dateNow.getTime()) {
+				postModel.setEndDate(new Date(endDate.getTime() + addDate));
 			} else {
-				long currentDate = postDto.getStartDate().getTime();
-				Long expiredTime = currentDate + addDate;
-				postModel.setStartDate(postDto.getStartDate());
-				postModel.setEndDate(new Date(expiredTime));
+				postModel.setStartDate(dateNow);
+				postModel.setEndDate(new Date(dateNow.getTime() + addDate));
 			}
 
 			return postRepository.save(postModel);
@@ -319,18 +322,19 @@ public class PostServiceImpl implements PostService {
 
 		Pageable pageable = PageRequest.of(pageIndex, pageSize);
 
-		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), dto.getMinPrice(),
-				dto.getMaxPrice(), dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
+//		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), dto.getMinPrice(),
+//				dto.getMaxPrice(), dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
 		// , dto.getAmenityIds()
 
-		List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
+		// List<PostingResponse> listPostingResponse =
+		// convertToPostingResponse(result.getContent());
 
 		PageableResponse pageableResponse = new PageableResponse();
 		pageableResponse.setCurrentPage(pageIndex + 1);
 		pageableResponse.setPageSize(pageSize);
-		pageableResponse.setTotalPages(result.getTotalPages());
-		pageableResponse.setTotalItems(result.getTotalElements());
-		pageableResponse.setResults(listPostingResponse);
+		// pageableResponse.setTotalPages(result.getTotalPages());
+//		pageableResponse.setTotalItems(result.getTotalElements());
+//		pageableResponse.setResults(listPostingResponse);
 
 		return pageableResponse;
 	}
@@ -365,6 +369,12 @@ public class PostServiceImpl implements PostService {
 		QuanHuyenDto dto = new QuanHuyenDto();
 		dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
 
+		List<RoomModel> listRoomModel = new ArrayList<RoomModel>();
+		for (RoomModel r : p.getHouse().getRoom()) {
+			if (r.isEnable() == true)
+				listRoomModel.add(r);
+		}
+
 		PostingRoomResponse prr = PostingRoomResponse.builder().post(modelMapper.map(p, PostDto.class))
 				.minPrice(roomService.minPrice(idHouse)).maxPrice(roomService.maxPrice(idHouse))
 				.minArea(roomService.minArea(idHouse)).maxArea(roomService.maxArea(idHouse))
@@ -372,7 +382,7 @@ public class PostServiceImpl implements PostService {
 				.phuongXa(p.getHouse().getAddress().getPhuongXa().getName()).quanHuyen(dto.getName())
 				.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName()).build();
 		prr.getPost().getRoom().setHouse(null);
-		prr.getPost().getHouse().setRooms(Arrays.asList(modelMapper.map(p.getHouse().getRoom(), RoomDto[].class)));
+		prr.getPost().getHouse().setRooms(Arrays.asList(modelMapper.map(listRoomModel, RoomDto[].class)));
 		return prr;
 	}
 
@@ -394,7 +404,7 @@ public class PostServiceImpl implements PostService {
 		}
 
 		String key = searchDto.getKeyword();
-		
+
 		if (searchDto.getKeyword() == null) {
 			key = "";
 		}
@@ -409,28 +419,31 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostResponse> findAllPostSearch(PostSearchDto dto) {
+	public List<PostResponse> findAllPostSearch(PostSearchDto dto, UserDto user) {
 		String sql = "select entity from PostModel as entity where (1=1) ";
-		String whereClause = "";
+		String whereClause = " AND entity.enable = true";
 
 		if (!dto.getFullname().isEmpty()) {
 			whereClause += " AND ( entity.house.user.fullName LIKE :text)";
 		}
-		
+
 		if (!dto.getUsername().isEmpty()) {
 			whereClause += " AND ( entity.house.user.username LIKE :text2)";
 		}
-		
-		if (dto.getFromDate() != null) {
-			whereClause += " AND (entity.createdDate >= :text3)";
+
+		if (!dto.getFromDateStr().isEmpty()) {
+			whereClause += " AND (entity.startDate >= :text3)";
 		}
 
-		if (dto.getToDate() != null) {
-			whereClause += " AND (entity.createdDate <= :text4)";
+		if (!dto.getToDateStr().isEmpty()) {
+			whereClause += " AND (entity.endDate <= :text4)";
 		}
-		
+
 		if (!dto.getPostCode().isEmpty()) {
 			whereClause += " AND ( entity.post_code LIKE :text5)";
+		}
+		if (user.getRole().getRole().equalsIgnoreCase("ROLE_LANDLORD")) {
+			whereClause += " AND ( entity.createdBy LIKE :text6)";
 		}
 
 		whereClause += " order by entity.createdDate desc";
@@ -441,26 +454,36 @@ public class PostServiceImpl implements PostService {
 		if (!dto.getFullname().isEmpty()) {
 			query.setParameter("text", '%' + dto.getFullname().trim() + '%');
 		}
-		
+
 		if (!dto.getUsername().isEmpty()) {
 			query.setParameter("text2", '%' + dto.getUsername().trim() + '%');
 		}
 
-		long millisInDay = 60 * 60 * 24 * 1000;
-	
-		if (dto.getFromDate() != null) {
-			long dateFrom = (dto.getFromDate() / millisInDay) * millisInDay;
-			query.setParameter("text3", new Date(dateFrom));
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		if (!dto.getFromDateStr().isEmpty()) {
+			try {
+				query.setParameter("text3", formatter.parse(dto.getFromDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 
-		if (dto.getToDate() != null) {
-			query.setParameter("text4", new Date(dto.getToDate()));
+		if (!dto.getToDateStr().isEmpty()) {
+			try {
+				query.setParameter("text4", formatter.parse(dto.getToDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
-		
+
 		if (!dto.getPostCode().isEmpty()) {
 			query.setParameter("text5", '%' + dto.getPostCode().trim().toLowerCase() + '%');
 		}
 
+		if (user.getRole().getRole().equalsIgnoreCase("ROLE_LANDLORD")) {
+			query.setParameter("text6", '%' + user.getEmail() + '%');
+		}
 
 		@SuppressWarnings("unchecked")
 		List<PostModel> list = query.getResultList();

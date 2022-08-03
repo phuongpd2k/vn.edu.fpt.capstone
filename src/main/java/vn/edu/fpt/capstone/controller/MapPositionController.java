@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.MapPositionDto;
 import vn.edu.fpt.capstone.dto.ResponseObject;
 import vn.edu.fpt.capstone.service.MapPositionService;
@@ -66,6 +67,18 @@ public class MapPositionController {
 	public ResponseEntity<?> delete(@RequestBody MapPositionDto mapPositionDto) {
 		try {
 			mapPositionService.delete(mapPositionDto);
+			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
+					.message("Delete successfully!").messageCode("DELETE_SUCCESSFULLY").build());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
+					.message("Delete fail!").messageCode("DELETE_FAIL").build());
+		}
+	}
+	
+	@DeleteMapping(value = "/delete-by-list-id")
+	public ResponseEntity<?> deleteByList(@RequestBody ListIdDto list) {
+		try {
+			mapPositionService.deleteByListId(list);
 			return ResponseEntity.status(HttpStatus.OK).body(ResponseObject.builder().code("200")
 					.message("Delete successfully!").messageCode("DELETE_SUCCESSFULLY").build());
 		} catch (Exception e) {
