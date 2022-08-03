@@ -420,7 +420,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostResponse> findAllPostSearch(PostSearchDto dto, UserDto user) {
 		String sql = "select entity from PostModel as entity where (1=1) ";
-		String whereClause = "";
+		String whereClause = " AND entity.enable = true";
 
 		if (!dto.getFullname().isEmpty()) {
 			whereClause += " AND ( entity.house.user.fullName LIKE :text)";
