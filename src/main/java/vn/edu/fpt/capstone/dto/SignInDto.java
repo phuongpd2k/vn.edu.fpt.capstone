@@ -2,8 +2,8 @@ package vn.edu.fpt.capstone.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import vn.edu.fpt.capstone.model.RoleModel;
 
 @Data
 public class SignInDto {
