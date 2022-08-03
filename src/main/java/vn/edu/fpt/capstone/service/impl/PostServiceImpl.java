@@ -284,9 +284,9 @@ public class PostServiceImpl implements PostService {
 			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 			Date dateNow = new Date();
 			Date endDate = postModel.getEndDate();
-			if(endDate.getTime() > dateNow.getTime()) {
+			if (endDate.getTime() > dateNow.getTime()) {
 				postModel.setEndDate(new Date(endDate.getTime() + addDate));
-			}else {
+			} else {
 				postModel.setStartDate(dateNow);
 				postModel.setEndDate(new Date(dateNow.getTime() + addDate));
 			}
@@ -326,12 +326,13 @@ public class PostServiceImpl implements PostService {
 //				dto.getMaxPrice(), dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
 		// , dto.getAmenityIds()
 
-		//List<PostingResponse> listPostingResponse = convertToPostingResponse(result.getContent());
+		// List<PostingResponse> listPostingResponse =
+		// convertToPostingResponse(result.getContent());
 
 		PageableResponse pageableResponse = new PageableResponse();
 		pageableResponse.setCurrentPage(pageIndex + 1);
 		pageableResponse.setPageSize(pageSize);
-		//pageableResponse.setTotalPages(result.getTotalPages());
+		// pageableResponse.setTotalPages(result.getTotalPages());
 //		pageableResponse.setTotalItems(result.getTotalElements());
 //		pageableResponse.setResults(listPostingResponse);
 
@@ -367,10 +368,10 @@ public class PostServiceImpl implements PostService {
 		Long idHouse = p.getHouse().getId();
 		QuanHuyenDto dto = new QuanHuyenDto();
 		dto = quanHuyenService.findById(p.getHouse().getAddress().getPhuongXa().getMaQh());
-		
+
 		List<RoomModel> listRoomModel = new ArrayList<RoomModel>();
 		for (RoomModel r : p.getHouse().getRoom()) {
-			if(r.isEnable() == true)
+			if (r.isEnable() == true)
 				listRoomModel.add(r);
 		}
 
@@ -403,7 +404,7 @@ public class PostServiceImpl implements PostService {
 		}
 
 		String key = searchDto.getKeyword();
-		
+
 		if (searchDto.getKeyword() == null) {
 			key = "";
 		}
@@ -420,28 +421,28 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostResponse> findAllPostSearch(PostSearchDto dto, UserDto user) {
 		String sql = "select entity from PostModel as entity where (1=1) ";
-		String whereClause = "";
+		String whereClause = " AND entity.enable = true";
 
 		if (!dto.getFullname().isEmpty()) {
 			whereClause += " AND ( entity.house.user.fullName LIKE :text)";
 		}
-		
+
 		if (!dto.getUsername().isEmpty()) {
 			whereClause += " AND ( entity.house.user.username LIKE :text2)";
 		}
-		
-		if (dto.getFromDate() != null) {
+
+		if (!dto.getFromDateStr().isEmpty()) {
 			whereClause += " AND (entity.startDate >= :text3)";
 		}
 
-		if (dto.getToDate() != null) {
-			whereClause += " AND (entity.endDate < :text4)";
+		if (!dto.getToDateStr().isEmpty()) {
+			whereClause += " AND (entity.endDate <= :text4)";
 		}
-		
+
 		if (!dto.getPostCode().isEmpty()) {
 			whereClause += " AND ( entity.post_code LIKE :text5)";
 		}
-		if(user.getRole().getRole().equalsIgnoreCase("ROLE_LANDLORD")) {
+		if (user.getRole().getRole().equalsIgnoreCase("ROLE_LANDLORD")) {
 			whereClause += " AND ( entity.createdBy LIKE :text6)";
 		}
 
@@ -453,30 +454,36 @@ public class PostServiceImpl implements PostService {
 		if (!dto.getFullname().isEmpty()) {
 			query.setParameter("text", '%' + dto.getFullname().trim() + '%');
 		}
-		
+
 		if (!dto.getUsername().isEmpty()) {
 			query.setParameter("text2", '%' + dto.getUsername().trim() + '%');
 		}
-		
-		if (dto.getFromDate() != null) {
-			Date dateWithoutTime = new Date((dto.getFromDate()/1000) * 1000);
-			query.setParameter("text3", dateWithoutTime);
-			
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		if (!dto.getFromDateStr().isEmpty()) {
+			try {
+				query.setParameter("text3", formatter.parse(dto.getFromDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 
-		if (dto.getToDate() != null) {
-			Date dateWithoutTime = new Date((dto.getToDate()/1000) * 1000 + TIMESTAMP_DAY);
-			query.setParameter("text4", dateWithoutTime);
+		if (!dto.getToDateStr().isEmpty()) {
+			try {
+				query.setParameter("text4", formatter.parse(dto.getToDateStr()));
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
 		}
-		
+
 		if (!dto.getPostCode().isEmpty()) {
 			query.setParameter("text5", '%' + dto.getPostCode().trim().toLowerCase() + '%');
 		}
-		
-		if(user.getRole().getRole().equalsIgnoreCase("ROLE_LANDLORD")) {
+
+		if (user.getRole().getRole().equalsIgnoreCase("ROLE_LANDLORD")) {
 			query.setParameter("text6", '%' + user.getEmail() + '%');
 		}
-
 
 		@SuppressWarnings("unchecked")
 		List<PostModel> list = query.getResultList();

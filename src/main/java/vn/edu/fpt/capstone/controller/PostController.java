@@ -404,7 +404,7 @@ public class PostController {
 			postDto.setStatus(constant.DELETED);
 			postDto.setNote(post.getNote());
 			postDto.setDeletedDate(new Date());
-			postDto.setEnable(false);
+			postDto.setActive(false);
 			
 			PostModel model = postService.confirmPost(postDto);
 			if (model != null) {
@@ -432,7 +432,7 @@ public class PostController {
 			}
 			postDto.setStatus(constant.CENSORED);
 			postDto.setNote(post.getNote());
-			postDto.setEnable(true);
+			postDto.setActive(true);
 			
 			long deletedDate = postDto.getDeletedDate().getTime();
 	        long endDate = postDto.getEndDate().getTime();
