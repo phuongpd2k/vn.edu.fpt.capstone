@@ -314,14 +314,14 @@ public class RoomController {
 	public ResponseEntity<ResponseObject> historyHouse(@RequestBody FilterRoomDto dto) {
 		try {
 			PageableResponse pageableResponse = postService.filterPosting(dto);
-			LOGGER.info("get All posting: {}", pageableResponse.getResults());
+			LOGGER.info("get All filter: {}");
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(ResponseObject.builder().code("200").message("Get posting successfully")
-							.messageCode("GET_POSTING_SUCCESSFULLY").results(pageableResponse).build());
+					.body(ResponseObject.builder().code("200").message("Get filter successfully")
+							.messageCode("GET_FILTER_SUCCESSFULLY").results(pageableResponse).build());
 		} catch (Exception e) {
-			LOGGER.error("getAll posting: {}", e);
+			LOGGER.error("getAll filter: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-					.message("Get posting: " + e.getMessage()).messageCode("GET_POSTING_FAILED").build());
+					.message("Get filter: " + e.getMessage()).messageCode("GET_FILTER_FAILED").build());
 		}
 	}
 	

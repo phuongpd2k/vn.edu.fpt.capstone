@@ -52,9 +52,9 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			// + " AND (COALESCE(:amenityIds) is null or COALESCE(:amenityIds) =
 			// COALESCE(p.room.amenities))"
 			+ " GROUP BY p.room.id")
-	Page<PostModel> getFilterPage(@Param("houseTypeIds") List<Long> houseTypeIds, @Param("minPrice") int minPrice,
+	List<PostModel> getFilterPage(@Param("houseTypeIds") List<Long> houseTypeIds, @Param("minPrice") int minPrice,
 			@Param("maxPrice") int maxPrice, @Param("roomCategoryIds") List<Long> roomCategoryIds,
-			@Param("maximumNumberOfPeople") int maximumNumberOfPeople, Pageable pageable);
+			@Param("maximumNumberOfPeople") int maximumNumberOfPeople);
 
 	@Query(value = "SELECT p.* FROM favorite f JOIN post p ON f.postId = p.id WHERE f.userid= :userId", nativeQuery = true)
 	List<PostModel> findAllFavoritePostByUserId(@Param("userId") Long userId);
@@ -105,6 +105,36 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	+ " AND p.startDate <= ?1"
 	+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
 	Page<PostModel> getFilterPageTop8(Date date, Pageable pageable);
+
+	
+	@Query(value = "SELECT p.* FROM post p"
+			+ " INNER JOIN house h ON p.house_id = h.id"
+			+ " INNER JOIN room r ON h.id = r.house_id"
+			+ " INNER JOIN house_amenitiess ha ON ha.house_id = h.id"
+			+ " INNER JOIN room_amenity ra ON ra.room_id = r.id"
+			
+			+ " WHERE p.enable = true AND p.is_active = true "
+			+ " AND r.enable = true AND p.status = 'CENSORED'"		
+			+ " AND (:verify = '' or p.verify = :verify)"
+			
+			+ " AND (r.area >= :minArea or :minArea is null or :minArea = '')"
+			+ " AND (r.area <= :maxArea or :maxArea is null or :maxArea = '')"
+			+ " AND (h.type_of_rental_id in (:typeOfRentalIds) or COALESCE(:typeOfRentalIds) is null)"
+			+ " AND (COALESCE(:roomCategoryIds) is null or r.room_category_id IN (:roomCategoryIds))"
+			+ " AND (r.rental_price >= :minPrice or :minPrice is null or :minPrice = '')"
+			+ " AND (r.rental_price >= :maxPrice or :maxPrice is null or :maxPrice = '')"
+			+ " AND (r.maximum_number_of_people <= :maximumNumberOfPeople or :maximumNumberOfPeople is null or :maximumNumberOfPeople = '')"
+			+ " AND (COALESCE(:amenityHouseIds) is null or ha.amenity_id IN (:amenityHouseIds))"
+			+ " AND (COALESCE(:amenityRoomIds) is null or ra.amenity_id IN (:amenityRoomIds))"
+			+ " AND (:roomMate = '' or r.room_mate = :roomMate)"
+
+			+ " GROUP BY p.id", nativeQuery = true)
+	List<PostModel> getListPostModelFilter(@Param("verify") String verify, @Param("minArea") Double minArea,
+			@Param("maxArea") Double maxArea, @Param("typeOfRentalIds") List<Long> typeOfRentalIds,
+			@Param("roomCategoryIds") List<Long> roomCategoryIds, @Param("minPrice") Integer minPrice,
+			@Param("maxPrice") Integer maxPrice, @Param("maximumNumberOfPeople") Integer maximumNumberOfPeople,
+			@Param("amenityHouseIds") List<Long> amenityHouseIds, @Param("amenityRoomIds") List<Long> amenityRoomIds, 
+			@Param("roomMate") String roomMate);
 	
 //	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
 //			+ " AND p.house.user.isActive = true"

@@ -7,13 +7,14 @@ import lombok.Data;
 @Data
 public class FilterRoomDto extends SearchDto{
 	private String verify;
-	private double minArea;
-	private double maxArea;
+	private Double minArea;
+	private Double maxArea;
 	private List<Long> typeOfRentalIds;
 	private List<Long> roomCategoryIds;
-	private int minPrice;
-	private int maxPrice;
-	private int maximumNumberOfPeople;
-	private List<Long> amenityIds;
+	private Integer minPrice;
+	private Integer maxPrice;
+	private Integer maximumNumberOfPeople;
+	private List<Long> amenityHouseIds;
+	private List<Long> amenityRoomIds;
 	private String roomMate;
 }
