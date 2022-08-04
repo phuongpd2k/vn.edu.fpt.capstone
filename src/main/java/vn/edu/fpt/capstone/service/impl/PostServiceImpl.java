@@ -319,22 +319,28 @@ public class PostServiceImpl implements PostService {
 		} else {
 			pageIndex = 0;
 		}
+		int start = pageIndex * pageSize;
+		int end = pageSize * (pageIndex + 1) - 1;
 
-		Pageable pageable = PageRequest.of(pageIndex, pageSize);
-
-//		Page<PostModel> result = postRepository.getFilterPage(dto.getHouseTypeIds(), dto.getMinPrice(),
-//				dto.getMaxPrice(), dto.getRoomCategoryIds(), dto.getMaximumNumberOfPeople(), pageable);
-		// , dto.getAmenityIds()
-
-		// List<PostingResponse> listPostingResponse =
-		// convertToPostingResponse(result.getContent());
+		List<PostModel> result = postRepository.getListPostModelFilter(dto.getVerify(), dto.getMinArea(),
+				dto.getMaxArea(), dto.getTypeOfRentalIds(), dto.getRoomCategoryIds(), dto.getMinPrice()
+				, dto.getMaxPrice(), dto.getMaximumNumberOfPeople(), dto.getAmenityHouseIds(), dto.getAmenityRoomIds(), 
+				dto.getRoomMate());
+		
+		
 
 		PageableResponse pageableResponse = new PageableResponse();
 		pageableResponse.setCurrentPage(pageIndex + 1);
 		pageableResponse.setPageSize(pageSize);
-		// pageableResponse.setTotalPages(result.getTotalPages());
-//		pageableResponse.setTotalItems(result.getTotalElements());
-//		pageableResponse.setResults(listPostingResponse);
+		pageableResponse.setTotalPages((int)Math.ceil(result.size()*1.0/pageSize));
+		pageableResponse.setTotalItems((long)result.size());
+		List<PostModel> resultList = null;
+		if(end >= result.size()) {
+			resultList = result.subList(start, result.size());
+		}else {
+			resultList = result.subList(start, end + 1);
+		}
+		pageableResponse.setResults(convertToPostingResponse(resultList));
 
 		return pageableResponse;
 	}
