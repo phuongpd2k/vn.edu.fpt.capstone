@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import vn.edu.fpt.capstone.dto.PostDto;
 import vn.edu.fpt.capstone.dto.RoomDto;
 import vn.edu.fpt.capstone.response.PostResponse;
+import vn.edu.fpt.capstone.response.PostingResponse;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -17,4 +18,8 @@ public class FavoriteResponse {
 	@JsonProperty("posts")
 	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
 	List<PostResponse> postDtos;
+	
+	@JsonProperty("postingDtos")
+	@JsonIgnoreProperties({ "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
+	List<PostingResponse> postingDtos;
 }

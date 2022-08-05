@@ -115,6 +115,34 @@ public class FavoriteController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@GetMapping(value = "/favorite/user/v2")
+	public ResponseEntity<ResponseObject> getFavoriteUserV2(@RequestHeader(value = "Authorization") String jwtToken) {
+		ResponseObject response = new ResponseObject();
+		try {
+			UserDto userDto = userService.getUserByToken(jwtToken);
+			if (userDto == null) {
+				response.setCode("406");
+				response.setMessage("Wrong body format or User token has expired");
+				response.setMessageCode(Message.NOT_ACCEPTABLE);
+				LOGGER.error("postFavorite: {}", "Wrong body format or User token has expired");
+				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+			}
+			FavoriteResponse favoriteResponse = new FavoriteResponse();
+			favoriteResponse.setPostingDtos(postService.findAllFavoritePostingByUserId(userDto.getId()));
+			
+			response.setResults(favoriteResponse);
+			LOGGER.info("getAll: {}", favoriteResponse);
+			response.setCode("200");
+			response.setMessageCode(Message.OK);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception ex) {
+			LOGGER.error("getAll: {}", ex);
+			response.setCode("500");
+			response.setMessageCode(Message.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@PostMapping(value = "/favorite")
 	public ResponseEntity<ResponseObject> postFavorite(@RequestBody FavoriteRequest favoriteRequest,

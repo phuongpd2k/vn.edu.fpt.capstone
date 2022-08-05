@@ -54,4 +54,6 @@ public interface PostService {
 
 	List<PostingResponse> filterMapPosting(FilterRoomDto dto);
 
+	List<PostingResponse> findAllFavoritePostingByUserId(Long id);
+
 }

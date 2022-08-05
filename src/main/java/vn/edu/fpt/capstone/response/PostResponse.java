@@ -52,4 +52,16 @@ public class PostResponse {
 	
 	private String verifyNote;
 	
+	private String houseImageUrl;
+	private String houseTypeOfRental;
+	private String roomMate;
+	
+	private int minPrice;
+	private int maxPrice;
+	private float minArea;
+	private float maxArea;
+	
+	private int amountRating;
+	private float rating;
+	
 }
