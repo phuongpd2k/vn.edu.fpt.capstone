@@ -496,4 +496,13 @@ public class PostServiceImpl implements PostService {
 		return convertEntity2Response(list);
 	}
 
+	@Override
+	public List<PostingResponse> filterMapPosting(FilterRoomDto dto) {
+		List<PostModel> result = postRepository.getListPostModelFilter(dto.getVerify(), dto.getMinArea(),
+				dto.getMaxArea(), dto.getTypeOfRentalIds(), dto.getRoomCategoryIds(), dto.getMinPrice()
+				, dto.getMaxPrice(), dto.getMaximumNumberOfPeople(), dto.getAmenityHouseIds(), dto.getAmenityRoomIds(), 
+				dto.getRoomMate());
+		return convertToPostingResponse(result);
+	}
+
 }

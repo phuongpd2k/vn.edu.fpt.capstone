@@ -52,4 +52,6 @@ public interface PostService {
 
 	List<PostResponse> findAllPostSearch(PostSearchDto dto, UserDto user);
 
+	List<PostingResponse> filterMapPosting(FilterRoomDto dto);
+
 }
