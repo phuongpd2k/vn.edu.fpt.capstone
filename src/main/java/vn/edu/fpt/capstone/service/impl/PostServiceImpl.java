@@ -351,9 +351,65 @@ public class PostServiceImpl implements PostService {
 		if (postModels == null || postModels.isEmpty()) {
 			return null;
 		}
-		List<PostResponse> postRes = convertEntity2Response(postModels);
+		List<PostResponse> postRes = convertEntity2ResponseV2(postModels);
 		return postRes;
 	}
+
+	private List<PostResponse> convertEntity2ResponseV2(List<PostModel> postModels) {
+		List<PostResponse> postRes = new ArrayList<PostResponse>();
+		for (PostModel model : postModels) {
+			QuanHuyenDto dto = new QuanHuyenDto();
+			dto = quanHuyenService.findById(model.getHouse().getAddress().getPhuongXa().getMaQh());
+			int amountRating = feedbackRepository.getAmountByPostId(model.getId());
+			float rating = 0;
+
+			if (amountRating > 0) {
+				rating = feedbackRepository.getTotalRatingByPostId(model.getId()) / amountRating;
+			}
+			PostResponse postResponse = PostResponse.builder()
+					.id(model.getId())
+					.postTypeId(model.getPostType().getId())
+					.postType(model.getPostType().getType())
+					.roomName(model.getRoom().getName())
+					.houseName(model.getHouse().getName())
+					.startDate(model.getStartDate())
+					.endDate(model.getEndDate())
+					.cost(model.getCost())
+					.numberOfDays(model.getNumberOfDays())
+					.status(model.getStatus())
+					.roomType(model.getRoom().getRoomType().getName())
+					.roomCategory(model.getRoom().getRoomCategory().getName())
+					.area(model.getHouse().getArea())
+					.rentalPrice(model.getRoom().getRentalPrice())
+					.street(model.getHouse().getAddress().getStreet())
+					.phuongXa(model.getHouse().getAddress().getPhuongXa().getName())
+					.quanHuyen(dto.getName())
+					.thanhPho(thanhPhoService.findById(dto.getMaTp()).getName())
+					.hostName(model.getHouse().getUser().getFullName())
+					.hostPhone(model.getHouse().getUser().getPhoneNumber())
+					.images(Arrays.asList(modelMapper.map(model.getRoom().getImages(), ImageDto[].class)))
+					.verify(model.getVerify())
+					.note(model.getNote())
+					.postCode(model.getPost_code())
+					.username(model.getHouse().getUser().getUsername())
+					.verifyNote(model.getVerifyNote())
+					.roomId(model.getRoom().getId())
+					.houseImageUrl(model.getHouse().getImageUrl())
+					.houseTypeOfRental(model.getHouse().getTypeOfRental().getName())
+					.roomMate(model.getRoom().getRoomMate())
+					.minPrice(roomService.minPrice(model.getHouse().getId()))
+					.maxPrice(roomService.maxPrice(model.getHouse().getId()))
+					.minArea(roomService.minArea(model.getHouse().getId()))
+					.maxArea(roomService.maxArea(model.getHouse().getId()))
+					.amountRating(amountRating)
+					.rating(rating)
+					.build();
+
+			postRes.add(postResponse);
+		}
+		return postRes;
+	}
+	
 
 	@Override
 	public List<PostingResponse> findTop8Posting() {
@@ -494,6 +550,25 @@ public class PostServiceImpl implements PostService {
 		@SuppressWarnings("unchecked")
 		List<PostModel> list = query.getResultList();
 		return convertEntity2Response(list);
+	}
+
+	@Override
+	public List<PostingResponse> filterMapPosting(FilterRoomDto dto) {
+		List<PostModel> result = postRepository.getListPostModelFilter(dto.getVerify(), dto.getMinArea(),
+				dto.getMaxArea(), dto.getTypeOfRentalIds(), dto.getRoomCategoryIds(), dto.getMinPrice()
+				, dto.getMaxPrice(), dto.getMaximumNumberOfPeople(), dto.getAmenityHouseIds(), dto.getAmenityRoomIds(), 
+				dto.getRoomMate());
+		return convertToPostingResponse(result);
+	}
+
+	@Override
+	public List<PostingResponse> findAllFavoritePostingByUserId(Long id) {
+		List<PostModel> postModels = postRepository.findAllFavoritePostByUserId(id);
+		if (postModels == null || postModels.isEmpty()) {
+			return null;
+		}
+		List<PostingResponse> postRes = convertToPostingResponse(postModels);
+		return postRes;
 	}
 
 }

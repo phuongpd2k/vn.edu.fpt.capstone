@@ -17,6 +17,7 @@ import vn.edu.fpt.capstone.repository.HouseRepository;
 import vn.edu.fpt.capstone.repository.RoomCategoryRepository;
 import vn.edu.fpt.capstone.repository.RoomTypeRepository;
 import vn.edu.fpt.capstone.response.PageableResponse;
+import vn.edu.fpt.capstone.response.PostingResponse;
 import vn.edu.fpt.capstone.response.RoomPostingResponse;
 import vn.edu.fpt.capstone.constant.Message;
 import vn.edu.fpt.capstone.dto.FilterRoomDto;
@@ -311,13 +312,28 @@ public class RoomController {
 	}
 	
 	@PostMapping(value = "/room/filter")
-	public ResponseEntity<ResponseObject> historyHouse(@RequestBody FilterRoomDto dto) {
+	public ResponseEntity<ResponseObject> filterRoom(@RequestBody FilterRoomDto dto) {
 		try {
 			PageableResponse pageableResponse = postService.filterPosting(dto);
 			LOGGER.info("get All filter: {}");
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseObject.builder().code("200").message("Get filter successfully")
 							.messageCode("GET_FILTER_SUCCESSFULLY").results(pageableResponse).build());
+		} catch (Exception e) {
+			LOGGER.error("getAll filter: {}", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+					.message("Get filter: " + e.getMessage()).messageCode("GET_FILTER_FAILED").build());
+		}
+	}
+	
+	@PostMapping(value = "/room/filter-map")
+	public ResponseEntity<ResponseObject> filterRoomMap(@RequestBody FilterRoomDto dto) {
+		try {
+			List<PostingResponse> list = postService.filterMapPosting(dto);
+			LOGGER.info("get All filter: {}");
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseObject.builder().code("200").message("Get filter successfully")
+							.messageCode("GET_FILTER_SUCCESSFULLY").results(list).build());
 		} catch (Exception e) {
 			LOGGER.error("getAll filter: {}", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")

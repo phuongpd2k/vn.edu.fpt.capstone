@@ -128,7 +128,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " AND (COALESCE(:amenityRoomIds) is null or ra.amenity_id IN (:amenityRoomIds))"
 			+ " AND (:roomMate = '' or r.room_mate = :roomMate)"
 
-			+ " GROUP BY p.id", nativeQuery = true)
+			+ " GROUP BY h.id", nativeQuery = true)
 	List<PostModel> getListPostModelFilter(@Param("verify") String verify, @Param("minArea") Double minArea,
 			@Param("maxArea") Double maxArea, @Param("typeOfRentalIds") List<Long> typeOfRentalIds,
 			@Param("roomCategoryIds") List<Long> roomCategoryIds, @Param("minPrice") Integer minPrice,
