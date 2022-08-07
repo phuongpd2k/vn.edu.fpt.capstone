@@ -280,15 +280,20 @@ public class PostServiceImpl implements PostService {
 			int costPerDay = postTypeRepository.getById(postModel.getPostType().getId()).getPrice();
 			postModel.setCost(postModel.getCost() + postDto.getNumberOfDays() * costPerDay);
 			postModel.setNumberOfDays(postModel.getNumberOfDays() + postDto.getNumberOfDays());
+			
+			Calendar c = Calendar.getInstance();
 
-			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 			Date dateNow = new Date();
 			Date endDate = postModel.getEndDate();
 			if (endDate.getTime() > dateNow.getTime()) {
-				postModel.setEndDate(new Date(endDate.getTime() + addDate));
-			} else {
+				c.setTime(postModel.getEndDate());
+				c.add(Calendar.DATE, postDto.getNumberOfDays());
+				postModel.setEndDate(c.getTime());
+			} else {		
 				postModel.setStartDate(dateNow);
-				postModel.setEndDate(new Date(dateNow.getTime() + addDate));
+				c.setTime(postModel.getStartDate());
+				c.add(Calendar.DATE, postDto.getNumberOfDays());
+				postModel.setEndDate(c.getTime());
 			}
 
 			return postRepository.save(postModel);
@@ -325,7 +330,7 @@ public class PostServiceImpl implements PostService {
 		List<PostModel> result = postRepository.getListPostModelFilter(dto.getVerify(), dto.getMinArea(),
 				dto.getMaxArea(), dto.getTypeOfRentalIds(), dto.getRoomCategoryIds(), dto.getMinPrice()
 				, dto.getMaxPrice(), dto.getMaximumNumberOfPeople(), dto.getAmenityHouseIds(), dto.getAmenityRoomIds(), 
-				dto.getRoomMate());
+				dto.getRoomMate(), dto.getHouseName());
 		
 		
 
@@ -557,7 +562,7 @@ public class PostServiceImpl implements PostService {
 		List<PostModel> result = postRepository.getListPostModelFilter(dto.getVerify(), dto.getMinArea(),
 				dto.getMaxArea(), dto.getTypeOfRentalIds(), dto.getRoomCategoryIds(), dto.getMinPrice()
 				, dto.getMaxPrice(), dto.getMaximumNumberOfPeople(), dto.getAmenityHouseIds(), dto.getAmenityRoomIds(), 
-				dto.getRoomMate());
+				dto.getRoomMate(), dto.getHouseName());
 		return convertToPostingResponse(result);
 	}
 
