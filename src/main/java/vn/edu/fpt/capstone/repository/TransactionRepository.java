@@ -26,7 +26,7 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	@Query("SELECT t FROM TransactionModel t WHERE t.user.id = ?1 order by t.createdDate desc")
 	List<TransactionModel> findAllById(Long id);
 
-	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS'")
+	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND' OR t.transferType = 'VERIFY') AND t.status = 'SUCCESS'")
 	Float getTotalAmountMoney();
 
 	
@@ -41,7 +41,7 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 			+ " ORDER BY MONTH(t.createdDate)")
 	List<DashBoardDataFloat> getDataRevenueDashBoardAdmin(int year);
 
-	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.amount))"
+	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.actualAmount))"
 			+ " FROM TransactionModel t"
 			+ " WHERE t.user.id = ?1 AND YEAR(t.createdDate) = ?2"
 			+ " AND (t.transferType = 'DEPOSIT') AND t.status = 'SUCCESS'"
@@ -53,7 +53,7 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.amount))"
 			+ " FROM TransactionModel t"
 			+ " WHERE t.user.id = ?1 AND YEAR(t.createdDate) = ?2"
-			+ " AND (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS'"
+			+ " AND (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND' OR t.transferType = 'VERIFY') AND t.status = 'SUCCESS'"
 			+ " GROUP BY MONTH(t.createdDate)"
 			+ " ORDER BY MONTH(t.createdDate)")
 	List<DashBoardDataFloat> getDataPostingExtendDashBoardHost(Long id, int year);

@@ -451,7 +451,6 @@ public class TransactionController {
 			transactionDto.setAction(constant.DO_NOTHING);
 			transactionDto.setTransferContent("Nạp tiền");
 			transactionDto.setUser(userDto);
-			transactionDto.setDateVerify(new Date());
 
 			transactionDto.setLastBalance(userDto.getBalance());
 

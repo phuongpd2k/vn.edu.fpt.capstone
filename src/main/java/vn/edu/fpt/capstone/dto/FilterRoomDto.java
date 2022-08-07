@@ -17,4 +17,5 @@ public class FilterRoomDto extends SearchDto{
 	private List<Long> amenityHouseIds;
 	private List<Long> amenityRoomIds;
 	private String roomMate;
+	private String houseName;
 }

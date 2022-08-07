@@ -127,6 +127,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " AND (COALESCE(:amenityHouseIds) is null or ha.amenity_id IN (:amenityHouseIds))"
 			+ " AND (COALESCE(:amenityRoomIds) is null or ra.amenity_id IN (:amenityRoomIds))"
 			+ " AND (:roomMate = '' or r.room_mate = :roomMate)"
+			+ " AND (:houseName = '' or h.name LIKE CONCAT('%',:houseName,'%'))"
 
 			+ " GROUP BY h.id", nativeQuery = true)
 	List<PostModel> getListPostModelFilter(@Param("verify") String verify, @Param("minArea") Double minArea,
@@ -134,24 +135,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			@Param("roomCategoryIds") List<Long> roomCategoryIds, @Param("minPrice") Integer minPrice,
 			@Param("maxPrice") Integer maxPrice, @Param("maximumNumberOfPeople") Integer maximumNumberOfPeople,
 			@Param("amenityHouseIds") List<Long> amenityHouseIds, @Param("amenityRoomIds") List<Long> amenityRoomIds, 
-			@Param("roomMate") String roomMate);
+			@Param("roomMate") String roomMate, @Param("houseName") String houseName);
 	
-//	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
-//			+ " AND p.house.user.isActive = true"
-//			+ " AND p.house.enable = true"
-//			+ " AND p.status = 'CENSORED'"
-//			+ " AND p.endDate >= ?1"
-//			+ " AND p.startDate <= ?1"
-//			+ " ORDER BY p.postCost")
-
-	
-//	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
-//			+ " AND p.house.user.isActive = true"
-//			+ " AND p.house.enable = true"
-//			+ " AND p.status = 'CENSORED'"
-//			+ " AND p.endDate >= ?1"
-//			+ " AND p.startDate <= ?1"
-//			+ " ORDER BY (CASE p.verify"
-//			+ "   WHEN 'VERIFIED' THEN 1"
-//			+ "   ELSE 2 END) ASC, p.postCost DESC")
+	//:#{#customer.firstname}
 }

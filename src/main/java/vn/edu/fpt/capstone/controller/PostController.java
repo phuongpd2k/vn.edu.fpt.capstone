@@ -38,6 +38,7 @@ import vn.edu.fpt.capstone.service.UserService;
 import vn.edu.fpt.capstone.random.RandomString;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -215,11 +216,10 @@ public class PostController {
 			}
 			
 			postDto.setCost(cost);
-			// set end date
-			long currentDate = postDto.getStartDate().getTime();
-			long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
-			Long expiredTime = currentDate + addDate;
-			postDto.setEndDate(new Date(expiredTime));
+			Calendar c = Calendar.getInstance();
+	        c.setTime(postDto.getStartDate());
+	        c.add(Calendar.DATE, postDto.getNumberOfDays());
+			postDto.setEndDate(c.getTime());
 			postDto.setStatus(constant.UNCENSORED);
 			
 			PostTypeModel postType = postTypeService.getById(postDto.getPostType().getId());
@@ -309,13 +309,16 @@ public class PostController {
 
 	        long currentDate = (new Date()).getTime();
 	        long startDate = postDto.getStartDate().getTime();
-	        long addDate = Math.abs((postDto.getNumberOfDays() * TIMESTAMP_DAY));
 	        if(currentDate > startDate) {	
-				Long expiredTime = currentDate + addDate;
-				postDto.setEndDate(new Date(expiredTime));
+				Calendar c = Calendar.getInstance();
+				c.setTime(new Date());
+				c.add(Calendar.DATE, postDto.getNumberOfDays());
+				postDto.setEndDate(c.getTime());
 	        }else {
-	        	Long expiredTime = startDate + addDate;
-				postDto.setEndDate(new Date(expiredTime));
+	        	Calendar c = Calendar.getInstance();
+				c.setTime(postDto.getStartDate());
+				c.add(Calendar.DATE, postDto.getNumberOfDays());
+				postDto.setEndDate(c.getTime());
 	        }
 	            
 	        TransactionDto tr = transactionService.findByPostIdAndTransferTypePosting(id);
@@ -486,7 +489,7 @@ public class PostController {
 			}
 			if (cost > userModel.getBalance()) {
 				LOGGER.error("postPost: {}", "Not enough money for post");
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("400")
 						.message("Extend post: not enough money!").messageCode("MONEY_NOT_ENOUGH").build());
 			} else {
 				userModel.setBalance(userModel.getBalance() - cost);
@@ -496,8 +499,7 @@ public class PostController {
 			UserModel user2 = userService.updateUser(modelMapper.map(userModel, UserDto.class));
 			if (user2 == null) {
 				LOGGER.error("extendPost: {}", "update user fail");
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("500")
-						.message("Extend post: update user fail").messageCode("EXTEND_POST_FAILED").build());
+				throw new Exception();
 			}
 
 			TransactionDto transactionDto = new TransactionDto();
