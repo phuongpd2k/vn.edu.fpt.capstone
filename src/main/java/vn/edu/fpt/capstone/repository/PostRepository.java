@@ -23,14 +23,14 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true ORDER BY pm.createdDate DESC")
 	List<PostModel> findAllQuery();
 
-	@Query("select p from PostModel p where p.enable = true AND p.isActive = true AND p.house.name LIKE %?1%"
-			+ " AND p.house.user.isActive = true"
-			+ " AND p.house.enable = true"
-			+ " AND p.status = 'CENSORED'"
-			+ " AND p.endDate >= ?2"
-			+ " AND p.startDate <= ?2"
-			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
-	Page<PostModel> getListPage(String houseName, Date dateNow, Pageable pageable);
+//	@Query("select p from PostModel p where p.enable = true AND p.isActive = true AND p.house.name LIKE %?1%"
+//			+ " AND p.house.user.isActive = true"
+//			+ " AND p.house.enable = true"
+//			+ " AND p.status = 'CENSORED'"
+//			+ " AND p.endDate >= ?2"
+//			+ " AND p.startDate <= ?2"
+//			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
+//	Page<PostModel> getListPage(String houseName, Date dateNow, Pageable pageable);
 
 	@Query("SELECT new vn.edu.fpt.capstone.response.HouseHistoryResponse(p.postType.type, p.cost, p.startDate, p.endDate, p.status) FROM PostModel p WHERE p.createdBy = ?1 AND p.house.id = ?2")
 	List<HouseHistoryResponse> getListHouseHistory(String username, Long id);
@@ -44,26 +44,30 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true AND pm.house.user.id = ?1 AND pm.house.enable = true ORDER BY pm.createdDate DESC")
 	List<PostModel> findAllPostByUserId(Long id);
 
-	@Query("SELECT p FROM PostModel p WHERE p.enable = true AND p.isActive = true"
-			+ " AND (COALESCE(:houseTypeIds) is null or p.house.typeOfRental.id IN :houseTypeIds)"
-			+ " AND (p.room.rentalPrice >= :minPrice) AND (p.room.rentalPrice <= :maxPrice)"
-			+ " AND (COALESCE(:roomCategoryIds) is null or p.room.roomCategory.id IN :roomCategoryIds)"
-			+ " AND (p.room.maximumNumberOfPeople = :maximumNumberOfPeople)"
-			// + " AND (COALESCE(:amenityIds) is null or COALESCE(:amenityIds) =
-			// COALESCE(p.room.amenities))"
-			+ " GROUP BY p.room.id")
-	List<PostModel> getFilterPage(@Param("houseTypeIds") List<Long> houseTypeIds, @Param("minPrice") int minPrice,
-			@Param("maxPrice") int maxPrice, @Param("roomCategoryIds") List<Long> roomCategoryIds,
-			@Param("maximumNumberOfPeople") int maximumNumberOfPeople);
+//	@Query("SELECT p FROM PostModel p WHERE p.enable = true AND p.isActive = true"
+//			+ " AND (COALESCE(:houseTypeIds) is null or p.house.typeOfRental.id IN :houseTypeIds)"
+//			+ " AND (p.room.rentalPrice >= :minPrice) AND (p.room.rentalPrice <= :maxPrice)"
+//			+ " AND (COALESCE(:roomCategoryIds) is null or p.room.roomCategory.id IN :roomCategoryIds)"
+//			+ " AND (p.room.maximumNumberOfPeople = :maximumNumberOfPeople)"
+//			// + " AND (COALESCE(:amenityIds) is null or COALESCE(:amenityIds) =
+//			// COALESCE(p.room.amenities))"
+//			+ " GROUP BY p.room.id")
+//	List<PostModel> getFilterPage(@Param("houseTypeIds") List<Long> houseTypeIds, @Param("minPrice") int minPrice,
+//			@Param("maxPrice") int maxPrice, @Param("roomCategoryIds") List<Long> roomCategoryIds,
+//			@Param("maximumNumberOfPeople") int maximumNumberOfPeople);
 
 	@Query(value = "SELECT p.* FROM favorite f JOIN post p ON f.postId = p.id WHERE f.userid= :userId", nativeQuery = true)
 	List<PostModel> findAllFavoritePostByUserId(@Param("userId") Long userId);
 
-	@Query(value="SELECT * FROM post WHERE post.enable = true AND post.is_active = true"
-			+ " AND post.status = 'CENSORED'"
-			+ " AND post.end_date >= ?1"
-			+ " AND post.start_date <= ?1"
-			+ " ORDER BY post.post_cost DESC Limit 0, 8", nativeQuery = true)
+	@Query(value="SELECT p.* FROM post p"
+			+ " join (SELECT postid as pid, AVG(f.rating) as 'avg'"
+			+ "		FROM feedback f"
+			+ "		group by postid) as fb on p.id = fb.pid"
+			+ " join house h on p.house_id = h.id"
+			+ " join user u on u.id = h.user_id"
+			+ " where p.is_active = true and u.is_active = true and h.enable = true"
+			+ " and p.status = 'CENSORED' and p.start_date <= ?1 and p.end_date >= ?1"
+			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.post_cost DESC, fb.avg DESC Limit 0, 8", nativeQuery = true)
 	List<PostModel> findTop8(Date dateNow);
 
 	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardData(MONTH(p.createdDate), COUNT(p))"
@@ -97,14 +101,14 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " ORDER BY p.postCost")	
 	List<PostModel> getAllPostModelContainKey(String key, Date dateNow);
 
-	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
-	+ " AND p.house.user.isActive = true"
-	+ " AND p.house.enable = true"
-	+ " AND p.status = 'CENSORED'"
-	+ " AND p.endDate >= ?1"
-	+ " AND p.startDate <= ?1"
-	+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
-	Page<PostModel> getFilterPageTop8(Date date, Pageable pageable);
+//	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
+//	+ " AND p.house.user.isActive = true"
+//	+ " AND p.house.enable = true"
+//	+ " AND p.status = 'CENSORED'"
+//	+ " AND p.endDate >= ?1"
+//	+ " AND p.startDate <= ?1"
+//	+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
+//	Page<PostModel> getFilterPageTop8(Date date, Pageable pageable);
 
 	
 	@Query(value = "SELECT p.* FROM post p"
@@ -136,6 +140,18 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			@Param("maxPrice") Integer maxPrice, @Param("maximumNumberOfPeople") Integer maximumNumberOfPeople,
 			@Param("amenityHouseIds") List<Long> amenityHouseIds, @Param("amenityRoomIds") List<Long> amenityRoomIds, 
 			@Param("roomMate") String roomMate, @Param("houseName") String houseName);
+
+	@Query(value="SELECT p.* FROM post p"
+			+ " join (SELECT postid as pid, AVG(f.rating) as 'avg'"
+			+ "		FROM feedback f"
+			+ "		group by postid) as fb on p.id = fb.pid"
+			+ " join house h on p.house_id = h.id"
+			+ " join user u on u.id = h.user_id"
+			+ " where p.is_active = true and u.is_active = true and h.enable = true"
+			+ " and h.name LIKE %?1%"
+			+ " and p.status = 'CENSORED' and p.start_date <= ?2 and p.end_date >= ?2"
+			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.post_cost DESC, fb.avg DESC", nativeQuery = true)
+	List<PostModel> getListPage(String key, Date dateNow);
 	
 	//:#{#customer.firstname}
 }

@@ -226,21 +226,27 @@ public class PostServiceImpl implements PostService {
 		} else {
 			pageIndex = 0;
 		}
+		
+		int start = pageIndex * pageSize;
+		int end = pageSize * (pageIndex + 1) - 1;
 
-		List<PostingResponse> listPostingResponse = null;
 		Date dateNow = new Date();
+
+		//Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
+		List<PostModel> result = postRepository.getListPage(key, dateNow);
+		
 		PageableResponse pageableResponse = new PageableResponse();
-
-		Pageable pageable = PageRequest.of(pageIndex, pageSize);
-
-		Page<PostModel> result = postRepository.getListPage(key, dateNow, pageable);
-		listPostingResponse = convertToPostingResponse(result.getContent());
-
 		pageableResponse.setCurrentPage(pageIndex + 1);
 		pageableResponse.setPageSize(pageSize);
-		pageableResponse.setTotalPages(result.getTotalPages());
-		pageableResponse.setTotalItems(result.getTotalElements());
-		pageableResponse.setResults(listPostingResponse);
+		pageableResponse.setTotalPages((int)Math.ceil(result.size()*1.0/pageSize));
+		pageableResponse.setTotalItems((long)result.size());
+		List<PostModel> resultList = null;
+		if(end >= result.size()) {
+			resultList = result.subList(start, result.size());
+		}else {
+			resultList = result.subList(start, end + 1);
+		}
+		pageableResponse.setResults(convertToPostingResponse(resultList));
 
 		return pageableResponse;
 	}
@@ -419,9 +425,10 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostingResponse> findTop8Posting() {
 		Date dateNow = new Date();
-		Pageable pageable = PageRequest.of(0, 8);
-		Page<PostModel> result = postRepository.getFilterPageTop8(dateNow, pageable);
-		List<PostModel> listPost = result.getContent();
+		//Pageable pageable = PageRequest.of(0, 8);
+		//Page<PostModel> result = postRepository.getFilterPageTop8(dateNow, pageable);
+		//List<PostModel> listPost = result.getContent();
+		List<PostModel> listPost = postRepository.findTop8(dateNow);
 
 		return convertToPostingResponse(listPost);
 	}
