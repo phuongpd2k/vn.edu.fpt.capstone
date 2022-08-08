@@ -30,7 +30,7 @@ public interface TransactionRepository extends JpaRepository<TransactionModel, L
 	Float getTotalAmountMoney();
 
 	
-	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND') AND t.status = 'SUCCESS' AND t.user.id = ?1")
+	@Query("SELECT SUM(t.amount) FROM TransactionModel t WHERE (t.transferType = 'POSTING' OR t.transferType = 'POSTING_EXTEND' t.transferType = 'VERIFY') AND t.status = 'SUCCESS' AND t.user.id = ?1")
 	Float getTotalAmountMoneyHost(Long id);
 
 	@Query("SELECT new vn.edu.fpt.capstone.dto.DashBoardDataFloat(MONTH(t.createdDate), SUM(t.amount))"

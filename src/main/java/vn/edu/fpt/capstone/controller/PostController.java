@@ -489,7 +489,7 @@ public class PostController {
 			}
 			if (cost > userModel.getBalance()) {
 				LOGGER.error("postPost: {}", "Not enough money for post");
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder().code("400")
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObject.builder().code("400")
 						.message("Extend post: not enough money!").messageCode("MONEY_NOT_ENOUGH").build());
 			} else {
 				userModel.setBalance(userModel.getBalance() - cost);
