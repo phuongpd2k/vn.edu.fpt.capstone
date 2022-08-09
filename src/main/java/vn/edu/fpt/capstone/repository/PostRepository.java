@@ -44,29 +44,18 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true AND pm.house.user.id = ?1 AND pm.house.enable = true ORDER BY pm.createdDate DESC")
 	List<PostModel> findAllPostByUserId(Long id);
 
-//	@Query("SELECT p FROM PostModel p WHERE p.enable = true AND p.isActive = true"
-//			+ " AND (COALESCE(:houseTypeIds) is null or p.house.typeOfRental.id IN :houseTypeIds)"
-//			+ " AND (p.room.rentalPrice >= :minPrice) AND (p.room.rentalPrice <= :maxPrice)"
-//			+ " AND (COALESCE(:roomCategoryIds) is null or p.room.roomCategory.id IN :roomCategoryIds)"
-//			+ " AND (p.room.maximumNumberOfPeople = :maximumNumberOfPeople)"
-//			// + " AND (COALESCE(:amenityIds) is null or COALESCE(:amenityIds) =
-//			// COALESCE(p.room.amenities))"
-//			+ " GROUP BY p.room.id")
-//	List<PostModel> getFilterPage(@Param("houseTypeIds") List<Long> houseTypeIds, @Param("minPrice") int minPrice,
-//			@Param("maxPrice") int maxPrice, @Param("roomCategoryIds") List<Long> roomCategoryIds,
-//			@Param("maximumNumberOfPeople") int maximumNumberOfPeople);
-
 	@Query(value = "SELECT p.* FROM favorite f JOIN post p ON f.postId = p.id WHERE f.userid= :userId", nativeQuery = true)
 	List<PostModel> findAllFavoritePostByUserId(@Param("userId") Long userId);
 
 	@Query(value="SELECT p.* FROM post p"
-			+ " join (SELECT postid as pid, AVG(f.rating) as 'avg'"
+			+ " left join (SELECT postid as pid, AVG(f.rating) as 'avg'"
 			+ "		FROM feedback f"
 			+ "		group by postid) as fb on p.id = fb.pid"
 			+ " join house h on p.house_id = h.id"
 			+ " join user u on u.id = h.user_id"
 			+ " where p.is_active = true and u.is_active = true and h.enable = true"
 			+ " and p.status = 'CENSORED' and p.start_date <= ?1 and p.end_date >= ?1"
+			+ " GROUP BY h.id"
 			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.post_cost DESC, fb.avg DESC Limit 0, 8", nativeQuery = true)
 	List<PostModel> findTop8(Date dateNow);
 
@@ -112,12 +101,17 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 
 	
 	@Query(value = "SELECT p.* FROM post p"
-			+ " INNER JOIN house h ON p.house_id = h.id"
-			+ " INNER JOIN room r ON h.id = r.house_id"
-			+ " INNER JOIN house_amenitiess ha ON ha.house_id = h.id"
-			+ " INNER JOIN room_amenity ra ON ra.room_id = r.id"
+			+ " left join (SELECT postid as pid, AVG(f.rating) as 'avg'"
+			+ "		FROM feedback f"
+			+ "		group by postid) as fb on p.id = fb.pid"
+			+ " JOIN house h ON p.house_id = h.id"
+			+ " JOIN room r ON h.id = r.house_id"
+			+ " JOIN house_amenitiess ha ON ha.house_id = h.id"
+			+ " JOIN room_amenity ra ON ra.room_id = r.id"
+			+ " join user u on u.id = h.user_id"
 			
 			+ " WHERE p.enable = true AND p.is_active = true "
+			+ " and u.is_active = true and h.enable = true"
 			+ " AND r.enable = true AND p.status = 'CENSORED'"		
 			+ " AND (:verify = '' or p.verify = :verify)"
 			
@@ -132,8 +126,8 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " AND (COALESCE(:amenityRoomIds) is null or ra.amenity_id IN (:amenityRoomIds))"
 			+ " AND (:roomMate = '' or r.room_mate = :roomMate)"
 			+ " AND (:houseName = '' or h.name LIKE CONCAT('%',:houseName,'%'))"
-
-			+ " GROUP BY h.id", nativeQuery = true)
+			+ " GROUP BY h.id"
+			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.post_cost DESC, fb.avg DESC", nativeQuery = true)
 	List<PostModel> getListPostModelFilter(@Param("verify") String verify, @Param("minArea") Double minArea,
 			@Param("maxArea") Double maxArea, @Param("typeOfRentalIds") List<Long> typeOfRentalIds,
 			@Param("roomCategoryIds") List<Long> roomCategoryIds, @Param("minPrice") Integer minPrice,
@@ -142,7 +136,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			@Param("roomMate") String roomMate, @Param("houseName") String houseName);
 
 	@Query(value="SELECT p.* FROM post p"
-			+ " join (SELECT postid as pid, AVG(f.rating) as 'avg'"
+			+ " left join (SELECT postid as pid, AVG(f.rating) as 'avg'"
 			+ "		FROM feedback f"
 			+ "		group by postid) as fb on p.id = fb.pid"
 			+ " join house h on p.house_id = h.id"
@@ -150,6 +144,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " where p.is_active = true and u.is_active = true and h.enable = true"
 			+ " and h.name LIKE %?1%"
 			+ " and p.status = 'CENSORED' and p.start_date <= ?2 and p.end_date >= ?2"
+			+ " GROUP BY h.id"
 			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.post_cost DESC, fb.avg DESC", nativeQuery = true)
 	List<PostModel> getListPage(String key, Date dateNow);
 	
