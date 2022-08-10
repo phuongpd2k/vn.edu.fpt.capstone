@@ -120,7 +120,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " AND (h.type_of_rental_id in (:typeOfRentalIds) or COALESCE(:typeOfRentalIds) is null)"
 			+ " AND (COALESCE(:roomCategoryIds) is null or r.room_category_id IN (:roomCategoryIds))"
 			+ " AND (r.rental_price >= :minPrice or :minPrice is null or :minPrice = '')"
-			+ " AND (r.rental_price >= :maxPrice or :maxPrice is null or :maxPrice = '')"
+			+ " AND (r.rental_price <= :maxPrice or :maxPrice is null or :maxPrice = '')"
 			+ " AND (r.maximum_number_of_people <= :maximumNumberOfPeople or :maximumNumberOfPeople is null or :maximumNumberOfPeople = '')"
 			+ " AND (COALESCE(:amenityHouseIds) is null or ha.amenity_id IN (:amenityHouseIds))"
 			+ " AND (COALESCE(:amenityRoomIds) is null or ra.amenity_id IN (:amenityRoomIds))"
