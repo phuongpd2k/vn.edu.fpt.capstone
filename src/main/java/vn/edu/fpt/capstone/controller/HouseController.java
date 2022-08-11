@@ -386,7 +386,7 @@ public class HouseController {
 				return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
 			}
 			HouseDto tempHouse = houseService.findById(houseDto.getId());
-			if (tempHouse.getUser().getId() != houseDto.getUser().getId()) {
+			if (!tempHouse.getUser().getId().equals(houseDto.getUser().getId())) {
 				LOGGER.error("putHouse: {}", "Can't change user");
 				response.setCode("406");
 				response.setMessage("Can't change user for this house");
