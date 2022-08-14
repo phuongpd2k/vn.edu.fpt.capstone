@@ -110,7 +110,14 @@ public class RoomController {
 				name = "";
 			}
 			Page<RoomModel> page = roomService.getPage(pageSize, pageIndex, name, houseDto.getId());
+			
+			for (RoomModel r : page.getContent()) {
+				if(r.getPosts().size() > 0) {
+					r.setCheck(true);
+				}
+			}
 			List<RoomDto> list = Arrays.asList(modelMapper.map(page.getContent(), RoomDto[].class));
+			
 
 			PageableResponse pageableResponse = new PageableResponse();
 			pageableResponse.setCurrentPage(pageIndex);

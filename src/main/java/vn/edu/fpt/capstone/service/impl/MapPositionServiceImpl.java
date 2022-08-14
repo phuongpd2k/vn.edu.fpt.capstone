@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vn.edu.fpt.capstone.dto.ListIdDto;
 import vn.edu.fpt.capstone.dto.MapPositionDto;
 import vn.edu.fpt.capstone.model.MapPositionModel;
 import vn.edu.fpt.capstone.repository.MapPositionRepository;
@@ -27,13 +28,22 @@ public class MapPositionServiceImpl implements MapPositionService{
 
 	@Override
 	public void createOrUpdate(MapPositionDto mapPositionDto) {
-		mapPositionRepo.save(modelMapper.map(mapPositionDto, MapPositionModel.class));
+		MapPositionModel mapPositionModel = modelMapper.map(mapPositionDto, MapPositionModel.class);
+		mapPositionRepo.save(mapPositionModel);
 		
 	}
 
 	@Override
 	public void delete(MapPositionDto mapPositionDto) {
-		mapPositionRepo.delete(modelMapper.map(mapPositionDto, MapPositionModel.class));
+		mapPositionRepo.deleteById(mapPositionDto.getId());;
+		
+	}
+
+	@Override
+	public void deleteByListId(ListIdDto list) {
+		for (long id : list.getList()) {
+			mapPositionRepo.deleteById(id);
+		}
 		
 	}
 

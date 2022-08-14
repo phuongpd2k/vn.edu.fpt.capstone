@@ -11,6 +11,6 @@ public class SearchTransactionDto extends SearchDto{
 	private String type;
 	
 	private String transactionCode;// (mã giao dịch) (mã chyển về chữ thường rồ search)
-    private String transactionType; // (đăng tin , xác thực, nạp tiền,..)
+    private TransactionTypeDto transactionType; // (đăng tin , xác thực, nạp tiền,..)
     
 }

@@ -21,6 +21,7 @@ public class PostDto extends Auditable<String> {
 	private int numberOfDays;
 	private int cost;
 	private boolean enable = true;
+	private boolean isActive = true;
 	private String status;
 	private String note;
 	private String verify = "UNVERIFIED";

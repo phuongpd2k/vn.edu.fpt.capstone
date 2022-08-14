@@ -29,8 +29,8 @@ public class MapPositionModel extends Auditable<String>{
     @Column(name = "NAME")
     private String name;
     
-    @Column(name = "LONGIUDE")
-    private String longiude;
+    @Column(name = "LONGITUDE")
+    private String longitude;
     
     @Column(name = "LATITUDE")
     private String latitude;

@@ -12,7 +12,7 @@ import vn.edu.fpt.capstone.model.RoomModel;
 
 @Repository
 public interface RoomRepository extends JpaRepository<RoomModel, Long> {
-	@Query("SELECT rm FROM RoomModel rm WHERE rm.house.id = ?1 AND rm.name LIKE %?2%")
+	@Query("SELECT rm FROM RoomModel rm WHERE rm.house.id = ?1 AND rm.name LIKE %?2% AND rm.enable = true")
 	Page<RoomModel> getListPage(Long house_id, String name, Pageable pageable);
 
 	@Query("SELECT MAX(rm.rentalPrice) FROM RoomModel rm WHERE rm.house.id = ?1")
