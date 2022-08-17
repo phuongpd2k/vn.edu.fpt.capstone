@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public interface MailService {
 	void sendMailVerifyCode(String email, String username, String code) throws MessagingException, UnsupportedEncodingException;
 	
-	void sendMailResetPassword(String email) throws UnsupportedEncodingException;
+	void sendMailResetPassword(String email) throws MessagingException, UnsupportedEncodingException;
 
 	void sendMailLockUser(String email, String username, String note) throws MessagingException, UnsupportedEncodingException;
 

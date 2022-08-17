@@ -70,7 +70,7 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@Override
-	public void sendMailResetPassword(String email) throws UnsupportedEncodingException {
+	public void sendMailResetPassword(String email) throws MessagingException, UnsupportedEncodingException {
 		String subject = "Đặt lại mật khẩu";
 		String senderName = "Hola Houses";
 		String newPass = random.generatePassword(8);
@@ -81,16 +81,14 @@ public class MailServiceImpl implements MailService {
 
 		String userName = userModel.getUsername();
 		MimeMessage message = javaMailSender.createMimeMessage();
-		boolean multipart = true;
 
-		String mailContent = "Dear [[name]],<br><br>" + "Mật khẩu mới của bạn là:<br>" + "<h3>[NEW_PASS]</h3>"
-				+ "Cảm ơn,<br>" + "The Hola Team!";
+		String mailContent = "Dear [[name]],<br><br>" + "Mật khẩu mới của bạn là:<br>" 
+				+ "<h3>[NEW_PASS]</h3>" + "Cảm ơn,<br>" + "The Hola Team!";
 
 		mailContent = mailContent.replace("[[name]]", userName);
 		mailContent = mailContent.replace("[NEW_PASS]", newPass);
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
-			message.setContent(mailContent, "text/html");
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
 			helper.setFrom(sendFrom, senderName);
 			helper.setTo(email);
 			helper.setSubject(subject);
