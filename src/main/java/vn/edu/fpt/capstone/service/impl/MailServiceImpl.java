@@ -45,7 +45,7 @@ public class MailServiceImpl implements MailService {
 			throws MessagingException, UnsupportedEncodingException {
 		String subject = "Xác minh tài khoản";
 		String senderName = "Hola Houses";
-		String verifyURL = "https://holahouses.netlify.app/verify-account?code=" + code;
+		String verifyURL = "https://holahouses.com/verify-account?code=" + code;
 
 		String mailContent = "Dear [[name]],<br><br>" + "Click vào đường link bên dưới để xác minh tài khoản của bạn:<br>"
 				+ "<h3><a href=\"[[URL]]\" target=\"_self\">XÁC NHẬN</a></h3>" + "Cảm ơn,<br>" + "The Hola Team!";
