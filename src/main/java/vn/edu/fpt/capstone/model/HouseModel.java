@@ -56,7 +56,7 @@ public class HouseModel extends Auditable<String> {
 	private List<RoomModel> room;
 
 	@OneToOne
-	@JoinColumn(name = "address_id")
+	@JoinColumn(name = "address_id",referencedColumnName = "id")
 	private AddressModel address;
 
 	@OneToMany(mappedBy = "house")
