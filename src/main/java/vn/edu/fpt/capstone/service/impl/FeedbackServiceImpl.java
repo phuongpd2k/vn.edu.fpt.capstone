@@ -24,6 +24,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
 	@Override
 	public FeedbackDto findById(Long id) {
+		if (!feedbackRepository.findById(id).isPresent())
+			return null;
 		FeedbackDto feedbackDto = modelMapper.map(feedbackRepository.findById(id).get(), FeedbackDto.class);
 		return feedbackDto;
 	}

@@ -45,9 +45,11 @@ public class RoomServiceImpl implements RoomService {
 
 	@Override
 	public RoomDto findById(Long id) {
+		if (!roomRepository.findById(id).isPresent())
+			return null;
 		RoomModel r = roomRepository.findById(id).get();
 		RoomDto roomDto = modelMapper.map(r, RoomDto.class);
-		if(r.getPosts().size() > 0) {
+		if (r.getPosts().size() > 0) {
 			roomDto.setCheck(true);
 		}
 		return roomDto;
@@ -202,9 +204,9 @@ public class RoomServiceImpl implements RoomService {
 			listTypeCategory.add(categoryTypeDto);
 		}
 		rp.setCategoryTypes(listTypeCategory);
-		
-		//rp.setStartDate(roomModel.getPosts());
-		
+
+		// rp.setStartDate(roomModel.getPosts());
+
 		return rp;
 	}
 
@@ -237,7 +239,7 @@ public class RoomServiceImpl implements RoomService {
 	public void update(RoomDto roomDto) {
 		RoomModel roomModel = modelMapper.map(roomDto, RoomModel.class);
 		roomRepository.save(roomModel);
-		
+
 	}
 
 }

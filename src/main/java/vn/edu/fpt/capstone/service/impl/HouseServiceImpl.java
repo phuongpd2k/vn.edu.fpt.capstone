@@ -91,6 +91,8 @@ public class HouseServiceImpl implements HouseService {
 
 	@Override
 	public HouseDto findById(Long id) {
+		if (!houseRepository.findById(id).isPresent())
+			return null;
 		HouseDto houseDto = convertEntity2Dto(houseRepository.findById(id).get());
 		return houseDto;
 	}

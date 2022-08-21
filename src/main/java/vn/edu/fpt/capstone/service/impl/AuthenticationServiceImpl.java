@@ -75,6 +75,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Override
 	public ResponseEntity<?> authenticate(SignInDto signInDto) throws AuthenticationException {
+		if (signInDto.getUsername()==null || signInDto.getPassword()==null) {
+			logger.error("Parameter invalid!");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ResponseObject.builder().code("401")
+							.message("Authenticate request: username or password invalid!!")
+							.messageCode("USERNAME_PASSWORD_INVALID").build());
+
+		}
 		if (StringUtils.isEmpty(signInDto.getUsername().trim())
 				|| StringUtils.isEmpty(signInDto.getPassword().trim())) {
 			logger.error("Parameter invalid!");

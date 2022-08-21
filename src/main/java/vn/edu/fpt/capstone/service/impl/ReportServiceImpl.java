@@ -29,7 +29,7 @@ public class ReportServiceImpl implements ReportService {
 	ReportRepository reportRepository;
 	@Autowired
 	ModelMapper modelMapper;
-	
+
 	@Autowired
 	private QuanHuyenService quanHuyenService;
 
@@ -38,6 +38,8 @@ public class ReportServiceImpl implements ReportService {
 
 	@Override
 	public ReportDto findById(Long id) {
+		if (!reportRepository.findById(id).isPresent())
+			return null;
 		ReportDto reportDto = modelMapper.map(reportRepository.findById(id).get(), ReportDto.class);
 		return reportDto;
 	}
@@ -48,7 +50,8 @@ public class ReportServiceImpl implements ReportService {
 		if (reportModels == null || reportModels.isEmpty()) {
 			return null;
 		}
-		//List<ReportDto> reportDtos = Arrays.asList(modelMapper.map(reportModels, ReportDto[].class));
+		// List<ReportDto> reportDtos = Arrays.asList(modelMapper.map(reportModels,
+		// ReportDto[].class));
 		List<ReportDto> reportDtos = convertToListDto(reportModels);
 		return reportDtos;
 	}
@@ -100,7 +103,7 @@ public class ReportServiceImpl implements ReportService {
 		postResponse.setUsername(model.getHouse().getUser().getUsername());
 		postResponse.setVerifyNote(model.getVerifyNote());
 		postResponse.setRoomId(model.getRoom().getId());
-		
+
 		return postResponse;
 	}
 

@@ -27,6 +27,8 @@ public class AddressServiceImpl implements AddressService {
 	@Override
 //	@Cacheable("address")
 	public AddressDto findById(Long id) {
+		if(!addressRepository.findById(id).isPresent())
+			return null;
 		AddressDto addressDto = modelMapper.map(addressRepository.findById(id).get(), AddressDto.class);
 		return addressDto;
 	}
