@@ -108,10 +108,11 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " JOIN room r ON h.id = r.house_id"
 			+ " JOIN house_amenitiess ha ON ha.house_id = h.id"
 			+ " JOIN room_amenity ra ON ra.room_id = r.id"
-			+ " join user u on u.id = h.user_id"
+			+ " JOIN user u on u.id = h.user_id"
 			
-			+ " WHERE p.enable = true AND p.is_active = true "
-			+ " and u.is_active = true and h.enable = true"
+			+ " WHERE p.enable = true AND p.is_active = true"
+			+ " AND p.start_date <= :date AND p.end_date >= :date"
+			+ " AND u.is_active = true and h.enable = true"
 			+ " AND r.enable = true AND p.status = 'CENSORED'"		
 			+ " AND (:verify = '' or p.verify = :verify)"
 			
@@ -133,7 +134,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			@Param("roomCategoryIds") List<Long> roomCategoryIds, @Param("minPrice") Integer minPrice,
 			@Param("maxPrice") Integer maxPrice, @Param("maximumNumberOfPeople") Integer maximumNumberOfPeople,
 			@Param("amenityHouseIds") List<Long> amenityHouseIds, @Param("amenityRoomIds") List<Long> amenityRoomIds, 
-			@Param("roomMate") String roomMate, @Param("houseName") String houseName);
+			@Param("roomMate") String roomMate, @Param("houseName") String houseName, @Param("date") Date date);
 
 	@Query(value="SELECT p.* FROM post p"
 			+ " left join (SELECT postid as pid, AVG(f.rating) as 'avg'"
