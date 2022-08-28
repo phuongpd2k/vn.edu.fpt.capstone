@@ -336,7 +336,7 @@ public class PostServiceImpl implements PostService {
 		List<PostModel> result = postRepository.getListPostModelFilter(dto.getVerify(), dto.getMinArea(),
 				dto.getMaxArea(), dto.getTypeOfRentalIds(), dto.getRoomCategoryIds(), dto.getMinPrice()
 				, dto.getMaxPrice(), dto.getMaximumNumberOfPeople(), dto.getAmenityHouseIds(), dto.getAmenityRoomIds(), 
-				dto.getRoomMate(), dto.getHouseName());
+				dto.getRoomMate(), dto.getHouseName(), new Date());
 		
 		
 
@@ -569,7 +569,7 @@ public class PostServiceImpl implements PostService {
 		List<PostModel> result = postRepository.getListPostModelFilter(dto.getVerify(), dto.getMinArea(),
 				dto.getMaxArea(), dto.getTypeOfRentalIds(), dto.getRoomCategoryIds(), dto.getMinPrice()
 				, dto.getMaxPrice(), dto.getMaximumNumberOfPeople(), dto.getAmenityHouseIds(), dto.getAmenityRoomIds(), 
-				dto.getRoomMate(), dto.getHouseName());
+				dto.getRoomMate(), dto.getHouseName(), new Date());
 		return convertToPostingResponse(result);
 	}
 
