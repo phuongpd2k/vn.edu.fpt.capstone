@@ -2,9 +2,6 @@ package vn.edu.fpt.capstone.repository;
 
 import java.util.Date;
 import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,16 +19,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 
 	@Query("SELECT pm FROM PostModel pm WHERE pm.enable = true ORDER BY pm.createdDate DESC")
 	List<PostModel> findAllQuery();
-
-//	@Query("select p from PostModel p where p.enable = true AND p.isActive = true AND p.house.name LIKE %?1%"
-//			+ " AND p.house.user.isActive = true"
-//			+ " AND p.house.enable = true"
-//			+ " AND p.status = 'CENSORED'"
-//			+ " AND p.endDate >= ?2"
-//			+ " AND p.startDate <= ?2"
-//			+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
-//	Page<PostModel> getListPage(String houseName, Date dateNow, Pageable pageable);
-
+	
 	@Query("SELECT new vn.edu.fpt.capstone.response.HouseHistoryResponse(p.postType.type, p.cost, p.startDate, p.endDate, p.status) FROM PostModel p WHERE p.createdBy = ?1 AND p.house.id = ?2")
 	List<HouseHistoryResponse> getListHouseHistory(String username, Long id);
 
@@ -90,15 +78,6 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " ORDER BY p.postCost")	
 	List<PostModel> getAllPostModelContainKey(String key, Date dateNow);
 
-//	@Query("select p from PostModel p where p.enable = true AND p.isActive = true"
-//	+ " AND p.house.user.isActive = true"
-//	+ " AND p.house.enable = true"
-//	+ " AND p.status = 'CENSORED'"
-//	+ " AND p.endDate >= ?1"
-//	+ " AND p.startDate <= ?1"
-//	+ " ORDER BY (CASE p.verify WHEN 'VERIFIED' THEN 1 ELSE 2 END) ASC, p.postCost DESC")
-//	Page<PostModel> getFilterPageTop8(Date date, Pageable pageable);
-
 	
 	@Query(value = "SELECT p.* FROM post p"
 			+ " left join (SELECT postid as pid, AVG(f.rating) as 'avg'"
@@ -108,10 +87,11 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			+ " JOIN room r ON h.id = r.house_id"
 			+ " JOIN house_amenitiess ha ON ha.house_id = h.id"
 			+ " JOIN room_amenity ra ON ra.room_id = r.id"
-			+ " join user u on u.id = h.user_id"
+			+ " JOIN user u on u.id = h.user_id"
 			
 			+ " WHERE p.enable = true AND p.is_active = true "
-			+ " and u.is_active = true and h.enable = true"
+			+ " AND p.start_date <= :date and p.end_date >= :date"
+			+ " AND u.is_active = true and h.enable = true"
 			+ " AND r.enable = true AND p.status = 'CENSORED'"		
 			+ " AND (:verify = '' or p.verify = :verify)"
 			
@@ -133,7 +113,7 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
 			@Param("roomCategoryIds") List<Long> roomCategoryIds, @Param("minPrice") Integer minPrice,
 			@Param("maxPrice") Integer maxPrice, @Param("maximumNumberOfPeople") Integer maximumNumberOfPeople,
 			@Param("amenityHouseIds") List<Long> amenityHouseIds, @Param("amenityRoomIds") List<Long> amenityRoomIds, 
-			@Param("roomMate") String roomMate, @Param("houseName") String houseName);
+			@Param("roomMate") String roomMate, @Param("houseName") String houseName, @Param("date") Date date);
 
 	@Query(value="SELECT p.* FROM post p"
 			+ " left join (SELECT postid as pid, AVG(f.rating) as 'avg'"
